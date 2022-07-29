@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  collector-pc:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    networks:
+      - ns-stream
+
+networks:
+  ns-stream:
+    external: true

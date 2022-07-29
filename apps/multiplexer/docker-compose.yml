@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  multiplexer:
+    build: .
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    env_file: .env
+    environment:
+      - APP_PORT=3000
+
+networks:
+  ns-stream:
+    external: true
