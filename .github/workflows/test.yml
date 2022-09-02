@@ -1,0 +1,22 @@
+name: Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  compile-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        apps: [ 'apps/collector', 'apps/manifold', 'apps/multiplexer' ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Compile
+        run: yarn build
+      - name: Test
+        run: yarn test --passWithNoTests
