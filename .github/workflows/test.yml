@@ -9,14 +9,9 @@ on:
 jobs:
   compile-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        apps: [ 'apps/collector', 'apps/manifold', 'apps/multiplexer' ]
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: lerna bootstrap
       - name: Compile
-        run: yarn build
-      - name: Test
-        run: yarn test --passWithNoTests
+        run: lerna build
