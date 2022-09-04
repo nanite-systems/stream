@@ -6,6 +6,9 @@
   "author": "Microwavekonijn <microwavekonijn@pm.me>",
   "license": "Apache-2.0",
   "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "lint": "prettier **/*.{ts,js,json}",
     "prepare": "husky install"

@@ -54,7 +54,7 @@ $ docker run --name ps2-collector -e SERVICE_ID=example -e PS2_ENVIRONMENT=ps2 -
 ## Configuration
 
 | Variable                                | Required | Description                                                                                              |
-|-----------------------------------------|----------|----------------------------------------------------------------------------------------------------------|
+| --------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
 | SERVICE_ID                              | yes      | Census service id, http://census.daybreakgames.com/#service-id                                           |
 | PS2_ENVIRONMENT                         | yes      | The environment to listen to                                                                             |
 | STREAM_ENDPOINT                         | no       | The url of the websocket endpoint                                                                        |

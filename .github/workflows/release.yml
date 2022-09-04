@@ -3,9 +3,9 @@ name: Release
 on:
   push:
     tags:
-      - 'collector@*'
-      - 'multiplexer@*'
-      - 'manifold@*'
+      - 'stream-collector@*'
+      - 'stream-multiplexer@*'
+      - 'stream-manifold@*'
 
 jobs:
   docker:
@@ -44,7 +44,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: apps/${{ steps.release_info.outputs.app }}
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
