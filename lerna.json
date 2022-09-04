@@ -1,5 +1,6 @@
 {
   "packages": ["apps/*"],
+  "npmClient": "yarn",
   "version": "independent",
   "command": {
     "version": {

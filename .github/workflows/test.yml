@@ -14,4 +14,4 @@ jobs:
       - name: Install dependencies
         run: lerna bootstrap
       - name: Compile
-        run: lerna build
+        run: lerna run build --parallel
