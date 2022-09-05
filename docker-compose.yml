@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - "5672:${RABBITMQ_PORT:-5672}"
+      - "15672:${RABBITMQ_MANAGEMENT_PORT:-15672}"
+    env_file: .env
+  collector:
+    build: apps/stream-collector
+    env_file: apps/stream-collector/.env
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    profiles:
+      - full
+      - back-end
+  multiplexer:
+    build: apps/stream-multiplexer
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    env_file: apps/stream-multiplexer/.env
+    environment:
+      - APP_PORT=3000
+    profiles:
+      - full
+      - back-end
+  manifold:
+    build: apps/stream-manifold
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - '${APP_PORT:-8000}:8000'
+    env_file: apps/stream-manifold/.env
+    environment:
+      - APP_PORT=8000
+    profiles:
+      - full
+
+
+networks:
+  ns-stream:
+    name: 'ns-stream'
