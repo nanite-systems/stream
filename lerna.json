@@ -1,6 +1,5 @@
 {
   "packages": ["apps/*"],
-  "useWorkspaces": true,
   "npmClient": "yarn",
   "version": "independent",
   "command": {
