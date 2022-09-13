@@ -3,20 +3,17 @@ name: Release
 on:
   push:
     tags:
-      - 'stream-collector@*'
-      - 'stream-multiplexer@*'
-      - 'stream-manifold@*'
+      - 'v*'
 
 jobs:
   docker:
+    strategy:
+      matrix:
+        image: [ 'stream-collector', 'stream-multiplexer', 'stream-manifold' ]
     runs-on: ubuntu-latest
     env:
       REGISTER: ghcr.io
     steps:
-      - id: release_info
-        run: |
-          echo "::set-output name=app::${GITHUB_REF_NAME%@*}"
-          echo "::set-output name=version::${GITHUB_REF_NAME#*@}"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up QEMU
@@ -33,23 +30,20 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTER }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTER }}/${{ matrix.image }}
           tags: |
-            type=semver,pattern={{version}},value=${{ env.IMAGE_VERSION }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.IMAGE_VERSION }}
-        env:
-          IMAGE_NAME: ${{ steps.release_info.outputs.app }}
-          IMAGE_VERSION: ${{ steps.release_info.outputs.version }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Build and push
         id: build
         uses: docker/build-push-action@v3
         with:
-          context: apps/${{ steps.release_info.outputs.app }}
+          context: apps/${{ matrix.image }}
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ github.repository }}:latest
+          cache-from: type=registry,ref=${{ github.repository_owner }}/${{ matrix.image }}:latest
           cache-to: type=inline
       - name: Image Digest
         run: echo ${{ steps.build.outputs.digest }}
