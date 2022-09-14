@@ -3,7 +3,7 @@
   <img src="https://nanite-systems.net/images/ns.colored.svg" width="200" alt="Nest Logo" />
 </a>
 
-[![version](https://img.shields.io/github/lerna-json/v/nanite-systems/stream?color=blue)](https://github.com/nanite-systems/stream)
+[![version](https://img.shields.io/github/lerna-json/v/nanite-systems/stream?color=blue&label=version)](https://github.com/nanite-systems/stream)
 [![issues](https://img.shields.io/github/issues/nanite-systems/stream)](https://github.com/nanite-systems/stream/issues)
 [![license](https://img.shields.io/github/license/nanite-systems/stream)](https://github.com/nanite-systems/stream/blob/main/LICENSE)
 
