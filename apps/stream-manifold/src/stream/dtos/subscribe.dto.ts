@@ -1,20 +1,23 @@
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
-import { TransformBoolean } from '../../utils/census.transformers';
+import { IsArray, IsBoolean, IsOptional } from 'class-validator';
+import {
+  TransformBoolean,
+  TransformList,
+} from '../../utils/census.transformers';
 
 export class SubscribeDto {
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @TransformList()
   readonly worlds?: Array<string>;
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @TransformList()
   readonly characters?: Array<string>;
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @TransformList()
   readonly eventNames?: Array<string>;
 
   @IsOptional()

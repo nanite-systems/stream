@@ -16,3 +16,12 @@ export function TransformBoolean(): PropertyDecorator {
     }
   });
 }
+
+export function TransformList(toString = true): PropertyDecorator {
+  return Transform(({ value }) => {
+    if (Array.isArray(value))
+      return value.map((item) => (toString ? JSON.stringify(item) : item));
+
+    return value;
+  });
+}
