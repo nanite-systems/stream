@@ -9,7 +9,10 @@ jobs:
   docker:
     strategy:
       matrix:
-        image: [ 'stream-collector', 'stream-multiplexer', 'stream-manifold' ]
+        image:
+          - 'stream-collector'
+          - 'stream-multiplexer'
+          - 'stream-manifold'
     runs-on: ubuntu-latest
     env:
       REGISTER: ghcr.io
@@ -30,7 +33,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTER }}/${{ matrix.image }}
+          images: |
+            ${{ env.REGISTER }}/${{ github.repository_owner }}/${{ matrix.image }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
