@@ -17,7 +17,7 @@ RUN yarn install --production --frozen-lockfile
 
 COPY --from=build /usr/src/app/dist ./dist
 
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["node", "dist/main"]
 
