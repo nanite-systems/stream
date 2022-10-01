@@ -17,7 +17,7 @@ export class SubscribeDto {
 
   @IsOptional()
   @IsArray()
-  @TransformList()
+  @TransformList(false)
   readonly eventNames?: Array<string>;
 
   @IsOptional()
