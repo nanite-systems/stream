@@ -20,3 +20,6 @@ COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 8000
 
 CMD ["node", "dist/main"]
+
+HEALTHCHECK --interval=12s --timeout=12s --start-period=30s \
+  CMD ["node", "dist/health"]

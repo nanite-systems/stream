@@ -5,12 +5,15 @@ import { EVENT_QUEUE, PUBLISH_EXCHANGE, RABBIT_MQ } from './constants';
 import { AmqpConnectionManager, connect } from 'amqp-connection-manager';
 import { EventQueueFactory } from './factories/event-queue.factory';
 import { PublishExchangeFactory } from './factories/publish-exchange.factory';
+import { RabbitMqIndicator } from './indicators/rabbit-mq.indicator';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
-  imports: [ConfigModule.forFeature([RabbitMqConfig])],
+  imports: [ConfigModule.forFeature([RabbitMqConfig]), TerminusModule],
   providers: [
     EventQueueFactory,
     PublishExchangeFactory,
+    RabbitMqIndicator,
 
     {
       provide: RABBIT_MQ,
@@ -30,7 +33,7 @@ import { PublishExchangeFactory } from './factories/publish-exchange.factory';
       inject: [PublishExchangeFactory, RabbitMqConfig],
     },
   ],
-  exports: [EVENT_QUEUE, PUBLISH_EXCHANGE],
+  exports: [EVENT_QUEUE, PUBLISH_EXCHANGE, RabbitMqIndicator],
 })
 export class RabbitMqModule implements OnApplicationShutdown {
   private readonly logger = new Logger('RabbitMQ');

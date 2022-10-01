@@ -18,3 +18,6 @@ RUN yarn install --production --frozen-lockfile
 COPY --from=build /usr/src/app/dist ./dist
 
 CMD ["node", "dist/main"]
+
+HEALTHCHECK --interval=12s --timeout=12s --start-period=30s \
+  CMD ["node", "dist/health"]

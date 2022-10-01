@@ -5,11 +5,14 @@ import { INGRESS_QUEUE, RABBIT_MQ } from './constants';
 import { connect } from 'amqp-connection-manager';
 import { DataStreamFactory } from './factories/data-stream.factory';
 import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpConnectionManager';
+import { RabbitMqIndicator } from './indicators/rabbit-mq.indicator';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
-  imports: [ConfigModule.forFeature([RabbitMqConfig])],
+  imports: [ConfigModule.forFeature([RabbitMqConfig]), TerminusModule],
   providers: [
     DataStreamFactory,
+    RabbitMqIndicator,
 
     {
       provide: RABBIT_MQ,
@@ -23,7 +26,7 @@ import { IAmqpConnectionManager } from 'amqp-connection-manager/dist/esm/AmqpCon
       inject: [DataStreamFactory, RabbitMqConfig],
     },
   ],
-  exports: [INGRESS_QUEUE],
+  exports: [INGRESS_QUEUE, RabbitMqIndicator],
 })
 export class RabbitMqModule implements OnApplicationShutdown {
   private readonly logger = new Logger('RabbitMQ');

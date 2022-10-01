@@ -15,11 +15,13 @@ import {
 import { ConfigModule } from '@census-reworked/nestjs-utils';
 import { CensusConfig } from './census.config';
 import { CensusClientFactory } from './factories/census-client.factory';
+import { CensusIndicator } from './indicator/census.indicator';
 
 @Module({
   imports: [ConfigModule.forFeature([CensusConfig])],
   providers: [
     CensusClientFactory,
+    CensusIndicator,
 
     {
       provide: PC_CLIENT,
@@ -42,7 +44,13 @@ import { CensusClientFactory } from './factories/census-client.factory';
       inject: [PC_CLIENT, PS4_US_CLIENT, PS4_EU_CLIENT],
     },
   ],
-  exports: [PC_CLIENT, PS4_US_CLIENT, PS4_EU_CLIENT, CENSUS_CLIENTS],
+  exports: [
+    PC_CLIENT,
+    PS4_US_CLIENT,
+    PS4_EU_CLIENT,
+    CENSUS_CLIENTS,
+    CensusIndicator,
+  ],
 })
 export class CensusModule
   implements OnApplicationBootstrap, OnApplicationShutdown

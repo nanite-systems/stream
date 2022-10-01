@@ -13,6 +13,9 @@ services:
   collector:
     build: apps/stream-collector
     env_file: apps/stream-collector/.env
+    environment:
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      - RABBITMQ_COLLECTOR_EXCHANGE_NAME=cr-collector
     restart: unless-stopped
     networks:
       - ns-stream
@@ -28,6 +31,9 @@ services:
       - '${MULTIPLEXER_PORT:-3000}:3000'
     env_file: apps/stream-multiplexer/.env
     environment:
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      - RABBITMQ_COLLECTOR_EXCHANGE=cr-collector
+      - RABBITMQ_STREAM_EXCHANGE=cr-stream
       - APP_PORT=3000
     profiles:
       - full
@@ -38,10 +44,13 @@ services:
     networks:
       - ns-stream
     ports:
-      - '${MANIFOLD_PORT:-8000}:8000'
+      - '${MANIFOLD_PORT:-8000}:3000'
     env_file: apps/stream-manifold/.env
     environment:
-      - APP_PORT=8000
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      - RABBITMQ_STREAM_EXCHANGE=cr-stream
+      - MULTIPLEXER_ENDPOINT=http://multiplexer:3000
+      - APP_PORT=3000
     profiles:
       - full
 

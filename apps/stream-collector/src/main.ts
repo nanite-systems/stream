@@ -3,15 +3,23 @@ import { AppModule } from './app.module';
 import { ConfigModule } from '@census-reworked/nestjs-utils';
 import { AppConfig } from './app.config';
 import { Logger } from '@nestjs/common';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
   const config = await ConfigModule.resolveConfig(AppConfig);
 
-  const app = await NestFactory.createApplicationContext(AppModule, {
-    logger: config.logLevels,
-  });
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    {
+      logger: config.logLevels,
+    },
+  );
 
   process
     .on('unhandledRejection', (err) => {
@@ -26,6 +34,8 @@ async function bootstrap() {
     });
 
   app.enableShutdownHooks();
+
+  await app.listen(config.port, '0.0.0.0');
 }
 
 void bootstrap();
