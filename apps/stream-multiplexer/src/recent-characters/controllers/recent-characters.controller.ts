@@ -26,6 +26,12 @@ export class RecentCharactersController {
         return this.censusClientPs4Eu.recentCharacters();
       case 'ps2ps4us':
         return this.censusClientPs4Us.recentCharacters();
+      case 'all':
+        return Promise.all([
+          this.censusClientPc.recentCharacters(),
+          this.censusClientPs4Eu.recentCharacters(),
+          this.censusClientPs4Us.recentCharacters(),
+        ]).then((results) => results.flat());
     }
   }
 
@@ -40,6 +46,12 @@ export class RecentCharactersController {
         return this.censusClientPs4Eu.recentCharacterCount();
       case 'ps2ps4us':
         return this.censusClientPs4Us.recentCharacterCount();
+      case 'all':
+        return Promise.all([
+          this.censusClientPc.recentCharacterCount(),
+          this.censusClientPs4Eu.recentCharacterCount(),
+          this.censusClientPs4Us.recentCharacterCount(),
+        ]).then((results) => results.reduce((sum, a) => sum + a));
     }
   }
 }
