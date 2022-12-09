@@ -14,7 +14,6 @@ export class EventService {
   constructor(eventStreamFactory: EventStreamFactory) {
     this.events = [
       new WorldEvent('ContinentLock', eventStreamFactory),
-      new WorldEvent('ContinentUnlock', eventStreamFactory),
       new WorldEvent('FacilityControl', eventStreamFactory),
       new WorldEvent('MetagameEvent', eventStreamFactory),
 
@@ -24,7 +23,6 @@ export class EventService {
       new CharacterEvent('PlayerFacilityCapture', eventStreamFactory),
       new CharacterEvent('PlayerFacilityDefend', eventStreamFactory),
       new CharacterEvent('SkillAdded', eventStreamFactory),
-      new CharacterEvent('VehicleDestroy', eventStreamFactory),
 
       new CharacterWorldEvent('PlayerLogin', eventStreamFactory),
       new CharacterWorldEvent('PlayerLogout', eventStreamFactory),
