@@ -1,8 +1,6 @@
-import { ProcessEnv } from '@census-reworked/nestjs-utils';
-import { IsNotEmpty } from 'class-validator';
+import { ProcessEnv } from '@nanite-systems/utils';
 
 export class CensusConfig {
   @ProcessEnv('SERVICE_ID')
-  @IsNotEmpty()
   serviceId: string;
 }

@@ -12,7 +12,7 @@ import {
   PS4_EU_CLIENT,
   PS4_US_CLIENT,
 } from './constants';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
+import { ConfigModule } from '@nanite-systems/utils';
 import { CensusConfig } from './census.config';
 import { CensusClientFactory } from './factories/census-client.factory';
 import { CensusIndicator } from './indicator/census.indicator';

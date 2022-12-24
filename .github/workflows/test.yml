@@ -8,10 +8,21 @@ on:
 
 jobs:
   compile-test:
+    name: Compile test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ^6.10.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: lerna bootstrap
+        run: pnpm i --frozen-lockfile --silent
+
       - name: Compile
-        run: lerna run build --parallel
+        run: pnpm nx run-each build

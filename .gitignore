@@ -14,7 +14,7 @@ node_modules/
 # bundle
 packages/**/*.d.ts
 packages/**/*.js
-/apps/*/dist
+dist
 
 # misc
 .DS_Store

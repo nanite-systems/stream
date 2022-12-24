@@ -5,17 +5,17 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppConfig } from './app.config';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
 import {
   ClassSerializerInterceptor,
   Logger,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigModule } from '@nanite-systems/utils';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
-  const config = await ConfigModule.resolveConfig(AppConfig);
+  const config = new AppConfig();
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

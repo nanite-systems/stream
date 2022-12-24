@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { StreamManagerService } from './services/stream-manager.service';
 import { Stream } from 'ps2census';
 import { CensusConfig } from './census.config';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
+import { ConfigModule } from '@nanite-systems/utils';
 
 @Module({
   imports: [ConfigModule.forFeature([CensusConfig])],

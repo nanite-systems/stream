@@ -11,7 +11,7 @@ import { RabbitMqModule } from '../rabbit-mq/rabbit-mq.module';
 import { EnvironmentsModule } from '../environments/environments.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { MultiplexerModule } from '../multiplexer/multiplexer.module';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
+import { ConfigModule } from '@nanite-systems/utils';
 import { StreamConfig } from './stream.config';
 
 @Module({

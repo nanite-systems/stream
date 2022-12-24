@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
+import { ConfigModule } from '@nanite-systems/utils';
 import { MultiplexerConfig } from './multiplexer.config';
 import { MULTIPLEXER_HTTP } from './constants';
 import { Axios } from 'axios';

@@ -6,13 +6,13 @@ import {
 } from '@nestjs/platform-fastify';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { AppConfig } from './app.config';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
 import { Logger } from '@nestjs/common';
+import { ConfigModule } from '@nanite-systems/utils';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
-  const config = await ConfigModule.resolveConfig(AppConfig);
+  const config = new AppConfig();
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

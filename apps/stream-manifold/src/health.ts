@@ -1,17 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
 import { AppConfig } from './app.config';
 import axios, { AxiosError } from 'axios';
+import { ConfigModule } from '@nanite-systems/utils';
 
 async function healthcheck() {
   ConfigModule.forRoot();
 
-  const app = await NestFactory.createApplicationContext(
-    ConfigModule.forFeature([AppConfig]),
-    { logger: false },
-  );
-
-  const { port } = await app.resolve(AppConfig);
+  const { port } = new AppConfig();
 
   try {
     const { data } = await axios.get(`http://localhost:${port}/health`);

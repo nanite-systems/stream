@@ -53,3 +53,8 @@ $ npm run start:prod
 ## License
 
 All NS projects are [Apache-2.0 licensed](LICENSE).
+"@typescript-eslint/eslint-plugin": "^5.38.1",
+"@typescript-eslint/parser": "^5.38.1",
+"eslint": "^8.23.0",
+"eslint-config-prettier": "^8.3.0",
+"eslint-plugin-prettier": "^4.0.0"

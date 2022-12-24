@@ -1,5 +1,5 @@
 import { Inject, Logger, Module, OnApplicationShutdown } from '@nestjs/common';
-import { ConfigModule } from '@census-reworked/nestjs-utils';
+import { ConfigModule } from '@nanite-systems/utils';
 import { RabbitMqConfig } from './rabbit-mq.config';
 import { INGRESS_QUEUE, RABBIT_MQ } from './constants';
 import { connect } from 'amqp-connection-manager';

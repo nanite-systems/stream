@@ -28,7 +28,7 @@ services:
     networks:
       - ns-stream
     ports:
-      - '${MULTIPLEXER_PORT:-3000}:3000'
+      - '${MULTIPLEXER_PORT:-3001}:3000'
     env_file: apps/stream-multiplexer/.env
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
@@ -44,7 +44,7 @@ services:
     networks:
       - ns-stream
     ports:
-      - '${MANIFOLD_PORT:-8000}:3000'
+      - '${MANIFOLD_PORT:-3000}:3000'
     env_file: apps/stream-manifold/.env
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
@@ -53,6 +53,14 @@ services:
       - APP_PORT=3000
     profiles:
       - full
+  health:
+    build: apps/stream-health
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - '${HEALTH_PORT:-3002}:3000'
+
 
 networks:
   ns-stream:

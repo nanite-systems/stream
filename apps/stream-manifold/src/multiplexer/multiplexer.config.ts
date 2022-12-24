@@ -1,8 +1,6 @@
-import { ProcessEnv } from '@census-reworked/nestjs-utils';
-import { IsUrl } from 'class-validator';
+import { ProcessEnv } from '@nanite-systems/utils';
 
 export class MultiplexerConfig {
   @ProcessEnv('MULTIPLEXER_ENDPOINT')
-  @IsUrl({ require_tld: false })
   endpoint: string;
 }
