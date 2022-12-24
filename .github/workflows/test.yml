@@ -25,4 +25,4 @@ jobs:
         run: pnpm i --frozen-lockfile --silent
 
       - name: Compile
-        run: pnpm nx run-each build
+        run: pnpm nx run-many --target=build

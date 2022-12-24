@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tag:
+    tags:
       - '*@*'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
