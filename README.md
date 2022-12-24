@@ -3,9 +3,14 @@
   <img src="https://nanite-systems.net/images/ns.colored.svg" width="200" alt="Nest Logo" />
 </a>
 
-[![version](https://img.shields.io/github/lerna-json/v/nanite-systems/stream?color=blue&label=version)](https://github.com/nanite-systems/stream)
 [![issues](https://img.shields.io/github/issues/nanite-systems/stream)](https://github.com/nanite-systems/stream/issues)
 [![license](https://img.shields.io/github/license/nanite-systems/stream)](https://github.com/nanite-systems/stream/blob/main/LICENSE)
+
+[![stream-collector](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-collector%2Fpackage.json&label=collector)](https://github.com/nanite-systems/stream/tree/main/apps/stream-collector)
+[![stream-multiplexer](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-multiplexer%2Fpackage.json&label=multiplexer)](https://github.com/nanite-systems/stream/tree/main/apps/stream-multiplexer)
+[![stream-manifold](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-manifold%2Fpackage.json&label=manifold)](https://github.com/nanite-systems/stream/tree/main/apps/stream-manifold)
+[![stream-health](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-health%2Fpackage.json&label=health)](https://github.com/nanite-systems/stream/tree/main/apps/stream-health)
+
 
 </div>
 
@@ -17,19 +22,20 @@ The service is composed of multiple microservices:
 
 - Collector: Collects all events from the Census ESS;
 - Multiplexer: Combines and improves the quality of the event stream;
-- Manifold: The endpoint of the ESS that exposes the event stream.
+- Manifold: The endpoint of the ESS that exposes the event stream;
+- Health: Monitors health of the downstream and upstream ESS.
 
 ## Requirements
 
-- NodeJS v16
+- NodeJS v18
+- Pnpm
 - Docker
-- Lerna
 
 ## Installation
 
 ```bash
 # install dependencies and setup projects
-$ lerna bootstrap
+$ pnpm i
 
 # configuration of each app
 $ cp .env.example .env
@@ -40,21 +46,13 @@ $ cp .env.example .env
 For each individual service
 
 ```bash
-# development
-$ yarn start
+# development, e.g.
+$ pnpm stream-collector start
 
 # watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$  pnpm stream-collector start:dev
 ```
 
 ## License
 
 All NS projects are [Apache-2.0 licensed](LICENSE).
-"@typescript-eslint/eslint-plugin": "^5.38.1",
-"@typescript-eslint/parser": "^5.38.1",
-"eslint": "^8.23.0",
-"eslint-config-prettier": "^8.3.0",
-"eslint-plugin-prettier": "^4.0.0"
