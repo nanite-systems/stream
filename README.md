@@ -7,7 +7,6 @@
 [![license](https://img.shields.io/github/license/nanite-systems/stream)](https://github.com/nanite-systems/stream/blob/main/LICENSE)
 
 [![stream-collector](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-collector%2Fpackage.json&label=collector)](https://github.com/nanite-systems/stream/tree/main/apps/stream-collector)
-[![stream-multiplexer](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-multiplexer%2Fpackage.json&label=multiplexer)](https://github.com/nanite-systems/stream/tree/main/apps/stream-multiplexer)
 [![stream-manifold](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-manifold%2Fpackage.json&label=manifold)](https://github.com/nanite-systems/stream/tree/main/apps/stream-manifold)
 [![stream-health](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-health%2Fpackage.json&label=health)](https://github.com/nanite-systems/stream/tree/main/apps/stream-health)
 
@@ -20,14 +19,14 @@ The Nanite Systems streaming services is a backwards-compatible ESS of PS2 Censu
 It implements numerous fixes and present a more reliable event stream.
 The service is composed of multiple microservices:
 
-- Collector: Collects all events from the Census ESS;
-- Multiplexer: Combines and improves the quality of the event stream;
-- Manifold: The endpoint of the ESS that exposes the event stream;
-- Health: Monitors health of the downstream and upstream ESS.
+- Collector service: Maintains connections to the Census ESS instances and collects, deduplicates, and multiplexes the event
+  stream;
+- Manifold ESS: The endpoint of the NS ESS that exposes the event stream;
+- Health service: Monitors health of the downstream and upstream ESS.
 
 ## Requirements
 
-- NodeJS v18
+- Node.js v18
 - Pnpm
 - Docker
 
