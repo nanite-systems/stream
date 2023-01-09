@@ -2,7 +2,6 @@ import { Logger } from '@nestjs/common';
 import { Stream } from 'ps2census';
 import { EssConfig } from '../config/ess.config';
 import { SubscriptionConfig } from '../config/subscription.config';
-import { StreamClosedException } from 'ps2census/dist/stream';
 
 export class StreamManagerService {
   private active = false;
@@ -115,9 +114,6 @@ export class StreamManagerService {
         eventNames: this.subscription.events,
         logicalAndCharactersWithWorlds: this.subscription.logicalAnd,
       });
-    } catch (err) {
-      if (err instanceof StreamClosedException) return;
-      else throw err;
-    }
+    } catch {}
   }
 }
