@@ -199,7 +199,6 @@ importers:
 
   apps/stream-manifold:
     specifiers:
-      '@nestjs/axios': ^1.0.1
       '@nestjs/cli': ^9.1.8
       '@nestjs/common': ^9.2.1
       '@nestjs/core': ^9.2.1
@@ -242,13 +241,12 @@ importers:
       utf-8-validate: ^5.0.10
       ws: ^8.12.0
     dependencies:
-      '@nestjs/axios': registry.npmjs.org/@nestjs/axios/1.0.1_b4pxbpa7chblgbyake5iz5rdmu
       '@nestjs/common': registry.npmjs.org/@nestjs/common/9.2.1_welcnyot5bzd5wa2aovbkxpi4i
       '@nestjs/core': registry.npmjs.org/@nestjs/core/9.2.1_ol6onmans36hgpf43aeufuysse
       '@nestjs/microservices': registry.npmjs.org/@nestjs/microservices/9.2.1_ec6hzddu6sfjg4i67jbpzq5cam
       '@nestjs/platform-fastify': registry.npmjs.org/@nestjs/platform-fastify/9.2.1_hjcqpoaebdr7gdo5hgc22hthbe
       '@nestjs/platform-ws': registry.npmjs.org/@nestjs/platform-ws/9.2.1_nw57urvgbqyl2pmwjmy72dvi2a
-      '@nestjs/terminus': registry.npmjs.org/@nestjs/terminus/9.1.4_pswoab7ga7d37prmlnpmmye7ae
+      '@nestjs/terminus': registry.npmjs.org/@nestjs/terminus/9.1.4_c72eh54dvi6eqdhcygnbktsg64
       '@nestjs/websockets': registry.npmjs.org/@nestjs/websockets/9.2.1_fyic65utxiftcghm7bf7rrj4z4
       '@nss/rabbitmq': link:../../shared/rabbitmq
       '@nss/utils': link:../../shared/utils
@@ -1458,24 +1456,6 @@ packages:
       ts-morph: registry.npmjs.org/ts-morph/17.0.1
     dev: false
 
-  registry.npmjs.org/@nestjs/axios/1.0.1_b4pxbpa7chblgbyake5iz5rdmu:
-    resolution: {integrity: sha512-TpoZM/0ZJ9xiC04qkRDFod93LCZ12TQARRU3ejDvBK2E8emvzM4HThOs5ePklVxce4Q1ZsnrIWqnImvoDmJYnQ==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@nestjs/axios/-/axios-1.0.1.tgz}
-    id: registry.npmjs.org/@nestjs/axios/1.0.1
-    name: '@nestjs/axios'
-    version: 1.0.1
-    peerDependencies:
-      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
-      reflect-metadata: ^0.1.12
-      rxjs: ^6.0.0 || ^7.0.0
-    dependencies:
-      '@nestjs/common': registry.npmjs.org/@nestjs/common/9.2.1_welcnyot5bzd5wa2aovbkxpi4i
-      axios: registry.npmjs.org/axios/1.2.1
-      reflect-metadata: registry.npmjs.org/reflect-metadata/0.1.13
-      rxjs: registry.npmjs.org/rxjs/7.8.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
   registry.npmjs.org/@nestjs/cli/9.1.8:
     resolution: {integrity: sha512-53laCMoPLAkjyz3405FlMSrHnbr3DGeoaQjY963bEroezLlm/qfQhwj6oGJwtgA28eNFgx68mvQV2f1VZNUJtw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@nestjs/cli/-/cli-9.1.8.tgz}
     name: '@nestjs/cli'
@@ -2057,64 +2037,6 @@ packages:
       '@nestjs/common': registry.npmjs.org/@nestjs/common/9.2.1_ew7gazwbjf4vlpfvmmn4v2vvei
       '@nestjs/core': registry.npmjs.org/@nestjs/core/9.2.1_pwdo3q3a7waqiisplezqjzetmq
       '@nestjs/microservices': registry.npmjs.org/@nestjs/microservices/9.2.1_mnzuyp464gogf3656qkt6jcveq
-      boxen: registry.npmjs.org/boxen/5.1.2
-      check-disk-space: registry.npmjs.org/check-disk-space/3.3.1
-      reflect-metadata: registry.npmjs.org/reflect-metadata/0.1.13
-      rxjs: registry.npmjs.org/rxjs/7.8.0
-    dev: false
-
-  registry.npmjs.org/@nestjs/terminus/9.1.4_pswoab7ga7d37prmlnpmmye7ae:
-    resolution: {integrity: sha512-VUkafKRK6uWzwyHPind3RejxQAFJxPaXjDtvHQRaNdJ5Pk9wVD4e6e8KLGhcrPGC8ZDorqBLZABnECIcGzkodA==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@nestjs/terminus/-/terminus-9.1.4.tgz}
-    id: registry.npmjs.org/@nestjs/terminus/9.1.4
-    name: '@nestjs/terminus'
-    version: 9.1.4
-    peerDependencies:
-      '@grpc/grpc-js': '*'
-      '@grpc/proto-loader': '*'
-      '@mikro-orm/core': '*'
-      '@mikro-orm/nestjs': '*'
-      '@nestjs/axios': '*'
-      '@nestjs/common': 9.x
-      '@nestjs/core': 9.x
-      '@nestjs/microservices': '*'
-      '@nestjs/mongoose': '*'
-      '@nestjs/sequelize': '*'
-      '@nestjs/typeorm': '*'
-      mongoose: '*'
-      reflect-metadata: 0.1.x
-      rxjs: 7.x
-      sequelize: '*'
-      typeorm: '*'
-    peerDependenciesMeta:
-      '@grpc/grpc-js':
-        optional: true
-      '@grpc/proto-loader':
-        optional: true
-      '@mikro-orm/core':
-        optional: true
-      '@mikro-orm/nestjs':
-        optional: true
-      '@nestjs/axios':
-        optional: true
-      '@nestjs/microservices':
-        optional: true
-      '@nestjs/mongoose':
-        optional: true
-      '@nestjs/sequelize':
-        optional: true
-      '@nestjs/typeorm':
-        optional: true
-      mongoose:
-        optional: true
-      sequelize:
-        optional: true
-      typeorm:
-        optional: true
-    dependencies:
-      '@nestjs/axios': registry.npmjs.org/@nestjs/axios/1.0.1_b4pxbpa7chblgbyake5iz5rdmu
-      '@nestjs/common': registry.npmjs.org/@nestjs/common/9.2.1_welcnyot5bzd5wa2aovbkxpi4i
-      '@nestjs/core': registry.npmjs.org/@nestjs/core/9.2.1_ol6onmans36hgpf43aeufuysse
-      '@nestjs/microservices': registry.npmjs.org/@nestjs/microservices/9.2.1_ec6hzddu6sfjg4i67jbpzq5cam
       boxen: registry.npmjs.org/boxen/5.1.2
       check-disk-space: registry.npmjs.org/check-disk-space/3.3.1
       reflect-metadata: registry.npmjs.org/reflect-metadata/0.1.13
@@ -3496,18 +3418,6 @@ packages:
     resolution: {integrity: sha512-zT7wZyNYu3N5Bu0wuZ6QccIf93Qk1eV8LOewxgjOZFd2DenOs98cJ7+Y6703d0wkaXGY6/nZd4EweJaHz9uzQw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/axios/-/axios-1.2.0.tgz}
     name: axios
     version: 1.2.0
-    dependencies:
-      follow-redirects: registry.npmjs.org/follow-redirects/1.15.2
-      form-data: registry.npmjs.org/form-data/4.0.0
-      proxy-from-env: registry.npmjs.org/proxy-from-env/1.1.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
-  registry.npmjs.org/axios/1.2.1:
-    resolution: {integrity: sha512-I88cFiGu9ryt/tfVEi4kX2SITsvDddTajXTOFmt2uK1ZVA8LytjtdeyefdQWEf5PU8w+4SSJDoYnggflB5tW4A==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/axios/-/axios-1.2.1.tgz}
-    name: axios
-    version: 1.2.1
     dependencies:
       follow-redirects: registry.npmjs.org/follow-redirects/1.15.2
       form-data: registry.npmjs.org/form-data/4.0.0
