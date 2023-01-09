@@ -1,4 +1,4 @@
-import { ProcessEnv } from '@nanite-systems/utils';
+import { ProcessEnv } from '@nss/utils';
 
 export class EventTrackerConfig {
   @ProcessEnv('EVENT_EXCHANGE')

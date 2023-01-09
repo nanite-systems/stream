@@ -1,4 +1,4 @@
-import { ProcessEnv } from '@nanite-systems/utils';
+import { ProcessEnv } from '@nss/utils';
 
 export class CensusConfig {
   @ProcessEnv('CENSUS_SERVICE_ID')

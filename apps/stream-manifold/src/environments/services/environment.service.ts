@@ -6,7 +6,7 @@ export class EnvironmentService {
   private readonly environments = new Map<string, Environment>();
 
   register(environment: Environment): this {
-    this.environments.set(environment.environmentName, environment);
+    this.environments.set(environment.name, environment);
 
     return this;
   }

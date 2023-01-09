@@ -1,111 +1,123 @@
-import {
-  Injectable,
-  Logger,
-  OnApplicationBootstrap,
-  OnApplicationShutdown,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Stream } from 'ps2census';
-import { CensusConfig } from '../census.config';
-import { fromEvent, Subscription, takeUntil, timer } from 'rxjs';
+import { EssConfig } from '../config/ess.config';
+import { SubscriptionConfig } from '../config/subscription.config';
+import { StreamClosedException } from 'ps2census/dist/stream';
 
-@Injectable()
-export class StreamManagerService
-  implements OnModuleInit, OnApplicationBootstrap, OnApplicationShutdown
-{
-  private readonly logger = new Logger('StreamManagerService');
+export class StreamManagerService {
+  private active = false;
 
-  private reconnectSubscription?: Subscription;
+  private reconnectTimeout?: NodeJS.Timeout;
 
-  private reconnectDelay: number;
+  private reconnectListener?: () => void;
+
+  private subscribeInterval?: NodeJS.Timer;
 
   constructor(
-    private readonly stream: Stream.Client,
-    private readonly config: CensusConfig,
+    readonly stream: Stream.Client,
+    private readonly logger: Logger,
+    private readonly config: EssConfig,
+    private readonly subscription: SubscriptionConfig,
   ) {
-    this.reconnectDelay = config.reconnectDelay;
+    this.prepare();
   }
 
-  onModuleInit(): void {
-    const ready = fromEvent(this.stream, 'ready');
-    const close = fromEvent(this.stream, 'close');
+  private prepare() {
+    this.stream
+      .on('ready', async () => {
+        if (this.config.debug) this.logger.debug('Ready');
 
-    this.stream.on('debug', (message) => this.logger.verbose(message));
-    this.stream.on('warn', (message) => this.logger.warn(message));
-    this.stream.on('error', (err) => this.logger.error(err));
+        this.startSubscribing();
+      })
+      .on('close', () => {
+        if (this.config.debug) this.logger.debug(`Closed`);
 
-    ready.subscribe(() => {
-      this.logger.log(`Connected to Census`);
-
-      if (this.config.reconnectInterval) {
-        this.logger.verbose(`Reconnect set: ${this.config.reconnectInterval}`);
-
-        timer(this.config.reconnectInterval)
-          .pipe(takeUntil(close))
-          .subscribe(() => {
-            this.logger.log('Force reconnect');
-            this.stream.destroy();
-          });
-      }
-
-      if (this.config.resubscribeInterval)
-        this.logger.verbose(
-          `Resubscribe set: ${this.config.resubscribeInterval}`,
-        );
-
-      timer(0, this.config.resubscribeInterval)
-        .pipe(takeUntil(close))
-        .subscribe(() => {
-          void this.subscribe();
-        });
-    });
-
-    this.reconnectSubscription = close.subscribe(() => {
-      this.logger.debug(`Reconnecting to Census`);
-
-      setTimeout(async () => {
-        try {
-          await this.connect();
-        } catch {}
-      }, this.reconnectDelay);
-    });
+        this.stopSubscribing();
+      })
+      .on('debug', this.logger.verbose, this.logger)
+      .on('warn', this.logger.warn, this.logger)
+      .on('error', this.logger.error, this.logger);
   }
 
-  async onApplicationBootstrap(): Promise<void> {
-    this.logger.log(`Connecting to Census`);
+  async start(): Promise<void> {
+    if (this.active) return;
+    this.active = true;
 
+    this.enableReconnect();
     await this.connect();
   }
 
-  onApplicationShutdown(): void {
-    this.reconnectSubscription.unsubscribe();
+  private async connect(): Promise<void> {
+    do {
+      try {
+        if (this.active) await this.stream.connect();
+        return;
+      } catch {}
+    } while (true);
+  }
+
+  cycle(): void {
+    this.logger.debug(`Cycling`);
     this.stream.destroy();
   }
 
-  private async connect(): Promise<void> {
-    try {
-      await this.stream.connect();
+  destroy(): void {
+    if (!this.active) return;
+    this.active = false;
 
-      this.reconnectDelay = this.config.reconnectDelay;
-    } catch (err) {
-      this.logger.warn(`Connection failed: ${JSON.stringify(err)}`);
+    this.disableReconnect();
+    this.cancelReconnect();
 
-      this.reconnectDelay = this.config.reconnectDelayFault;
-    }
+    this.stream.destroy();
+  }
+
+  private enableReconnect(): void {
+    this.reconnectListener = () => {
+      this.reconnectTimeout = setTimeout(() => {
+        if (this.config.debug) this.logger.log(`Reconnecting`);
+
+        void this.connect();
+      }, this.config.reconnectDelay);
+    };
+    this.stream.on('close', this.reconnectListener);
+  }
+
+  private disableReconnect(): void {
+    this.stream.off('close', this.reconnectListener);
+    delete this.reconnectListener;
+  }
+
+  private cancelReconnect(): void {
+    clearTimeout(this.reconnectTimeout);
+    delete this.reconnectTimeout;
+  }
+
+  private startSubscribing(): void {
+    this.subscribe();
+
+    this.subscribeInterval = setInterval(() => {
+      this.subscribe();
+    }, this.config.subscriptionInterval);
+  }
+
+  private stopSubscribing(): void {
+    clearInterval(this.subscribeInterval);
+    delete this.subscribeInterval;
   }
 
   private async subscribe(): Promise<void> {
     try {
-      await this.stream.send({
+      this.stream.send({
         service: 'event',
         action: 'subscribe',
         characters: ['all'],
-        worlds: this.config.worlds,
-        eventNames: this.config.events,
-        logicalAndCharactersWithWorlds: this.config.logicalAnd,
+        worlds: this.subscription.worlds,
+        eventNames: this.subscription.events,
+        logicalAndCharactersWithWorlds: this.subscription.logicalAnd,
       });
     } catch (err) {
-      this.logger.warn(`Failed to send subscription: ${err}`);
+      if (err instanceof StreamClosedException) return;
+      else throw err;
     }
   }
 }

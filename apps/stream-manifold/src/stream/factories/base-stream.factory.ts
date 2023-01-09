@@ -3,6 +3,7 @@ import { Injectable, Scope } from '@nestjs/common';
 import { FactoryInterface } from '../../utils/factory.interface';
 import { Environment } from '../../environments/utils/environment';
 import { Stream } from 'ps2census';
+import { ServiceState } from '@nss/rabbitmq';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BaseStreamFactory implements FactoryInterface<Observable<any>> {
@@ -34,8 +35,11 @@ export class BaseStreamFactory implements FactoryInterface<Observable<any>> {
       map(() => ({
         online: Object.fromEntries(
           this.environment
-            .getWorldStates()
-            .map((state) => [state.detail, state.state ? 'true' : 'false']),
+            .getServiceStates()
+            .map((state) => [
+              this.createDetail(state),
+              state.online ? 'true' : 'false',
+            ]),
         ),
         service: 'event',
         type: 'heartbeat',
@@ -44,13 +48,18 @@ export class BaseStreamFactory implements FactoryInterface<Observable<any>> {
   }
 
   public serviceState(): Observable<Stream.CensusMessages.ServiceStateChanged> {
-    return this.environment.worldStream.pipe(
+    return this.environment.serviceStateStream.pipe(
       map((state) => ({
-        detail: state.detail,
-        online: state.state ? 'true' : 'false',
+        detail: this.createDetail(state),
+        online: state.online ? 'true' : 'false',
         service: 'event',
         type: 'serviceStateChanged',
       })),
     );
+  }
+
+  private createDetail(state: ServiceState): string {
+    const { worldId, worldName } = state;
+    return `EventServerEndpoint_${worldName}_${worldId}`;
   }
 }

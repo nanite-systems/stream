@@ -16,14 +16,13 @@ export class ConfigModule {
       module: ConfigModule,
       providers: configs.map((config) => ({
         provide: config,
-        useFactory: () => this.resolveConfig(config),
+        useFactory: () => this.resolve(config),
       })),
       exports: configs,
     };
   }
 
-  static resolveConfig(config: Type) {
-    // const logger = new Logger('Config');
+  static resolve<T>(config: Type<T>): T {
     const base = {} as any;
 
     // Hydrate the base instance

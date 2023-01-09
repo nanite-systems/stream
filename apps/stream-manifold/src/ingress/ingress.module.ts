@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { RabbitMqModule } from '../rabbit-mq/rabbit-mq.module';
 import { EventStreamFactory } from './factories/event-stream.factory';
-import { DistributerService } from './services/distributer.service';
-import { WorldStateModule } from '../world-state/world-state.module';
+import { ServiceStateModule } from '../service-state/service-state.module';
+import { RabbitMqModule } from '@nss/rabbitmq';
+import { DistributorService } from './services/distributor.service';
 
 @Module({
-  imports: [RabbitMqModule, WorldStateModule],
-  providers: [EventStreamFactory, DistributerService],
+  imports: [RabbitMqModule, ServiceStateModule],
+  providers: [EventStreamFactory, DistributorService],
   exports: [EventStreamFactory],
 })
 export class IngressModule {}

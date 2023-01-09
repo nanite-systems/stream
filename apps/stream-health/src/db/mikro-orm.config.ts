@@ -4,7 +4,7 @@ const config: Options = {
   type: 'postgresql',
 
   host: process.env.DB_HOST ?? 'localhost',
-  port: Number.parseInt(process.env.DB_PORT, 10) ?? 5432,
+  port: parseInt(process.env.DB_PORT, 10) ?? 5432,
   user: process.env.DB_USER ?? 'nanite',
   password: process.env.DB_PASS ?? 'pass',
   dbName: process.env.DB_NAME ?? 'nanite',

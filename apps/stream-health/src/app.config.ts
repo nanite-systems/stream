@@ -1,10 +1,10 @@
-import { ProcessEnv } from '@nanite-systems/utils';
+import { ProcessEnv } from '@nss/utils';
 import { Transform } from 'class-transformer';
 import { LogLevel } from '@nestjs/common';
 
 export class AppConfig {
   @ProcessEnv('APP_PORT')
-  @Transform(({ value }) => Number.parseInt(value, 10))
+  @Transform(({ value }) => parseInt(value, 10))
   port = 3000;
 
   @ProcessEnv('LOG_LEVELS')

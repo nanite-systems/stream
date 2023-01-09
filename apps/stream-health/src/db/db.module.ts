@@ -2,7 +2,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { DbConfig } from './db.config';
 import { MikroORM } from '@mikro-orm/core';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 @Module({
   imports: [ConfigModule.forFeature([DbConfig]), MikroOrmModule.forRoot()],

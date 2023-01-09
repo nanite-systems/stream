@@ -1,4 +1,4 @@
-import { BoolTransform, ProcessEnv } from '@nanite-systems/utils';
+import { BoolTransform, ProcessEnv } from '@nss/utils';
 
 export class DbConfig {
   @ProcessEnv('DB_AUTO_MIGRATE')

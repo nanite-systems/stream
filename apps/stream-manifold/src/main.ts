@@ -7,12 +7,12 @@ import {
 import { WsAdapter } from '@nestjs/platform-ws';
 import { AppConfig } from './app.config';
 import { Logger } from '@nestjs/common';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
-  const config = new AppConfig();
+  const config = ConfigModule.resolve(AppConfig);
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

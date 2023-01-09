@@ -1,19 +1,20 @@
 import { filter, from, merge, Observable } from 'rxjs';
-import { WorldState } from '../../world-state/concerns/world-state.type';
-import { WorldStateService } from '../../world-state/services/world-state.service';
+import { ServiceStateService } from '../../service-state/services/service-state.service';
 import { EnvironmentDescription } from './environment.description';
+import { ServiceState } from '@nss/rabbitmq';
+import { EnvironmentName } from '../../concerns/environment.type';
 
 export class Environment {
   constructor(
-    readonly environmentName: string,
+    readonly name: EnvironmentName,
     readonly description: EnvironmentDescription,
-    private readonly worldStateService: WorldStateService,
+    private readonly serviceStateService: ServiceStateService,
   ) {}
 
-  get worldStream(): Observable<WorldState> {
+  get serviceStateStream(): Observable<ServiceState> {
     return merge(
-      from(this.getWorldStates()),
-      this.worldStateService.stream.pipe(
+      from(this.getServiceStates()),
+      this.serviceStateService.stream.pipe(
         filter((state) => this.description.hasWorld(state.worldId)),
       ),
     );
@@ -23,8 +24,8 @@ export class Environment {
     return Array.from(this.description.worlds);
   }
 
-  getWorldStates(): WorldState[] {
-    return this.worldStateService
+  getServiceStates(): ServiceState[] {
+    return this.serviceStateService
       .getStates()
       .filter(({ worldId }) => this.description.hasWorld(worldId));
   }

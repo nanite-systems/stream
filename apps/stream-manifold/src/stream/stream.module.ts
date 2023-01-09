@@ -7,21 +7,19 @@ import { BASE_STREAM, CENSUS_STREAM } from './constants';
 import { GatewayMetadataExplorer } from '@nestjs/websockets/gateway-metadata-explorer';
 import { provideFactory } from '../utils/provide.helpers';
 import { CensusStreamFactory } from './factories/census-stream.factory';
-import { RabbitMqModule } from '../rabbit-mq/rabbit-mq.module';
 import { EnvironmentsModule } from '../environments/environments.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { MultiplexerModule } from '../multiplexer/multiplexer.module';
-import { ConfigModule } from '@nanite-systems/utils';
+import { NssModule } from '../nss/nss.module';
+import { ConfigModule } from '@nss/utils';
 import { StreamConfig } from './stream.config';
 
 @Module({
   imports: [
     ConfigModule.forFeature([StreamConfig]),
     DiscoveryModule,
-    RabbitMqModule,
     EnvironmentsModule,
     SubscriptionModule,
-    MultiplexerModule,
+    NssModule,
   ],
   providers: [
     {

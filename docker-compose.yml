@@ -10,34 +10,46 @@ services:
       - '5672:${RABBITMQ_PORT:-5672}'
       - '15672:${RABBITMQ_MANAGEMENT_PORT:-15672}'
     env_file: .env
-  collector:
+
+  collector-ps2:
     build: apps/stream-collector
     env_file: apps/stream-collector/.env
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      - RABBITMQ_COLLECTOR_EXCHANGE_NAME=cr-collector
+      - PS2_ENVIRONMENT=ps2
     restart: unless-stopped
     networks:
       - ns-stream
     profiles:
       - full
       - back-end
-  multiplexer:
-    build: apps/stream-multiplexer
-    restart: unless-stopped
-    networks:
-      - ns-stream
-    ports:
-      - '${MULTIPLEXER_PORT:-3001}:3000'
-    env_file: apps/stream-multiplexer/.env
+
+  collector-ps4eu:
+    build: apps/stream-collector
+    env_file: apps/stream-collector/.env
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      - RABBITMQ_COLLECTOR_EXCHANGE=cr-collector
-      - RABBITMQ_STREAM_EXCHANGE=cr-stream
-      - APP_PORT=3000
+      - PS2_ENVIRONMENT=ps2ps4eu
+    restart: unless-stopped
+    networks:
+      - ns-stream
     profiles:
       - full
       - back-end
+
+  collector-ps4us:
+    build: apps/stream-collector
+    env_file: apps/stream-collector/.env
+    environment:
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      - PS2_ENVIRONMENT=ps2ps4us
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    profiles:
+      - full
+      - back-end
+
   manifold:
     build: apps/stream-manifold
     restart: unless-stopped
@@ -49,17 +61,9 @@ services:
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
       - RABBITMQ_STREAM_EXCHANGE=cr-stream
-      - MULTIPLEXER_ENDPOINT=http://multiplexer:3000
       - APP_PORT=3000
     profiles:
       - full
-  health:
-    build: apps/stream-health
-    restart: unless-stopped
-    networks:
-      - ns-stream
-    ports:
-      - '${HEALTH_PORT:-3002}:3000'
 
 
 networks:

@@ -23,7 +23,7 @@ import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
-import { MultiplexerService } from '../multiplexer/services/multiplexer.service';
+import { NssService } from '../nss/services/nss.service';
 import { StreamConfig } from './stream.config';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -42,14 +42,14 @@ export class StreamConnection implements ConnectionContract {
     private readonly config: StreamConfig,
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
-    private readonly multiplexer: MultiplexerService,
+    private readonly nss: NssService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
   ) {}
 
   onConnected(client: WebSocket, request: IncomingMessage): void {
     StreamConnection.logger.log(
       `Client connected ${this.id}: ${JSON.stringify({
-        environment: this.environment.environmentName,
+        environment: this.environment.name,
         headers: Object.fromEntries(
           this.config.logHeaders.map((header) => [
             header,
@@ -156,8 +156,8 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIds',
   })
   async recentCharacterIds(): Promise<Stream.CensusMessages.ServiceMessage> {
-    const characters = await this.multiplexer.getRecentCharactersIds(
-      this.environment.environmentName,
+    const characters = await this.nss.getRecentCharactersIds(
+      this.environment.name,
     );
 
     return {
@@ -175,8 +175,8 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIdsCount',
   })
   async recentCharacterIdsCount(): Promise<Stream.CensusMessages.ServiceMessage> {
-    const count = await this.multiplexer.getRecentCharactersCount(
-      this.environment.environmentName,
+    const count = await this.nss.getRecentCharactersCount(
+      this.environment.name,
     );
 
     return {

@@ -3,14 +3,15 @@ import { IngressModule } from '../ingress/ingress.module';
 import { EnvironmentFactory } from './factories/environment.factory';
 import { EnvironmentManifest } from './environment.manifest';
 import { EnvironmentService } from './services/environment.service';
-import { WorldStateModule } from '../world-state/world-state.module';
+import { ServiceStateModule } from '../service-state/service-state.module';
 import { provideFactory } from '../utils/provide.helpers';
 import { Environment } from './utils/environment';
 import { EnvironmentSelectorFactory } from './factories/environment-selector.factory';
 import { EnvironmentAccessor } from './utils/environment.accessor';
+import { EnvironmentName } from '../concerns/environment.type';
 
 @Module({
-  imports: [IngressModule, WorldStateModule],
+  imports: [IngressModule, ServiceStateModule],
   providers: [
     EnvironmentFactory,
     EnvironmentService,
@@ -31,6 +32,8 @@ export class EnvironmentsModule implements OnModuleInit {
     for (const [environment, description] of Object.entries(
       EnvironmentManifest.environments,
     ))
-      this.service.register(this.factory.create(environment, description));
+      this.service.register(
+        this.factory.create(environment as EnvironmentName, description),
+      );
   }
 }

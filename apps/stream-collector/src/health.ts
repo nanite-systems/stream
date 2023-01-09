@@ -1,11 +1,11 @@
 import { AppConfig } from './app.config';
 import axios, { AxiosError } from 'axios';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 async function healthcheck() {
   ConfigModule.forRoot();
 
-  const { port } = new AppConfig();
+  const { port } = ConfigModule.resolve(AppConfig);
 
   try {
     const { data } = await axios.get(`http://localhost:${port}/health`);

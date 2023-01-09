@@ -4,7 +4,7 @@ import { DbModule } from '../db/db.module';
 import { EventTrackerConfig } from './event-tracker.config';
 import { EventTrackerService } from './services/event-tracker.service';
 import { EventTrackerController } from './controllers/event-tracker.controller';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 @Module({
   imports: [

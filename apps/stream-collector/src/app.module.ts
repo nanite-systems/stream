@@ -1,8 +1,22 @@
-import { Module } from '@nestjs/common';
-import { PublisherModule } from './publisher/publisher.module';
+import { Logger, Module, OnModuleDestroy } from '@nestjs/common';
 import { HealthModule } from './health/health.module';
+import { CollectorModule } from './collector/collector.module';
+import { RecentCharactersModule } from './recent-characters/recent-characters.module';
+import { ServiceTrackerModule } from './service-tracker/service-tracker.module';
+import { NssServiceModule } from '@nss/rabbitmq';
 
 @Module({
-  imports: [PublisherModule, HealthModule],
+  imports: [
+    // TODO: Fix environment
+    NssServiceModule.forService('ps2'),
+    CollectorModule,
+    RecentCharactersModule,
+    ServiceTrackerModule,
+    HealthModule,
+  ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleDestroy {
+  onModuleDestroy(): void {
+    new Logger('App').log('Goodbye :)');
+  }
+}

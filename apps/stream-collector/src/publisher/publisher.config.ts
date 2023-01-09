@@ -1,7 +1,10 @@
-import { ProcessEnv } from '@nanite-systems/utils';
+import { ProcessEnv } from '@nss/utils';
 import { randomUUID } from 'crypto';
 
 export class PublisherConfig {
-  @ProcessEnv('COLLECTOR_ID')
-  collectorId = randomUUID();
+  @ProcessEnv('APP_ID')
+  readonly appId = randomUUID();
+
+  @ProcessEnv('STREAM_EXCHANGE_NAME')
+  readonly exchangeName = 'nss-stream';
 }

@@ -1,4 +1,4 @@
-import { ProcessEnv } from '@nanite-systems/utils';
+import { ProcessEnv } from '@nss/utils';
 import { Transform } from 'class-transformer';
 
 export class StreamConfig {

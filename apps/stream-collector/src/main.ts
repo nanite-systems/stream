@@ -6,12 +6,13 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
+import { NSS_SERVICE_CONFIG } from '@nss/rabbitmq';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
-  const config = new AppConfig();
+  const config = ConfigModule.resolve(AppConfig);
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -21,20 +22,23 @@ async function bootstrap() {
     },
   );
 
+  app.connectMicroservice(app.get(NSS_SERVICE_CONFIG));
+
   process
     .on('unhandledRejection', (err) => {
       throw err;
     })
-    .on('uncaughtException', (err) => {
+    .on('uncaughtException', async (err) => {
       const logger = new Logger('UncaughtException');
 
       logger.error(err, err.stack);
-      app.close();
+      await app.close();
       process.exit(1);
     });
 
   app.enableShutdownHooks();
 
+  await app.startAllMicroservices();
   await app.listen(config.port, '0.0.0.0');
 }
 

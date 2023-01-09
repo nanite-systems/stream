@@ -3,6 +3,9 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["prebuild", "^build"]
+    },
+    "start": {
+      "dependsOn": ["prebuild", "^build"]
     }
   }
 }

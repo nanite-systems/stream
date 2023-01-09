@@ -10,6 +10,7 @@ node_modules/
 /.vscode
 /.devcontainer
 *.code-workspace
+.nx*
 
 # bundle
 packages/**/*.d.ts

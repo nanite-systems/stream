@@ -8,7 +8,7 @@ import { CensusClient } from 'ps2census';
 import { CensusClientFactory } from './factories/census-client.factory';
 import { RestClientFactory } from './factories/rest-client.factory';
 import { PC_REST, PS4EU_REST, PS4US_REST } from './constants';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 @Module({
   imports: [ConfigModule.forFeature([CensusConfig])],

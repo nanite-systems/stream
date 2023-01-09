@@ -6,12 +6,12 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
-import { ConfigModule } from '@nanite-systems/utils';
+import { ConfigModule } from '@nss/utils';
 
 async function bootstrap() {
   ConfigModule.forRoot();
 
-  const appConfig = new AppConfig();
+  const appConfig = ConfigModule.resolve(AppConfig);
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
