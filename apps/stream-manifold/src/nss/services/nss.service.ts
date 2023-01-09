@@ -20,7 +20,9 @@ export class NssService {
     private readonly all: NssCombinedClient,
   ) {}
 
-  async getWorldsStates(environment: EnvironmentName): Promise<ServiceState[]> {
+  async getServiceStates(
+    environment: EnvironmentName,
+  ): Promise<ServiceState[]> {
     return firstValueFrom(
       this.service(environment).send(NSS_COMMANDS.serviceStates),
     );

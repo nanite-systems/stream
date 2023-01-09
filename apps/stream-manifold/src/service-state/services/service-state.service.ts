@@ -45,7 +45,7 @@ export class ServiceStateService implements OnModuleInit {
   }
 
   async fetchStates(): Promise<void> {
-    const states = await this.nss.getWorldsStates('all');
+    const states = await this.nss.getServiceStates('all');
 
     states.forEach((state) => this.registerState(state));
   }

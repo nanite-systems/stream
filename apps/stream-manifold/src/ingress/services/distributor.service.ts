@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { ConsumeMessage } from 'amqplib';
 import { EventStreamFactory } from '../factories/event-stream.factory';
 import { ServiceStateService } from '../../service-state/services/service-state.service';
 import { STREAM_MESSAGE_TYPE } from '@nss/rabbitmq';
@@ -8,7 +6,6 @@ import { STREAM_MESSAGE_TYPE } from '@nss/rabbitmq';
 @Injectable()
 export class DistributorService {
   constructor(
-    private readonly queue: Observable<ConsumeMessage>,
     private readonly eventStreamFactory: EventStreamFactory,
     private readonly serviceStateService: ServiceStateService,
   ) {}

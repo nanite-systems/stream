@@ -5,7 +5,12 @@ import { Options } from 'amqplib';
 import { NssServiceConfig } from './nss-service.config';
 import { RabbitMqConfig } from '../rabbitmq/rabbit-mq.config';
 import { ConfigModule } from '@nss/utils';
-import { NSS_PS2_CLIENT, NSS_SERVICE_CONFIG } from './constants';
+import {
+  NSS_PS2_CLIENT,
+  NSS_PS2PS4EU_CLIENT,
+  NSS_PS2PS4US_CLIENT,
+  NSS_SERVICE_CONFIG,
+} from './constants';
 
 @Module({})
 export class NssServiceModule {
@@ -24,18 +29,18 @@ export class NssServiceModule {
             ],
           },
           {
-            name: NSS_PS2_CLIENT,
+            name: NSS_PS2PS4EU_CLIENT,
             useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
-              this.createConfig('ps2', nss, rabbit),
+              this.createConfig('ps2ps4eu', nss, rabbit),
             inject: [NssServiceConfig, RabbitMqConfig],
             imports: [
               ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig]),
             ],
           },
           {
-            name: NSS_PS2_CLIENT,
+            name: NSS_PS2PS4US_CLIENT,
             useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
-              this.createConfig('ps2', nss, rabbit),
+              this.createConfig('ps2ps4us', nss, rabbit),
             inject: [NssServiceConfig, RabbitMqConfig],
             imports: [
               ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig]),

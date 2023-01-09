@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { NssService } from './services/nss.service';
-import { NssServiceModule as NssBaseModule } from '@nss/rabbitmq';
+import { NssServiceModule } from '@nss/rabbitmq';
+import { NssCombinedClient } from './services/nss-combined.client';
 
 @Module({
-  imports: [NssBaseModule.forClient()],
-  providers: [NssService],
+  imports: [NssServiceModule.forClient()],
+  providers: [NssService, NssCombinedClient],
   exports: [NssService],
 })
 export class NssModule {}
