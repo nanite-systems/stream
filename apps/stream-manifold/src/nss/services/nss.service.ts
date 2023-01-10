@@ -24,7 +24,7 @@ export class NssService {
     environment: EnvironmentName,
   ): Promise<ServiceState[]> {
     return firstValueFrom(
-      this.service(environment).send(NSS_COMMANDS.serviceStates),
+      this.service(environment).send(NSS_COMMANDS.serviceStates, {}),
     );
   }
 
@@ -32,7 +32,7 @@ export class NssService {
     environment: EnvironmentName,
   ): Promise<string[]> {
     return firstValueFrom(
-      this.service(environment).send(NSS_COMMANDS.recentCharacters),
+      this.service(environment).send(NSS_COMMANDS.recentCharacters, {}),
     );
   }
 
@@ -40,7 +40,7 @@ export class NssService {
     environment: EnvironmentName,
   ): Promise<number> {
     return firstValueFrom(
-      this.service(environment).send(NSS_COMMANDS.recentCharacterCount),
+      this.service(environment).send(NSS_COMMANDS.recentCharacterCount, {}),
     );
   }
 

@@ -1,8 +1,8 @@
+# syntax=docker/dockerfile:1
+
 FROM node:18-alpine as workspace
 
 WORKDIR /workspace
-
-ARG APP_NAME
 
 RUN npm -g install pnpm
 RUN apk add --no-cache g++ make py3-pip
@@ -14,6 +14,9 @@ RUN pnpm fetch
 COPY . .
 
 RUN pnpm i --frozen-lockfile --offline --silent
+
+ARG APP_NAME
+
 RUN pnpm nx build $APP_NAME
 RUN pnpm $APP_NAME --prod deploy /app
 

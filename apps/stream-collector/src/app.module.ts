@@ -8,7 +8,7 @@ import { NssServiceModule } from '@nss/rabbitmq';
 @Module({
   imports: [
     // TODO: Fix environment
-    NssServiceModule.forService('ps2'),
+    NssServiceModule.forService(process.env.PS2_ENVIRONMENT as any),
     CollectorModule,
     RecentCharactersModule,
     ServiceTrackerModule,

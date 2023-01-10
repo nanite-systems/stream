@@ -6,5 +6,5 @@ export class PublisherConfig {
   readonly appId = randomUUID();
 
   @ProcessEnv('STREAM_EXCHANGE_NAME')
-  readonly exchangeName = 'nss-stream';
+  readonly exchangeName = 'nss.stream';
 }

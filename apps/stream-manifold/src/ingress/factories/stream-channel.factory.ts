@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RABBIT_MQ } from '@nss/rabbitmq';
-import { AmqpConnectionManager, Channel } from 'amqp-connection-manager';
+import {
+  AmqpConnectionManager,
+  Channel,
+  ChannelWrapper,
+} from 'amqp-connection-manager';
 import { DistributorService } from '../services/distributor.service';
 import { ConsumeMessage } from 'amqplib';
 import { IngressConfig } from '../ingress.config';
@@ -13,7 +17,7 @@ export class StreamChannelFactory {
     private readonly config: IngressConfig,
   ) {}
 
-  create() {
+  create(): ChannelWrapper {
     return this.rabbit.createChannel({
       setup: async (channel) => {
         const { queue } = channel.assertQueue(null, {

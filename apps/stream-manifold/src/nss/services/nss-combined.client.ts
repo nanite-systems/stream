@@ -31,17 +31,16 @@ export class NssCombinedClient implements NssClient {
     command: NSS_COMMANDS.serviceStates,
   ): Observable<NssCommandResponses.ServiceStateRes>;
   send(command: any): Observable<any> {
-    this.clients.map((c) => c.send(command));
-    const { pipe } = from(this.clients).pipe(
-      mergeMap((client) => client.send(command).pipe(first())),
+    const meep: Observable<any> = from(this.clients).pipe(
+      mergeMap((client) => client.send(command, {}).pipe(first())),
     );
 
     switch (command) {
       case NSS_COMMANDS.recentCharacters:
       case NSS_COMMANDS.serviceStates:
-        return pipe(reduce((a, r) => a.push(r)));
+        return meep.pipe(reduce((a, r) => [...a, ...r], []));
       case NSS_COMMANDS.recentCharacterCount:
-        return;
+        return meep.pipe(reduce((a, r) => a + r, 0));
     }
   }
 }
