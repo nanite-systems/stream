@@ -36,3 +36,5 @@ jobs:
 
       - name: Build and push
         run: pnpm nx container ${GITHUB_REF_NAME%@*} --push
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
