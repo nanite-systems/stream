@@ -3,10 +3,14 @@
   <img src="https://nanite-systems.net/images/ns.colored.svg" width="200" alt="Nest Logo" />
 </a>
 
-[![stars](https://img.shields.io/github/stars/nanite-systems/stream?color=green)](https://github.com/nanite-systems/stream/stargazers)
 [![issues](https://img.shields.io/github/issues/nanite-systems/stream)](https://github.com/nanite-systems/stream/issues)
 [![license](https://img.shields.io/github/license/nanite-systems/stream)](https://github.com/nanite-systems/stream/blob/main/LICENSE)
+[![stars](https://img.shields.io/github/stars/nanite-systems/stream?color=green)](https://github.com/nanite-systems/stream/stargazers)
 [![discord](https://img.shields.io/discord/1019343142471880775?color=7734eb&label=discord&logo=Discord&logoColor=white)](https://discord.gg/kQj4uw5Q9s)
+
+[![Testing](https://github.com/nanite-systems/stream/actions/workflows/test.yml/badge.svg)](https://github.com/nanite-systems/stream/actions/workflows/test.yml)
+[![Release](https://github.com/nanite-systems/stream/actions/workflows/build.yml/badge.svg)](https://github.com/nanite-systems/stream/actions/workflows/build.yml)
+[![Linting](https://github.com/nanite-systems/stream/actions/workflows/lint.yml/badge.svg)](https://github.com/nanite-systems/stream/actions/workflows/lint.yml)
 
 [![stream-collector](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-collector%2Fpackage.json&label=collector)](https://github.com/nanite-systems/stream/tree/main/apps/stream-collector)
 [![stream-manifold](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-manifold%2Fpackage.json&label=manifold)](https://github.com/nanite-systems/stream/tree/main/apps/stream-manifold)
