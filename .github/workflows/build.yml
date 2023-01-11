@@ -3,7 +3,8 @@ name: Release
 on:
   push:
     tags:
-      - '*@*'
+      - 'stream-collector@*'
+      - 'stream-manifold@*'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -13,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: nrwl/nx-set-shas@v3
 
       - uses: pnpm/action-setup@v2
         with:
