@@ -30,7 +30,7 @@ export class IngressService implements OnModuleInit {
 
   private handleServiceMessage(
     message: Stream.CensusMessages.ServiceMessage,
-    id,
+    id: string,
   ): void {
     if ('event_name' in message.payload)
       this.multiplexer.handleEvent(message.payload, id);

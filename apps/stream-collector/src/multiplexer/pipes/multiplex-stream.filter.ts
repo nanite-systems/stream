@@ -11,9 +11,10 @@ export class MultiplexStreamFilter {
 
   filter(hash: string, collector: string): boolean {
     const counters = this.getCounters(hash);
+    const { max } = counters;
     const hits = counters.hit(collector);
 
-    return hits > counters.max;
+    return hits > max;
   }
 
   private getCounters(key: string): Counters {
