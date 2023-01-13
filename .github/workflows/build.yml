@@ -35,6 +35,6 @@ jobs:
         run: pnpm i --frozen-lockfile --silent
 
       - name: Build and push
-        run: pnpm nx container ${GITHUB_REF_NAME%@*} --push --cache-from="type=gha" --cache-to="type=gha,mode=max"
+        run: pnpm nx container ${GITHUB_REF_NAME%@*} --push
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
