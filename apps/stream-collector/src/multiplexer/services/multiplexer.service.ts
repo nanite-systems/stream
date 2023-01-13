@@ -15,10 +15,12 @@ export class MultiplexerService {
   handleEvent(event: Stream.PS2Event, id: string): void {
     const hash = this.hashEvent(event);
 
-    if (this.multiplexer.filter(hash, id) || this.duplicateFilter.filter(hash))
-      return;
-
-    void this.publisher.publishEvent(event, hash);
+    if (
+      this.multiplexer.filter(hash, id) &&
+      (event.event_name == 'GainExperience' ||
+        this.duplicateFilter.filter(hash))
+    )
+      void this.publisher.publishEvent(event, hash);
   }
 
   private hashEvent(event: Stream.PS2Event): string {
