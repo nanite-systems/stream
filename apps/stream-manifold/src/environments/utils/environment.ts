@@ -1,7 +1,7 @@
 import { filter, from, merge, Observable } from 'rxjs';
 import { ServiceStateService } from '../../service-state/services/service-state.service';
 import { EnvironmentDescription } from './environment.description';
-import { ServiceState } from '@nss/rabbitmq';
+import { NssClient, ServiceState } from '@nss/rabbitmq';
 import { EnvironmentName } from '../../concerns/environment.type';
 
 export class Environment {
@@ -9,6 +9,7 @@ export class Environment {
     readonly name: EnvironmentName,
     readonly description: EnvironmentDescription,
     private readonly serviceStateService: ServiceStateService,
+    readonly nssClient: NssClient,
   ) {}
 
   get serviceStateStream(): Observable<ServiceState> {

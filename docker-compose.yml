@@ -12,6 +12,7 @@ services:
     env_file: .env
 
   collector-ps2:
+    image: ghcr.io/nanite-systems/stream-collector
     build:
       dockerfile: Dockerfile
       args:
@@ -30,10 +31,7 @@ services:
       - back-end
 
   collector-ps2ps4eu:
-    build:
-      dockerfile: Dockerfile
-      args:
-        APP_NAME: stream-collector
+    image: ghcr.io/nanite-systems/stream-collector
     env_file: apps/stream-collector/.env
     environment:
       RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
@@ -41,6 +39,7 @@ services:
     restart: unless-stopped
     depends_on:
       - rabbitmq
+      - collector-ps2
     networks:
       - ns-stream
     profiles:
@@ -48,10 +47,7 @@ services:
       - back-end
 
   collector-ps2ps4us:
-    build:
-      dockerfile: Dockerfile
-      args:
-        APP_NAME: stream-collector
+    image: ghcr.io/nanite-systems/stream-collector
     env_file: apps/stream-collector/.env
     environment:
       RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
@@ -59,6 +55,7 @@ services:
     restart: unless-stopped
     depends_on:
       - rabbitmq
+      - collector-ps2
     networks:
       - ns-stream
     profiles:
@@ -66,6 +63,7 @@ services:
       - back-end
 
   manifold:
+    image: ghcr.io/nanite-systems/stream-manifold
     build:
       dockerfile: Dockerfile
       args:

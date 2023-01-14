@@ -7,9 +7,10 @@ import {
   NssCommandResponses,
 } from '@nss/rabbitmq';
 import { first, from, mergeMap, Observable } from 'rxjs';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { reduce } from 'rxjs/operators';
 
+@Injectable()
 export class NssCombinedClient implements NssClient {
   private readonly clients: NssClient[];
 

@@ -1,6 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { PS2Environment } from 'ps2census';
-import { ClientsModule, RmqOptions, Transport } from '@nestjs/microservices';
+import {
+  ClientProxyFactory,
+  RmqOptions,
+  Transport,
+} from '@nestjs/microservices';
 import { Options } from 'amqplib';
 import { NssServiceConfig } from './nss-service.config';
 import { RabbitMqConfig } from '../rabbitmq/rabbit-mq.config';
@@ -17,38 +21,32 @@ export class NssServiceModule {
   static forClient(): DynamicModule {
     return {
       module: NssServiceModule,
-      imports: [
-        ClientsModule.registerAsync([
-          {
-            name: NSS_PS2_CLIENT,
-            useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
-              this.createConfig('ps2', nss, rabbit),
-            inject: [NssServiceConfig, RabbitMqConfig],
-            imports: [
-              ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig]),
-            ],
-          },
-          {
-            name: NSS_PS2PS4EU_CLIENT,
-            useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
+      imports: [ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig])],
+      providers: [
+        {
+          provide: NSS_PS2_CLIENT,
+          useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
+            ClientProxyFactory.create(this.createConfig('ps2', nss, rabbit)),
+          inject: [NssServiceConfig, RabbitMqConfig],
+        },
+        {
+          provide: NSS_PS2PS4EU_CLIENT,
+          useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
+            ClientProxyFactory.create(
               this.createConfig('ps2ps4eu', nss, rabbit),
-            inject: [NssServiceConfig, RabbitMqConfig],
-            imports: [
-              ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig]),
-            ],
-          },
-          {
-            name: NSS_PS2PS4US_CLIENT,
-            useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
+            ),
+          inject: [NssServiceConfig, RabbitMqConfig],
+        },
+        {
+          provide: NSS_PS2PS4US_CLIENT,
+          useFactory: (nss: NssServiceConfig, rabbit: RabbitMqConfig) =>
+            ClientProxyFactory.create(
               this.createConfig('ps2ps4us', nss, rabbit),
-            inject: [NssServiceConfig, RabbitMqConfig],
-            imports: [
-              ConfigModule.forFeature([NssServiceConfig, RabbitMqConfig]),
-            ],
-          },
-        ]),
+            ),
+          inject: [NssServiceConfig, RabbitMqConfig],
+        },
       ],
-      exports: [ClientsModule],
+      exports: [NSS_PS2_CLIENT, NSS_PS2PS4EU_CLIENT, NSS_PS2PS4US_CLIENT],
     };
   }
 

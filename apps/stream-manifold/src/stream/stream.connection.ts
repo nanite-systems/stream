@@ -13,7 +13,7 @@ import { HELP_EVENT_MESSAGE } from './messages/help-event.message';
 import { WebSocket } from 'ws';
 import { SubscribeDto } from './dtos/subscribe.dto';
 import { ClearSubscribeDto } from './dtos/clear-subscribe.dto';
-import { first, fromEvent, Observable, share, takeUntil } from 'rxjs';
+import { first, fromEvent, map, Observable, share, takeUntil } from 'rxjs';
 import { CENSUS_STREAM } from './constants';
 import { ConnectionContract } from './concers/connection.contract';
 import { EchoDto } from './dtos/echo.dto';
@@ -23,8 +23,8 @@ import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
-import { NssService } from '../nss/services/nss.service';
 import { StreamConfig } from './stream.config';
+import { NSS_COMMANDS } from '@nss/rabbitmq';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -42,7 +42,6 @@ export class StreamConnection implements ConnectionContract {
     private readonly config: StreamConfig,
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
-    private readonly nss: NssService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
   ) {}
 
@@ -155,36 +154,36 @@ export class StreamConnection implements ConnectionContract {
     service: 'event',
     action: 'recentCharacterIds',
   })
-  async recentCharacterIds(): Promise<Stream.CensusMessages.ServiceMessage> {
-    const characters = await this.nss.getRecentCharactersIds(
-      this.environment.name,
-    );
-
-    return {
-      service: 'event',
-      type: 'serviceMessage',
-      payload: {
-        recent_character_id_count: characters.length,
-        recent_character_id_list: characters,
-      },
-    };
+  recentCharacterIds(): Observable<Stream.CensusMessages.ServiceMessage> {
+    return this.environment.nssClient
+      .send(NSS_COMMANDS.recentCharacters, {})
+      .pipe(
+        map((characters) => ({
+          service: 'event',
+          type: 'serviceMessage',
+          payload: {
+            recent_character_id_count: characters.length,
+            recent_character_id_list: characters,
+          },
+        })),
+      );
   }
 
   @SubscribeMessage<EventMessage>({
     service: 'event',
     action: 'recentCharacterIdsCount',
   })
-  async recentCharacterIdsCount(): Promise<Stream.CensusMessages.ServiceMessage> {
-    const count = await this.nss.getRecentCharactersCount(
-      this.environment.name,
-    );
-
-    return {
-      service: 'event',
-      type: 'serviceMessage',
-      payload: {
-        recent_character_id_count: count,
-      },
-    };
+  recentCharacterIdsCount(): Observable<Stream.CensusMessages.ServiceMessage> {
+    return this.environment.nssClient
+      .send(NSS_COMMANDS.recentCharacterCount, {})
+      .pipe(
+        map((recent_character_id_count) => ({
+          service: 'event',
+          type: 'serviceMessage',
+          payload: {
+            recent_character_id_count,
+          },
+        })),
+      );
   }
 }

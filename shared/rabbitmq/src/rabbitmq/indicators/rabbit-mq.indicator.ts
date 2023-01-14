@@ -2,7 +2,7 @@ import { MicroserviceHealthIndicator } from '@nestjs/terminus';
 import { Transport } from '@nestjs/microservices';
 import { RabbitMqConfig } from '../rabbit-mq.config';
 import { Injectable } from '@nestjs/common';
-import { HealthIndicatorResult } from '@nestjs/terminus/dist/health-indicator';
+import { HealthIndicatorResult } from '@nestjs/terminus';
 
 @Injectable()
 export class RabbitMqIndicator {

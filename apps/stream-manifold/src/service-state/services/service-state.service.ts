@@ -1,35 +1,22 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Observable, Subject } from 'rxjs';
-import { sleep } from '../../utils/promise.helper';
-import { NssService } from '../../nss/services/nss.service';
-import { ServiceState } from '@nss/rabbitmq';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { mergeMap, Observable, of, Subject } from 'rxjs';
+import { NSS_COMMANDS, ServiceState } from '@nss/rabbitmq';
+import { NssServiceContainer } from '../../nss/services/nss-service.container';
 
 @Injectable()
 export class ServiceStateService implements OnModuleInit {
-  private readonly logger = new Logger('ServiceStateService');
-
   private readonly cache = new Map<string, ServiceState>();
 
   private readonly _stream = new Subject<ServiceState>();
 
-  constructor(private readonly nss: NssService) {}
+  constructor(private readonly nss: NssServiceContainer) {}
 
   get stream(): Observable<ServiceState> {
     return this._stream;
   }
 
-  async onModuleInit(): Promise<void> {
-    do {
-      try {
-        await this.fetchStates();
-        return;
-      } catch (err) {
-        this.logger.error(`Failed to initialize world states: ${err}`);
-
-        // Let's not try to DDOS anything
-        await sleep(1000);
-      }
-    } while (true);
+  onModuleInit(): void {
+    this.fetchStates();
   }
 
   getStates(): ServiceState[] {
@@ -44,9 +31,13 @@ export class ServiceStateService implements OnModuleInit {
     if (!current || current.online != state.online) this._stream.next(state);
   }
 
-  async fetchStates(): Promise<void> {
-    const states = await this.nss.getServiceStates('all');
-
-    states.forEach((state) => this.registerState(state));
+  fetchStates(): void {
+    this.nss
+      .getService('all')
+      .send(NSS_COMMANDS.serviceStates, {})
+      .pipe(mergeMap((res) => of(...res)))
+      .subscribe((state) => {
+        this.registerState(state);
+      });
   }
 }

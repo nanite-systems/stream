@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
+import { WsAdapter } from '@nestjs/platform-ws';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { WsAdapter } from '@nestjs/platform-ws';
+import { AppModule } from './app.module';
 import { AppConfig } from './app.config';
-import { Logger } from '@nestjs/common';
 import { ConfigModule } from '@nss/utils';
 
 async function bootstrap() {
