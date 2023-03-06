@@ -21,7 +21,7 @@ import { CensusModule } from '../census/census.module';
     }),
     makeCounterProvider({
       name: 'ess_duplicates',
-      help: 'Messages received from ess',
+      help: 'Duplicate messages received from ess',
       labelNames: ['connection', 'event', 'world'],
     }),
   ],
