@@ -1,15 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CONNECTIONS } from '../../census/constants';
 import { ConnectionContract } from '../../census/concerns/connection.contract';
-import {
-  filter,
-  from,
-  map,
-  mergeMap,
-  Observable,
-  partition,
-  share,
-} from 'rxjs';
+import { filter, from, map, mergeMap, Observable, share } from 'rxjs';
 import { EventEntity } from '../entities/event.entity';
 import { EventEntityFactory } from '../factories/event-entity.factory';
 
@@ -23,24 +15,28 @@ export class MultiplexerService {
     @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
     private readonly eventEntityFactory: EventEntityFactory,
   ) {
-    const [stream, residualStream] = partition(
-      from(connections).pipe(
-        mergeMap((connection) =>
-          connection
-            .observeEventMessage()
-            .pipe(
-              map((payload) =>
-                this.eventEntityFactory.create(payload, connection),
-              ),
+    const messages = from(connections).pipe(
+      mergeMap((connection) =>
+        connection
+          .observeEventMessage()
+          .pipe(
+            map((payload) =>
+              this.eventEntityFactory.create(payload, connection),
             ),
-        ),
+          ),
       ),
-      (event) =>
-        event.sightingMultiplexed == 0 && event.sightingConnection == 0,
+      share(),
     );
 
-    this.streamObservable = stream.pipe(share());
-    this.duplicateObservable = residualStream.pipe(
+    this.streamObservable = messages.pipe(
+      filter(
+        (event) =>
+          event.sightingMultiplexed == 0 && event.sightingConnection == 0,
+      ),
+      share(),
+    );
+
+    this.duplicateObservable = messages.pipe(
       filter((event) => event.sightingConnection > 0),
       share(),
     );

@@ -1,14 +1,14 @@
 import { Logger, Module, OnModuleDestroy } from '@nestjs/common';
 import { HealthModule } from './health/health.module';
 import { ConfigModule } from '@nestjs/config';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { config } from './config';
 import { PublisherModule } from './publisher/publisher.module';
+import { MetricModule } from './metrics/metric.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-    PrometheusModule.register({}),
+    MetricModule,
     HealthModule,
     PublisherModule,
   ],

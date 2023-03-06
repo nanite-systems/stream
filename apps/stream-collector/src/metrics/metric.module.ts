@@ -1,14 +1,37 @@
-import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { Counter } from 'prom-client';
-import { Inject } from '@nestjs/common';
-import { CONNECTIONS } from '../../census/constants';
-import { ConnectionContract } from '../../census/concerns/connection.contract';
-import { MultiplexerService } from './multiplexer.service';
+import { Inject, Module } from '@nestjs/common';
+import { MultiplexerService } from '../multiplexer/services/multiplexer.service';
+import { CONNECTIONS } from '../census/constants';
+import { ConnectionContract } from '../census/concerns/connection.contract';
+import {
+  InjectMetric,
+  makeCounterProvider,
+  PrometheusModule,
+} from '@willsoto/nestjs-prometheus';
+import { Counter, Gauge } from 'prom-client';
+import { MultiplexerModule } from '../multiplexer/multiplexer.module';
+import { CensusModule } from '../census/census.module';
 
-export class MetricService {
+@Module({
+  imports: [PrometheusModule.register(), CensusModule, MultiplexerModule],
+  providers: [
+    makeCounterProvider({
+      name: 'ess_messages',
+      help: 'Messages received from ess',
+      labelNames: ['connection', 'event', 'world'],
+    }),
+    makeCounterProvider({
+      name: 'ess_duplicates',
+      help: 'Messages received from ess',
+      labelNames: ['connection', 'event', 'world'],
+    }),
+  ],
+})
+export class MetricModule {
   constructor(
     @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
     private readonly multiplexer: MultiplexerService,
+    @InjectMetric('ess_connection')
+    private readonly connectionGauge: Gauge,
     @InjectMetric('ess_messages')
     private readonly messageCounter: Counter,
     @InjectMetric('ess_duplicates')
