@@ -1,7 +1,7 @@
-import { SubscribeDto } from '../../stream/dtos/subscribe.dto';
 import { Injectable, Scope } from '@nestjs/common';
 import { EventEmitter } from 'eventemitter3';
 import { Stream } from 'ps2census';
+import { EventSubscribeQuery } from '../concerns/event-subscribe-query.type';
 
 type EventSubscriptionQueryEvents = {
   subscribe: () => void;
@@ -59,7 +59,7 @@ export class EventSubscriptionQuery extends EventEmitter<EventSubscriptionQueryE
     return this._logicalAndCharactersWithWorlds;
   }
 
-  merge(subscribe: SubscribeDto): void {
+  merge(subscribe: EventSubscribeQuery): void {
     subscribe.eventNames?.forEach((event) => {
       this._events.add(event);
     });
@@ -77,7 +77,7 @@ export class EventSubscriptionQuery extends EventEmitter<EventSubscriptionQueryE
     this.emit('subscribe');
   }
 
-  clear(subscribe: SubscribeDto): void {
+  clear(subscribe: EventSubscribeQuery): void {
     subscribe.eventNames?.forEach((event) => {
       this._events.delete(event);
     });

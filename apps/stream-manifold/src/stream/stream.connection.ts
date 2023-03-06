@@ -23,7 +23,6 @@ import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
-import { StreamConfig } from './stream.config';
 import { NSS_COMMANDS } from '@nss/rabbitmq';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -39,24 +38,20 @@ export class StreamConnection implements ConnectionContract {
   private readonly id = randomUUID();
 
   constructor(
-    private readonly config: StreamConfig,
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
   ) {}
 
   onConnected(client: WebSocket, request: IncomingMessage): void {
-    StreamConnection.logger.log(
+    StreamConnection.logger.debug(
       `Client connected ${this.id}: ${JSON.stringify({
         environment: this.environment.name,
-        headers: Object.fromEntries(
-          this.config.logHeaders.map((header) => [
-            header,
-            request.headers[header],
-          ]),
-        ),
+        headers: request.rawHeaders,
       })}`,
     );
+
+    this.subscribeFromParams(request);
 
     const close = fromEvent(client, 'close').pipe(first(), share());
 
@@ -68,7 +63,38 @@ export class StreamConnection implements ConnectionContract {
   onDisconnected(): void {
     this.subscription.clearAll();
 
-    StreamConnection.logger.log(`Client disconnected ${this.id}`);
+    StreamConnection.logger.debug(`Client disconnected ${this.id}`);
+  }
+
+  private subscribeFromParams(request: IncomingMessage): void {
+    const { searchParams } = new URL(
+      request.url,
+      `http://${request.headers.host}`,
+    );
+
+    this.subscription.merge({
+      eventNames: searchParams
+        .getAll('event_names')
+        .flatMap((v) => v.split(',')),
+      characters: searchParams
+        .getAll('characters')
+        .flatMap((v) => v.split(',')),
+      worlds: searchParams.getAll('worlds').flatMap((v) => v.split(',')),
+      logicalAndCharactersWithWorlds: this.parseLogicalAndCharactersWithWorlds(
+        searchParams.get('logical_and_characters_with_worlds'),
+      ),
+    });
+  }
+
+  private parseLogicalAndCharactersWithWorlds(
+    param?: string,
+  ): boolean | undefined {
+    param = param?.toLowerCase();
+
+    if (['1', 'true'].includes(param)) return true;
+    if (['0', 'false'].includes(param)) return false;
+
+    return undefined;
   }
 
   @SubscribeMessage<EventMessage>({
@@ -100,7 +126,7 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.log(
+      StreamConnection.logger.debug(
         `Client subscribe ${this.id}: ${JSON.stringify({
           eventNames: message.eventNames,
           worlds: message.worlds,
@@ -133,7 +159,7 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.log(
+      StreamConnection.logger.debug(
         `Client unsubscribe ${this.id}: ${JSON.stringify({
           eventNames: message.eventNames,
           worlds: message.worlds,

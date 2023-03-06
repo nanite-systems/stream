@@ -4,16 +4,10 @@ import { ServiceStateModule } from '../service-state/service-state.module';
 import { RabbitMqModule } from '@nss/rabbitmq';
 import { DistributorService } from './services/distributor.service';
 import { StreamChannelFactory } from './factories/stream-channel.factory';
-import { ConfigModule } from '@nss/utils';
-import { IngressConfig } from './ingress.config';
 import { STREAM_CHANNEL } from './constants';
 
 @Module({
-  imports: [
-    ConfigModule.forFeature([IngressConfig]),
-    RabbitMqModule,
-    ServiceStateModule,
-  ],
+  imports: [RabbitMqModule, ServiceStateModule],
   providers: [
     EventStreamFactory,
     StreamChannelFactory,

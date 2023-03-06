@@ -26,8 +26,12 @@ WORKDIR /app
 
 COPY --from=workspace /app .
 
+ENV APP_PORT 3000
+
+EXPOSE $APP_PORT
+
 CMD ["node", "dist/main"]
 
 HEALTHCHECK --interval=12s --timeout=12s --start-period=30s \
-  CMD ["node", "dist/health"]
+  CMD wget --no-verbose --tries=1 --spider http://localhost:$APP_PORT/health || exit 1
 

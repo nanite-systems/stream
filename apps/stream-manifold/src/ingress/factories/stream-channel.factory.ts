@@ -7,14 +7,14 @@ import {
 } from 'amqp-connection-manager';
 import { DistributorService } from '../services/distributor.service';
 import { ConsumeMessage } from 'amqplib';
-import { IngressConfig } from '../ingress.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class StreamChannelFactory {
   constructor(
     @Inject(RABBIT_MQ) private readonly rabbit: AmqpConnectionManager,
     private readonly distributor: DistributorService,
-    private readonly config: IngressConfig,
+    private readonly config: ConfigService,
   ) {}
 
   create(): ChannelWrapper {
@@ -25,7 +25,7 @@ export class StreamChannelFactory {
         });
 
         await Promise.all([
-          channel.bindQueue(queue, this.config.exchangeName),
+          channel.bindQueue(queue, this.config.get('rabbitmq.exchangeName')),
           channel.consume(queue, (message) =>
             this.handleMessage(message, channel),
           ),

@@ -1,8 +1,6 @@
 {
   "name": "@nss/utils",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
   "private": true,
   "license": "Apache-2.0",
   "main": "dist/index.js",
@@ -12,24 +10,9 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "tsc",
-    "prod": "pnpm prune --prod"
-  },
-  "dependencies": {
-    "dotenv": "^16.0.3",
-    "dotenv-expand": "^10.0.0"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^9.2.1",
-    "class-transformer": "^0.5.1",
-    "reflect-metadata": "^0.1.13"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@nestjs/common": "^9.2.1",
-    "class-transformer": "^0.5.1",
-    "dotenv": "^16.0.3",
-    "dotenv-expand": "^10.0.0",
-    "reflect-metadata": "^0.1.13",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",

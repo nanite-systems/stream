@@ -9,16 +9,9 @@ import { provideFactory } from '../utils/provide.helpers';
 import { CensusStreamFactory } from './factories/census-stream.factory';
 import { EnvironmentsModule } from '../environments/environments.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { ConfigModule } from '@nss/utils';
-import { StreamConfig } from './stream.config';
 
 @Module({
-  imports: [
-    ConfigModule.forFeature([StreamConfig]),
-    DiscoveryModule,
-    EnvironmentsModule,
-    SubscriptionModule,
-  ],
+  imports: [DiscoveryModule, EnvironmentsModule, SubscriptionModule],
   providers: [
     {
       provide: GatewayMetadataExplorer,

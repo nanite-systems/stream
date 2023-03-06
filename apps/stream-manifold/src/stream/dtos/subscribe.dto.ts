@@ -3,8 +3,9 @@ import {
   TransformBoolean,
   TransformList,
 } from '../../utils/census.transformers';
+import { EventSubscribeQuery } from '../../subscription/concerns/event-subscribe-query.type';
 
-export class SubscribeDto {
+export class SubscribeDto implements EventSubscribeQuery {
   @IsOptional()
   @IsArray()
   @TransformList()

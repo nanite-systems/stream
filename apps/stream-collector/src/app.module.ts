@@ -1,18 +1,16 @@
 import { Logger, Module, OnModuleDestroy } from '@nestjs/common';
 import { HealthModule } from './health/health.module';
-import { CollectorModule } from './collector/collector.module';
-import { RecentCharactersModule } from './recent-characters/recent-characters.module';
-import { ServiceTrackerModule } from './service-tracker/service-tracker.module';
-import { NssServiceModule } from '@nss/rabbitmq';
+import { ConfigModule } from '@nestjs/config';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { config } from './config';
+import { PublisherModule } from './publisher/publisher.module';
 
 @Module({
   imports: [
-    // TODO: Fix environment
-    NssServiceModule.forService(process.env.PS2_ENVIRONMENT as any),
-    CollectorModule,
-    RecentCharactersModule,
-    ServiceTrackerModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    PrometheusModule.register({}),
     HealthModule,
+    PublisherModule,
   ],
 })
 export class AppModule implements OnModuleDestroy {

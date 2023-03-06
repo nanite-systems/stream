@@ -1,45 +1,35 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AppConfig } from './app.config';
 import { Logger } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ConfigModule } from '@nss/utils';
-import { NSS_SERVICE_CONFIG } from '@nss/rabbitmq';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  ConfigModule.forRoot();
-
-  const config = ConfigModule.resolve(AppConfig);
-
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
     {
-      logger: config.logLevels,
+      bufferLogs: true,
     },
   );
 
-  app.connectMicroservice(app.get(NSS_SERVICE_CONFIG));
+  const config = await app.resolve(ConfigService);
 
-  process
-    .on('unhandledRejection', (err) => {
-      throw err;
-    })
-    .on('uncaughtException', async (err) => {
-      const logger = new Logger('UncaughtException');
+  app.useLogger(config.get('log.levels'));
 
-      logger.error(err, err.stack);
-      await app.close();
-      process.exit(1);
-    });
+  process.on('uncaughtException', async (err) => {
+    const logger = new Logger('UncaughtException');
+
+    logger.error(err, err.stack);
+    process.exit(1);
+  });
 
   app.enableShutdownHooks();
 
-  await app.startAllMicroservices();
-  await app.listen(config.port, '0.0.0.0');
+  await app.listen(config.get('app.port'), '0.0.0.0');
 }
 
 void bootstrap();

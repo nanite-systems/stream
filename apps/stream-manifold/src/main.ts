@@ -6,38 +6,31 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
-import { AppConfig } from './app.config';
-import { ConfigModule } from '@nss/utils';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  ConfigModule.forRoot();
-
-  const config = ConfigModule.resolve(AppConfig);
-
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
     {
-      logger: config.logLevels,
+      bufferLogs: true,
     },
   );
 
-  app.useWebSocketAdapter(new WsAdapter(app));
-  app.enableShutdownHooks();
+  const config = await app.resolve(ConfigService);
 
-  process
-    .on('unhandledRejection', (err) => {
-      throw err;
-    })
-    .on('uncaughtException', (err) => {
-      const logger = new Logger('UncaughtException');
+  app.useLogger(config.get('log.levels'));
 
-      logger.error(err, err.stack);
-      app.close();
-      process.exit(1);
-    });
+  app.useWebSocketAdapter(new WsAdapter(app)).enableShutdownHooks();
 
-  await app.listen(config.port, '0.0.0.0');
+  process.on('uncaughtException', (err) => {
+    const logger = new Logger('App');
+
+    logger.error(err, err.stack);
+    process.exit(1);
+  });
+
+  await app.listen(config.get('app.port'), '0.0.0.0');
 }
 
 void bootstrap();

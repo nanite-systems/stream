@@ -3,20 +3,24 @@ import {
   HealthIndicator,
   HealthIndicatorResult,
 } from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
-import { StreamConductorService } from '../services/stream-conductor.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { MANAGED_CONNECTIONS } from '../constants';
+import { ManagedConnection } from '../utils/managed-connection';
 
 @Injectable()
 export class StreamIndicator extends HealthIndicator {
-  constructor(private readonly conductor: StreamConductorService) {
+  constructor(
+    @Inject(MANAGED_CONNECTIONS)
+    private readonly connections: ManagedConnection[],
+  ) {
     super();
   }
 
   check(key: string): HealthIndicatorResult {
-    const status = this.conductor.getStatus();
-    const isHealthy = status.cycling < status.connections;
+    const connections = this.connections.map((c) => c.status());
+    const isHealthy = connections.some((c) => c.accepted);
 
-    const result = this.getStatus(key, isHealthy, status);
+    const result = this.getStatus(key, isHealthy, { connections });
 
     if (isHealthy) return result;
 
