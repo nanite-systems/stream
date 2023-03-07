@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { EventPayload } from './event-payload.type';
+import { EventPayload, ServiceState } from '@nss/ess-concerns';
 
 export interface ConnectionContract {
   connect(): Observable<void>;
@@ -16,6 +16,8 @@ export interface ConnectionContract {
   observeConnect(): Observable<void>;
 
   observeHeartbeat(): Observable<void>;
+
+  observeServiceState(): Observable<ServiceState>;
 
   observeEventMessage(): Observable<EventPayload>;
 

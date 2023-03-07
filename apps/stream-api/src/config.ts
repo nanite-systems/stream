@@ -22,13 +22,15 @@ export const config = () => ({
     urls: envSplit('RMQ_URLS', ['amqp://guest:guest@localhost:5672']),
 
     /**
-     * Exchange that is used for stream messages
-     */
-    streamExchangeName: env('RMQ_STREAM_EXCHANGE_NAME', 'nss.stream'),
-
-    /**
-     * NSS microservice queue name
+     * Microservice queue to receive commands from
      */
     apiQueueName: env('RMQ_API_QUEUE_NAME', `nss.api`),
+  },
+
+  ess: {
+    /**
+     * Census Service ID for authentication
+     */
+    serviceId: env('ESS_SERVICE_ID'),
   },
 });

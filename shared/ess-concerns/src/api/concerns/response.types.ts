@@ -1,5 +1,5 @@
-import { ServiceState } from './service-state.type';
+import { ServiceState } from '../../stream/concerns/message.types';
 
-export type RecentCharacters = string[];
-export type RecentCharacterCount = number;
-export type ServiceStates = ServiceState[];
+export type RecentCharactersResponse = string[];
+export type RecentCharacterCountResponse = number;
+export type ServiceStatesResponse = ServiceState[];

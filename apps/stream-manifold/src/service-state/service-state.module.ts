@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { NssModule } from '../nss/nss.module';
+import { NssApiModule } from '../nss-api/nss-api.module';
 import { ServiceStateService } from './services/service-state.service';
 
 @Module({
-  imports: [NssModule],
+  imports: [NssApiModule],
   providers: [ServiceStateService],
   exports: [ServiceStateService],
 })

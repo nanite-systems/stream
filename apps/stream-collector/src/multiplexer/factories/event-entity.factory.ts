@@ -1,7 +1,7 @@
 import { EventEntity } from '../entities/event.entity';
 import { DuplicateService } from '../services/duplicate.service';
 import { Injectable } from '@nestjs/common';
-import { EventPayload } from '../../census/concerns/event-payload.type';
+import { EventPayload } from '@nss/ess-concerns';
 
 @Injectable()
 export class EventEntityFactory {

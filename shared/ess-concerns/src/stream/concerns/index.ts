@@ -1,1 +1,1 @@
-export * as CollectorMessage from './message.types';
+export * from './message.types';

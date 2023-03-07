@@ -1,4 +1,4 @@
-import { EventPayload } from '../../census/concerns/event-payload.type';
+import { EventPayload } from '@nss/ess-concerns';
 
 export class EventEntity {
   constructor(

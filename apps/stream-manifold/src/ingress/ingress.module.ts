@@ -5,9 +5,18 @@ import { RabbitMqModule } from '@nss/rabbitmq';
 import { DistributorService } from './services/distributor.service';
 import { StreamChannelFactory } from './factories/stream-channel.factory';
 import { STREAM_CHANNEL } from './constants';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [RabbitMqModule, ServiceStateModule],
+  imports: [
+    RabbitMqModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        urls: config.get('rabbitmq.urls'),
+      }),
+      inject: [ConfigService],
+    }),
+    ServiceStateModule,
+  ],
   providers: [
     EventStreamFactory,
     StreamChannelFactory,

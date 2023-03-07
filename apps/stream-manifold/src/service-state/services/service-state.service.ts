@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { mergeMap, Observable, of, Subject } from 'rxjs';
-import { NSS_COMMANDS, ServiceState } from '@nss/rabbitmq';
-import { NssServiceContainer } from '../../nss/services/nss-service.container';
+import { ServiceState } from '@nss/ess-concerns';
+import { NssApiService } from '../../nss-api/services/nss-api.service';
 
 @Injectable()
 export class ServiceStateService implements OnModuleInit {
@@ -9,7 +9,7 @@ export class ServiceStateService implements OnModuleInit {
 
   private readonly _stream = new Subject<ServiceState>();
 
-  constructor(private readonly nss: NssServiceContainer) {}
+  constructor(private readonly api: NssApiService) {}
 
   get stream(): Observable<ServiceState> {
     return this._stream;
@@ -32,9 +32,8 @@ export class ServiceStateService implements OnModuleInit {
   }
 
   fetchStates(): void {
-    this.nss
-      .getService('all')
-      .send(NSS_COMMANDS.serviceStates, {})
+    this.api
+      .serviceStates('all')
       .pipe(mergeMap((res) => of(...res)))
       .subscribe((state) => {
         this.registerState(state);

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventStreamFactory } from '../factories/event-stream.factory';
 import { ServiceStateService } from '../../service-state/services/service-state.service';
-import { STREAM_MESSAGE_TYPE } from '@nss/rabbitmq';
+import { STREAM_MESSAGE_TYPE } from '@nss/ess-concerns';
 
 @Injectable()
 export class DistributorService {

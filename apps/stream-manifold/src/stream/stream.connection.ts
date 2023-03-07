@@ -23,7 +23,7 @@ import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
-import { NSS_COMMANDS } from '@nss/rabbitmq';
+import { NssApiService } from '../nss-api/services/nss-api.service';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -40,6 +40,7 @@ export class StreamConnection implements ConnectionContract {
   constructor(
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
+    private readonly api: NssApiService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
   ) {}
 
@@ -181,18 +182,16 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIds',
   })
   recentCharacterIds(): Observable<Stream.CensusMessages.ServiceMessage> {
-    return this.environment.nssClient
-      .send(NSS_COMMANDS.recentCharacters, {})
-      .pipe(
-        map((characters) => ({
-          service: 'event',
-          type: 'serviceMessage',
-          payload: {
-            recent_character_id_count: characters.length,
-            recent_character_id_list: characters,
-          },
-        })),
-      );
+    return this.api.recentCharacters(this.environment.name).pipe(
+      map((characters) => ({
+        service: 'event',
+        type: 'serviceMessage',
+        payload: {
+          recent_character_id_count: characters.length,
+          recent_character_id_list: characters,
+        },
+      })),
+    );
   }
 
   @SubscribeMessage<EventMessage>({
@@ -200,16 +199,14 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIdsCount',
   })
   recentCharacterIdsCount(): Observable<Stream.CensusMessages.ServiceMessage> {
-    return this.environment.nssClient
-      .send(NSS_COMMANDS.recentCharacterCount, {})
-      .pipe(
-        map((recent_character_id_count) => ({
-          service: 'event',
-          type: 'serviceMessage',
-          payload: {
-            recent_character_id_count,
-          },
-        })),
-      );
+    return this.api.recentCharacterCount(this.environment.name).pipe(
+      map((recent_character_id_count) => ({
+        service: 'event',
+        type: 'serviceMessage',
+        payload: {
+          recent_character_id_count,
+        },
+      })),
+    );
   }
 }

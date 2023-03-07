@@ -9,6 +9,7 @@ import { DUPLICATE_EXCHANGE, STREAM_EXCHANGE } from './constant';
 import { ExchangeFactory } from './factories/exchange.factory';
 import { ConfigService } from '@nestjs/config';
 import { MultiplexerModule } from '../multiplexer/multiplexer.module';
+import { ServiceTrackerModule } from '../service-tracker/service-tracker.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MultiplexerModule } from '../multiplexer/multiplexer.module';
       inject: [ConfigService],
     }),
     MultiplexerModule,
+    ServiceTrackerModule,
   ],
   providers: [
     ExchangeFactory,
