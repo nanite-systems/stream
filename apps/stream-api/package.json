@@ -31,7 +31,7 @@
     "cache-manager": "^5.1.7",
     "class-validator": "^0.14.0",
     "prom-client": "^14.2.0",
-    "ps2census": "^4.5.2",
+    "ps2census": "^4.5.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^4.3.1",
     "rxjs": "^7.8.0"
