@@ -24,6 +24,8 @@ import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
 import { NssApiService } from '../nss-api/services/nss-api.service';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Gauge } from 'prom-client';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -42,6 +44,7 @@ export class StreamConnection implements ConnectionContract {
     private readonly environment: Environment,
     private readonly api: NssApiService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
+    @InjectMetric('nss_connections') private readonly connectionGauge: Gauge,
   ) {}
 
   onConnected(client: WebSocket, request: IncomingMessage): void {
@@ -51,6 +54,8 @@ export class StreamConnection implements ConnectionContract {
         headers: request.rawHeaders,
       })}`,
     );
+
+    this.connectionGauge.inc({ environment: this.environment.name });
 
     this.subscribeFromParams(request);
 
@@ -62,6 +67,8 @@ export class StreamConnection implements ConnectionContract {
   }
 
   onDisconnected(): void {
+    this.connectionGauge.dec({ environment: this.environment.name });
+
     this.subscription.clearAll();
 
     StreamConnection.logger.debug(`Client disconnected ${this.id}`);

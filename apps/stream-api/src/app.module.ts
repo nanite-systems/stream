@@ -4,10 +4,12 @@ import { RecentCharactersModule } from './recent-characters/recent-characters.mo
 import { ServiceTrackerModule } from './service-tracker/service-tracker.module';
 import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    PrometheusModule.register(),
     CacheModule.register({ isGlobal: true }),
     RecentCharactersModule,
     ServiceTrackerModule,
