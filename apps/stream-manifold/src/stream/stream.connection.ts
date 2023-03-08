@@ -76,11 +76,11 @@ export class StreamConnection implements ConnectionContract {
     this.subscription.merge({
       eventNames: searchParams
         .getAll('event_names')
-        .flatMap((v) => v.split(',')),
+        .flatMap((v) => v.split(',', 500)),
       characters: searchParams
         .getAll('characters')
-        .flatMap((v) => v.split(',')),
-      worlds: searchParams.getAll('worlds').flatMap((v) => v.split(',')),
+        .flatMap((v) => v.split(',', 500)),
+      worlds: searchParams.getAll('worlds').flatMap((v) => v.split(',', 500)),
       logicalAndCharactersWithWorlds: this.parseLogicalAndCharactersWithWorlds(
         searchParams.get('logical_and_characters_with_worlds'),
       ),

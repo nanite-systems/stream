@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsOptional } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsBoolean, IsOptional } from 'class-validator';
 import {
   TransformBoolean,
   TransformList,
@@ -8,16 +8,19 @@ import { EventSubscribeQuery } from '../../subscription/concerns/event-subscribe
 export class SubscribeDto implements EventSubscribeQuery {
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(500)
   @TransformList()
   readonly worlds?: Array<string>;
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(500)
   @TransformList()
   readonly characters?: Array<string>;
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(500)
   @TransformList(false)
   readonly eventNames?: Array<string>;
 

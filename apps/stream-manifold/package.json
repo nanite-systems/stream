@@ -23,6 +23,7 @@
     "@nestjs/platform-fastify": "^9.3.9",
     "@nestjs/platform-ws": "^9.3.9",
     "@nestjs/terminus": "^9.2.1",
+    "@nestjs/throttler": "^4.0.0",
     "@nestjs/websockets": "^9.3.9",
     "@nss/ess-concerns": "workspace:*",
     "@nss/rabbitmq": "workspace:*",
