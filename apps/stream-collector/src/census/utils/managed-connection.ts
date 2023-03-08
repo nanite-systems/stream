@@ -10,7 +10,6 @@ import {
   retry,
   Subscription,
   switchMap,
-  takeUntil,
   tap,
   timer,
 } from 'rxjs';
@@ -18,14 +17,6 @@ import { HeartbeatOffsetAccessorContract } from '../concerns/heartbeat-offset-ac
 import { StreamConductorService } from '../services/stream-conductor.service';
 import { DelayPolicyContract } from '../concerns/delay-policy.contract';
 import { Logger } from '@nestjs/common';
-
-export interface ManagedConnectionOptions {
-  subscribeInterval: number;
-  characters: string[];
-  eventNames: string[];
-  worlds: string[];
-  logicalAndCharactersWithWorlds: boolean;
-}
 
 export class ManagedConnection {
   private accepted = false;
@@ -46,7 +37,6 @@ export class ManagedConnection {
     private readonly offsetAccessor: HeartbeatOffsetAccessorContract,
     private readonly delayPolicy: DelayPolicyContract,
     private readonly conductor: StreamConductorService,
-    private readonly options: ManagedConnectionOptions,
   ) {
     /** Cycle connection logic */
     this.observeInitHeartbeat().subscribe(() => {
@@ -72,26 +62,6 @@ export class ManagedConnection {
         this.connection.disconnect();
       }
     });
-
-    /** Subscribe logic */
-    this.connection
-      .observeConnect()
-      .pipe(
-        switchMap(() =>
-          timer(0, this.options.subscribeInterval).pipe(
-            takeUntil(this.connection.observeDisconnect()),
-          ),
-        ),
-      )
-      .subscribe(() =>
-        this.connection.subscribe({
-          characters: this.options.characters,
-          eventNames: this.options.eventNames,
-          worlds: this.options.worlds,
-          logicalAndCharactersWithWorlds:
-            this.options.logicalAndCharactersWithWorlds,
-        }),
-      );
 
     /** Disconnect log */
     this.connection

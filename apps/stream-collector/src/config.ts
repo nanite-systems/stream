@@ -1,4 +1,4 @@
-import { env, envInt, envSplit } from '@nss/utils';
+import { env, envBool, envInt, envSplit } from '@nss/utils';
 import { randomUUID } from 'crypto';
 
 export const config = () => ({
@@ -93,6 +93,11 @@ export const config = () => ({
      * List of events to subscribe to delimited by commas
      */
     events: envSplit('ESS_SUBSCRIPTION_EVENTS', ['all']),
+
+    /**
+     * Sets the logicalAndCharactersWithWorlds in subscription
+     */
+    logicalAnd: envBool('ESS_SUBSCRIPTION_LOGICAL_AND', true),
 
     /**
      * The interval used for resending interval

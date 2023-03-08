@@ -6,13 +6,6 @@ export interface ConnectionContract {
 
   disconnect(): void;
 
-  subscribe(subscription: {
-    characters?: string[];
-    eventNames?: string[];
-    worlds?: string[];
-    logicalAndCharactersWithWorlds?: boolean;
-  }): void;
-
   observeConnect(): Observable<void>;
 
   observeHeartbeat(): Observable<void>;

@@ -13,7 +13,16 @@ export class ConnectionFactory {
   ) {}
 
   createConnection(): ConnectionContract {
-    return new EssAdapter(this.createStream());
+    return new EssAdapter(
+      this.createStream(),
+      {
+        eventNames: this.config.get('ess.events'),
+        worlds: this.config.get('ess.worlds'),
+        characters: this.config.get('ess.events'),
+        logicalAndCharactersWithWorlds: this.config.get('ess.logicalAnd'),
+      },
+      this.config.get('ess.subscriptionInterval'),
+    );
   }
 
   private createStream(): Stream.Client {

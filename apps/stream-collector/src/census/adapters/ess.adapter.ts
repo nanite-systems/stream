@@ -1,5 +1,15 @@
 import { ConnectionContract } from '../concerns/connection.contract';
-import { filter, from, fromEvent, map, Observable, share } from 'rxjs';
+import {
+  filter,
+  from,
+  fromEvent,
+  map,
+  Observable,
+  share,
+  switchMap,
+  takeUntil,
+  timer,
+} from 'rxjs';
 import { Stream } from 'ps2census';
 import { EventPayload, ServiceState } from '@nss/ess-concerns';
 
@@ -10,7 +20,11 @@ export class EssAdapter implements ConnectionContract {
   private readonly serviceStateObservable: Observable<ServiceState>;
   private readonly eventMessageObservable: Observable<EventPayload>;
 
-  constructor(readonly stream: Stream.Client) {
+  constructor(
+    readonly stream: Stream.Client,
+    subscription: Omit<Stream.CensusCommands.Subscribe, 'service' | 'action'>,
+    subscriptionInterval: number,
+  ) {
     const message = fromEvent(stream, 'message').pipe(
       filter((msg: any) => msg.service == 'event'),
       share(),
@@ -47,6 +61,25 @@ export class EssAdapter implements ConnectionContract {
       map((msg): EventPayload => msg.payload),
       share(),
     );
+
+    /** Subscription logic */
+    this.readyObservable
+      .pipe(
+        switchMap(() =>
+          timer(0, subscriptionInterval).pipe(
+            takeUntil(this.disconnectObservable),
+          ),
+        ),
+      )
+      .subscribe(() => {
+        try {
+          stream.send({
+            service: 'event',
+            action: 'subscribe',
+            ...subscription,
+          });
+        } catch {}
+      });
   }
 
   connect(): Observable<void> {
@@ -55,25 +88,6 @@ export class EssAdapter implements ConnectionContract {
 
   disconnect(): void {
     this.stream.destroy();
-  }
-
-  subscribe(subscription: {
-    characters?: string[];
-    eventNames?: string[];
-    worlds?: string[];
-    logicalAndCharactersWithWorlds?: boolean;
-  }) {
-    try {
-      this.stream.send({
-        service: 'event',
-        action: 'subscribe',
-        characters: subscription.characters,
-        eventNames: subscription.eventNames as any,
-        worlds: subscription.worlds,
-        logicalAndCharactersWithWorlds:
-          subscription.logicalAndCharactersWithWorlds,
-      });
-    } catch {}
   }
 
   observeConnect(): Observable<void> {
