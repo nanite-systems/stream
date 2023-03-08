@@ -11,56 +11,64 @@ services:
       - '15672:${RABBITMQ_MANAGEMENT_PORT:-15672}'
     env_file: .env
 
-  collector-ps2:
+  collector-pc: &collector
     image: ghcr.io/nanite-systems/stream-collector
     build:
       dockerfile: Dockerfile
       args:
         APP_NAME: stream-collector
-    env_file: apps/stream-collector/.env
-    environment:
-      RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      PS2_ENVIRONMENT: ps2
+    env_file:
+      - .env
+      - apps/stream-collector/.env
+    environment: &collector.environment
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      APP_PORT: 3000
+      ESS_ENVIRONMENT: ps2
     restart: unless-stopped
     depends_on:
       - rabbitmq
     networks:
       - ns-stream
+    ports:
+      - '${COLLECTOR_PC_PORT:-3002}:3000'
     profiles:
       - full
       - back-end
 
-  collector-ps2ps4eu:
-    image: ghcr.io/nanite-systems/stream-collector
-    env_file: apps/stream-collector/.env
+  collector-ps4eu:
+    <<: *collector
     environment:
-      RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      PS2_ENVIRONMENT: ps2ps4eu
-    restart: unless-stopped
-    depends_on:
-      - rabbitmq
-      - collector-ps2
-    networks:
-      - ns-stream
-    profiles:
-      - full
-      - back-end
+      <<: *collector.environment
+      ESS_ENVIRONMENT: ps2ps4eu
+    ports:
+      - '${COLLECTOR_PC_PORT:-3003}:3000'
 
-  collector-ps2ps4us:
-    image: ghcr.io/nanite-systems/stream-collector
-    env_file: apps/stream-collector/.env
+  collector-ps4us:
+    <<: *collector
     environment:
-      RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      PS2_ENVIRONMENT: ps2ps4us
+      <<: *collector.environment
+      ESS_ENVIRONMENT: ps2ps4us
+    ports:
+      - '${COLLECTOR_PC_PORT:-3004}:3000'
+
+  api:
+    image: ghcr.io/nanite-systems/stream-api
+    build:
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: stream-api
     restart: unless-stopped
+    env_file:
+      - .env
+      - apps/stream-api/.env
+    environment:
+      APP_PORT: 3000
     depends_on:
       - rabbitmq
-      - collector-ps2
     networks:
       - ns-stream
-    profiles:
-      - full
-      - back-end
+    ports:
+      - '${API_PORT:-3001}:3000'
 
   manifold:
     image: ghcr.io/nanite-systems/stream-manifold
@@ -70,15 +78,18 @@ services:
         APP_NAME: stream-manifold
     restart: unless-stopped
     depends_on:
-      - collector-ps2
-      - collector-ps2ps4eu
-      - collector-ps2ps4us
+      - collector-pc
+      - collector-ps4eu
+      - collector-ps4us
+      - api
       - rabbitmq
     networks:
       - ns-stream
     ports:
       - '${MANIFOLD_PORT:-3000}:3000'
-    env_file: apps/stream-manifold/.env
+    env_file:
+      - .env
+      - apps/stream-manifold/.env
     environment:
       RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
       APP_PORT: 3000
