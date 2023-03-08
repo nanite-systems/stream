@@ -20,7 +20,7 @@ services:
     env_file:
       - .env
       - apps/stream-collector/.env
-    environment: &collector.environment
+    environment: &collector_environment
       RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
       APP_PORT: 3000
       ESS_ENVIRONMENT: ps2
@@ -38,7 +38,7 @@ services:
   collector-ps4eu:
     <<: *collector
     environment:
-      <<: *collector.environment
+      <<: *collector_environment
       ESS_ENVIRONMENT: ps2ps4eu
     ports:
       - '${COLLECTOR_PC_PORT:-3003}:3000'
@@ -46,7 +46,7 @@ services:
   collector-ps4us:
     <<: *collector
     environment:
-      <<: *collector.environment
+      <<: *collector_environment
       ESS_ENVIRONMENT: ps2ps4us
     ports:
       - '${COLLECTOR_PC_PORT:-3004}:3000'

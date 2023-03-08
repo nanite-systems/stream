@@ -6,11 +6,6 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "stream-collector": "pnpm --filter stream-collector",
-    "stream-manifold": "pnpm --filter stream-manifold",
-    "stream-multiplexer": "pnpm --filter stream-multiplexer",
-    "stream-health": "pnpm --filter stream-health",
-    "utils": "pnpm --filter utils",
     "changelog": "pnpm changeset version",
     "lint": "prettier **/*.{ts,js,json}",
     "prepare": "husky install"

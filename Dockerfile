@@ -18,7 +18,7 @@ RUN pnpm i --frozen-lockfile --offline --silent
 ARG APP_NAME
 
 RUN pnpm nx build $APP_NAME
-RUN pnpm $APP_NAME --prod deploy /app
+RUN pnpm -F $APP_NAME --prod deploy /app
 
 FROM node:18-alpine
 
