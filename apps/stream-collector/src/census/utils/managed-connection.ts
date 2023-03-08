@@ -39,8 +39,8 @@ export class ManagedConnection {
     private readonly conductor: StreamConductorService,
   ) {
     /** Cycle connection logic */
-    this.observeInitHeartbeat().subscribe(() => {
-      this.heartbeatOffset = this.offsetAccessor.getOffset();
+    this.observeInitHeartbeat().subscribe((heartbeat) => {
+      this.heartbeatOffset = this.offsetAccessor.timestampToOffset(heartbeat);
 
       if (this.conductor.claim(this, this.heartbeatOffset)) {
         this.logger.log(
@@ -123,7 +123,7 @@ export class ManagedConnection {
     this.connection.disconnect();
   }
 
-  private observeInitHeartbeat(): Observable<void> {
+  private observeInitHeartbeat(): Observable<number> {
     return this.connection
       .observeConnect()
       .pipe(switchMap(() => this.connection.observeHeartbeat().pipe(first())));

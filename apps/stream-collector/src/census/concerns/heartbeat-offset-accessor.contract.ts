@@ -3,7 +3,6 @@ export const HEARTBEAT_OFFSET_ACCESSOR = Symbol(
 );
 
 export interface HeartbeatOffsetAccessorContract {
-  getOffset(): number;
-
+  timestampToOffset(ts: number): number;
   deltaOffsets(a: number, b: number): number;
 }

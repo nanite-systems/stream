@@ -16,7 +16,7 @@ import { EventPayload, ServiceState } from '@nss/ess-concerns';
 export class EssAdapter implements ConnectionContract {
   private readonly readyObservable: Observable<void>;
   private readonly disconnectObservable: Observable<any>;
-  private readonly heartbeatObservable: Observable<void>;
+  private readonly heartbeatObservable: Observable<number>;
   private readonly serviceStateObservable: Observable<ServiceState>;
   private readonly eventMessageObservable: Observable<EventPayload>;
 
@@ -39,7 +39,7 @@ export class EssAdapter implements ConnectionContract {
 
     this.heartbeatObservable = message.pipe(
       filter((msg) => msg.type == 'heartbeat'),
-      map(() => undefined),
+      map(() => new Date().getTime()),
       share(),
     );
 
@@ -98,7 +98,7 @@ export class EssAdapter implements ConnectionContract {
     return this.disconnectObservable;
   }
 
-  observeHeartbeat(): Observable<void> {
+  observeHeartbeat(): Observable<number> {
     return this.heartbeatObservable;
   }
 

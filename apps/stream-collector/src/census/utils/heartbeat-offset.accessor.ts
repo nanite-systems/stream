@@ -21,8 +21,8 @@ export class HeartbeatOffsetAccessor
     this.half = Math.floor(this.options.heartbeatInterval / 2);
   }
 
-  getOffset(): number {
-    return Date.now() % this.options.heartbeatInterval;
+  timestampToOffset(ts: number): number {
+    return ts % this.options.heartbeatInterval;
   }
 
   deltaOffsets(a: number, b: number): number {

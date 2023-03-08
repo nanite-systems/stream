@@ -8,7 +8,7 @@ export interface ConnectionContract {
 
   observeConnect(): Observable<void>;
 
-  observeHeartbeat(): Observable<void>;
+  observeHeartbeat(): Observable<number>;
 
   observeServiceState(): Observable<ServiceState>;
 

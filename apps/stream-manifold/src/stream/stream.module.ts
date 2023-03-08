@@ -10,9 +10,15 @@ import { CensusStreamFactory } from './factories/census-stream.factory';
 import { EnvironmentsModule } from '../environments/environments.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { makeGaugeProvider } from '@willsoto/nestjs-prometheus';
+import { NssApiModule } from '../nss-api/nss-api.module';
 
 @Module({
-  imports: [DiscoveryModule, EnvironmentsModule, SubscriptionModule],
+  imports: [
+    DiscoveryModule,
+    EnvironmentsModule,
+    SubscriptionModule,
+    NssApiModule,
+  ],
   providers: [
     {
       provide: GatewayMetadataExplorer,
