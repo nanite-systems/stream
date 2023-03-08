@@ -28,6 +28,7 @@
     "@willsoto/nestjs-prometheus": "^5.1.0",
     "amqp-connection-manager": "^4.1.11",
     "amqplib": "^0.10.3",
+    "cache-manager": "^5.1.7",
     "class-validator": "^0.14.0",
     "prom-client": "^14.2.0",
     "ps2census": "^4.5.2",
