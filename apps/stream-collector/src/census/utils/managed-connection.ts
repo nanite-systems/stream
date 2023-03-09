@@ -8,8 +8,10 @@ import {
   Observable,
   of,
   retry,
+  Subject,
   Subscription,
   switchMap,
+  takeUntil,
   tap,
   timer,
 } from 'rxjs';
@@ -18,18 +20,29 @@ import { StreamConductorService } from '../services/stream-conductor.service';
 import { DelayPolicyContract } from '../concerns/delay-policy.contract';
 import { Logger } from '@nestjs/common';
 
+export enum State {
+  DISCONNECTED,
+  CONNECTING,
+  FAILED,
+  CONNECTED,
+  CYCLING,
+  ACCEPTED,
+}
+
 export class ManagedConnection {
-  private accepted = false;
+  accepted = false;
 
-  private connectedAt?: number;
+  connectedAt?: number;
 
-  private heartbeatOffset?: number;
+  heartbeatOffset?: number;
 
   private wasForcedDisconnect = false;
 
-  private cycleCounter = 0;
+  cycleCounter = 0;
 
   private connectionSubscription?: Subscription;
+
+  private readonly stateChange = new Subject<State>();
 
   constructor(
     private readonly logger: Logger,
@@ -50,6 +63,8 @@ export class ManagedConnection {
         );
         this.accepted = true;
         this.cycleCounter = 0;
+
+        this.stateChange.next(State.ACCEPTED);
       } else {
         this.logger.verbose(
           `Cycling connection: ${JSON.stringify({
@@ -58,8 +73,14 @@ export class ManagedConnection {
           })}`,
         );
 
-        this.wasForcedDisconnect = true;
-        this.connection.disconnect();
+        timer(this.delayPolicy.next(true, 0, this.cycleCounter))
+          .pipe(takeUntil(this.connection.observeDisconnect()))
+          .subscribe(() => {
+            this.wasForcedDisconnect = true;
+            this.connection.disconnect();
+          });
+
+        this.stateChange.next(State.CYCLING);
       }
     });
 
@@ -67,9 +88,11 @@ export class ManagedConnection {
     this.connection
       .observeDisconnect()
       .pipe(filter(() => this.accepted))
-      .subscribe((details) =>
-        this.logger.log(`Disconnected: ${JSON.stringify(details)}`),
-      );
+      .subscribe((details) => {
+        this.logger.log(`Disconnected: ${JSON.stringify(details)}`);
+
+        this.stateChange.next(State.DISCONNECTED);
+      });
   }
 
   start(): void {
@@ -89,13 +112,21 @@ export class ManagedConnection {
         tap(() => {
           this.accepted = false;
           delete this.connectedAt;
+          delete this.heartbeatOffset;
+
           this.conductor.release(this);
+
+          this.logger.verbose('Connecting');
+          this.stateChange.next(State.CONNECTING);
         }),
-        tap(() => this.logger.verbose('Connecting')),
         exhaustMap(() =>
           defer(() => this.connection.connect()).pipe(
             tap({
-              error: (err) => this.logger.debug(`Connection failed: ${err}`),
+              error: (err) => {
+                this.logger.debug(`Connection failed: ${err}`);
+
+                this.stateChange.next(State.FAILED);
+              },
             }),
             retry({
               delay: (err, retryCount) =>
@@ -115,6 +146,8 @@ export class ManagedConnection {
 
         this.connectedAt = new Date().getTime();
         this.wasForcedDisconnect = false;
+
+        this.stateChange.next(State.CONNECTED);
       });
   }
 
@@ -127,6 +160,10 @@ export class ManagedConnection {
     return this.connection
       .observeConnect()
       .pipe(switchMap(() => this.connection.observeHeartbeat().pipe(first())));
+  }
+
+  observeStateChange(): Observable<State> {
+    return this.stateChange;
   }
 
   status() {

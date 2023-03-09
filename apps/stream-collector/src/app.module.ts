@@ -3,12 +3,12 @@ import { HealthModule } from './health/health.module';
 import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
 import { PublisherModule } from './publisher/publisher.module';
-import { MetricModule } from './metrics/metric.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-    MetricModule,
+    PrometheusModule.register(),
     HealthModule,
     PublisherModule,
   ],

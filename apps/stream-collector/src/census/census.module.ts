@@ -23,6 +23,11 @@ import {
 import { ConnectionContract } from './concerns/connection.contract';
 import { ManagedConnectionFactory } from './factories/managed-connection.factory';
 import { ConfigService } from '@nestjs/config';
+import {
+  makeCounterProvider,
+  makeGaugeProvider,
+} from '@willsoto/nestjs-prometheus';
+import { CensusMetricsService } from './services/census-metrics.service';
 
 const range = (n: number) => Array.from(Array(n).keys());
 
@@ -94,6 +99,30 @@ const range = (n: number) => Array.from(Array(n).keys());
       ) => Object.freeze(connections.map((c, i) => factory.create(i, c))),
       inject: [CONNECTIONS, ManagedConnectionFactory],
     },
+
+    /** Metrics */
+    CensusMetricsService,
+
+    makeGaugeProvider({
+      name: 'ess_connection_start_time_seconds',
+      help: 'Start time of ess connection unix epoch',
+      labelNames: ['connection'],
+    }),
+    makeGaugeProvider({
+      name: 'ess_connection_heartbeat_offset_seconds',
+      help: 'Residual of unix epoch divided by heartbeat interval',
+      labelNames: ['connection'],
+    }),
+    makeCounterProvider({
+      name: 'ess_connection_state_count',
+      help: 'Counter that tracks disconnects',
+      labelNames: ['connection', 'kind'],
+    }),
+    makeGaugeProvider({
+      name: 'ess_connection_state_total',
+      help: 'Current number of connections in a certain state',
+      labelNames: ['kind'],
+    }),
   ],
   exports: [CONNECTIONS, StreamIndicator],
 })

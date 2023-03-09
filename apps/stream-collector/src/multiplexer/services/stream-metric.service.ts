@@ -6,13 +6,13 @@ import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter } from 'prom-client';
 
 @Injectable()
-export class MetricService {
+export class StreamMetricService {
   constructor(
     @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
     private readonly multiplexer: MultiplexerService,
-    @InjectMetric('ess_messages')
+    @InjectMetric('ess_message_count')
     private readonly messageCounter: Counter,
-    @InjectMetric('ess_duplicates')
+    @InjectMetric('ess_duplicate_count')
     private readonly duplicateCounter: Counter,
   ) {
     this.connections.forEach((connection, id) =>
