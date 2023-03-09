@@ -25,7 +25,10 @@ export class StreamChannelFactory {
         });
 
         await Promise.all([
-          channel.bindQueue(queue, this.config.get('rabbitmq.exchangeName')),
+          channel.bindQueue(
+            queue,
+            this.config.get('rabbitmq.streamExchangeName'),
+          ),
           channel.consume(queue, (message) =>
             this.handleMessage(message, channel),
           ),

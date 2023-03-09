@@ -4,7 +4,8 @@ import { ServiceStateController } from './controllers/service-state.controller';
 import { CensusModule } from '../census/census.module';
 
 @Module({
-  providers: [CensusModule, ServiceTrackerService],
+  imports: [CensusModule],
+  providers: [ServiceTrackerService],
   controllers: [ServiceStateController],
   exports: [ServiceTrackerService],
 })

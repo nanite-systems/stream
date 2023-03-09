@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { mergeMap, Observable, of, Subject } from 'rxjs';
+import { firstValueFrom, Observable, retry, Subject, timeout } from 'rxjs';
 import { ServiceState } from '@nss/ess-concerns';
 import { NssApiService } from '../../nss-api/services/nss-api.service';
 
@@ -15,8 +15,12 @@ export class ServiceStateService implements OnModuleInit {
     return this._stream;
   }
 
-  onModuleInit(): void {
-    this.fetchStates();
+  async onModuleInit(): Promise<void> {
+    const states = await firstValueFrom(
+      this.api.serviceStates().pipe(timeout(5000), retry(10)),
+    );
+
+    for (const state of states) this.registerState(state);
   }
 
   getStates(): ServiceState[] {
@@ -29,14 +33,5 @@ export class ServiceStateService implements OnModuleInit {
     this.cache.set(state.worldId, state);
 
     if (!current || current.online != state.online) this._stream.next(state);
-  }
-
-  fetchStates(): void {
-    this.api
-      .serviceStates('all')
-      .pipe(mergeMap((res) => of(...res)))
-      .subscribe((state) => {
-        this.registerState(state);
-      });
   }
 }

@@ -8,7 +8,7 @@ export class ServiceStateController {
   constructor(private readonly serviceTracker: ServiceTrackerService) {}
 
   @MessagePattern(ApiCommands.serviceStates)
-  serviceStates(): ServiceStatesResponse {
+  serviceStates(): Promise<ServiceStatesResponse> {
     return this.serviceTracker.getStates();
   }
 }

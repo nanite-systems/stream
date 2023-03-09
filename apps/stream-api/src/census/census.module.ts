@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { StreamFactory } from './factories/stream.factory';
 import { STREAM_PC, STREAM_PS4EU, STREAM_PS4US } from './constants';
+import { CensusClient } from 'ps2census';
 
 @Module({
   providers: [
@@ -24,4 +25,24 @@ import { STREAM_PC, STREAM_PS4EU, STREAM_PS4US } from './constants';
   ],
   exports: [STREAM_PC, STREAM_PS4EU, STREAM_PS4US],
 })
-export class CensusModule {}
+export class CensusModule implements OnModuleInit, OnModuleDestroy {
+  constructor(
+    @Inject(STREAM_PC) private readonly streamPc: CensusClient,
+    @Inject(STREAM_PS4EU) private readonly streamPs4eu: CensusClient,
+    @Inject(STREAM_PS4US) private readonly streamPs4us: CensusClient,
+  ) {}
+
+  async onModuleInit(): Promise<void> {
+    await Promise.all([
+      this.streamPc.watch(),
+      this.streamPs4eu.watch(),
+      this.streamPs4us.watch(),
+    ]);
+  }
+
+  onModuleDestroy(): void {
+    this.streamPc.destroy();
+    this.streamPs4eu.destroy();
+    this.streamPs4us.destroy();
+  }
+}

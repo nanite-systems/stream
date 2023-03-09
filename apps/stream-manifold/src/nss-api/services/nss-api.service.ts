@@ -23,7 +23,7 @@ export class NssApiService {
     return this.api.send(ApiCommands.recentCharacterCount, { environment });
   }
 
-  serviceStates(environment: string): Observable<ServiceStatesResponse> {
-    return this.api.send(ApiCommands.serviceStates, { environment });
+  serviceStates(): Observable<ServiceStatesResponse> {
+    return this.api.send(ApiCommands.serviceStates, {});
   }
 }

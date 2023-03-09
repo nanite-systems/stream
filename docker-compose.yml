@@ -41,7 +41,7 @@ services:
       <<: *collector_environment
       ESS_ENVIRONMENT: ps2ps4eu
     ports:
-      - '${COLLECTOR_PC_PORT:-3003}:3000'
+      - '${COLLECTOR_PS4EU_PORT:-3003}:3000'
 
   collector-ps4us:
     <<: *collector
@@ -49,7 +49,7 @@ services:
       <<: *collector_environment
       ESS_ENVIRONMENT: ps2ps4us
     ports:
-      - '${COLLECTOR_PC_PORT:-3004}:3000'
+      - '${COLLECTOR_PS4US_PORT:-3004}:3000'
 
   api:
     image: ghcr.io/nanite-systems/stream-api
@@ -62,6 +62,7 @@ services:
       - .env
       - apps/stream-api/.env
     environment:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
       APP_PORT: 3000
     depends_on:
       - rabbitmq
@@ -91,7 +92,7 @@ services:
       - .env
       - apps/stream-manifold/.env
     environment:
-      RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
       APP_PORT: 3000
     profiles:
       - full

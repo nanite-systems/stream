@@ -21,11 +21,13 @@ async function bootstrap() {
   const config = await app.resolve(ConfigService);
 
   app.useLogger(config.get('log.levels'));
+  app.enableShutdownHooks();
+
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
       urls: config.get('rabbitmq.urls'),
-      queue: config.get('rabbitmq.serviceQueueName'),
+      queue: config.get('rabbitmq.apiQueueName'),
       queueOptions: {
         durable: false,
       } satisfies Options.AssertQueue,
@@ -38,8 +40,6 @@ async function bootstrap() {
     logger.error(err, err.stack);
     process.exit(1);
   });
-
-  app.enableShutdownHooks();
 
   await app.startAllMicroservices();
   await app.listen(config.get('app.port'), '0.0.0.0');
