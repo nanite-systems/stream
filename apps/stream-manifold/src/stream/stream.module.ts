@@ -9,7 +9,7 @@ import { provideFactory } from '../utils/provide.helpers';
 import { CensusStreamFactory } from './factories/census-stream.factory';
 import { EnvironmentsModule } from '../environments/environments.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { makeGaugeProvider } from '@willsoto/nestjs-prometheus';
+import { makeCounterProvider } from '@willsoto/nestjs-prometheus';
 import { NssApiModule } from '../nss-api/nss-api.module';
 
 @Module({
@@ -33,10 +33,10 @@ import { NssApiModule } from '../nss-api/nss-api.module';
     BaseStreamFactory,
     CensusStreamFactory,
 
-    makeGaugeProvider({
-      name: 'nss_connections',
-      help: 'active connections to the manifold',
-      labelNames: ['environment'],
+    makeCounterProvider({
+      name: 'nss_connection_change_count',
+      help: 'connects and disconnect counter to different environments',
+      labelNames: ['environment', 'kind'],
     }),
 
     provideFactory(BASE_STREAM, BaseStreamFactory),
