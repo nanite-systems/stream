@@ -3,6 +3,8 @@ name: Release
 on:
   push:
     tags:
+      - 'stream-api@*'
+      - 'stream-auth@*'
       - 'stream-collector@*'
       - 'stream-manifold@*'
 
