@@ -12,9 +12,10 @@
 [![Release](https://github.com/nanite-systems/stream/actions/workflows/build.yml/badge.svg)](https://github.com/nanite-systems/stream/actions/workflows/build.yml)
 [![Linting](https://github.com/nanite-systems/stream/actions/workflows/lint.yml/badge.svg)](https://github.com/nanite-systems/stream/actions/workflows/lint.yml)
 
+[![stream-api](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-api%2Fpackage.json&label=api)](https://github.com/nanite-systems/stream/tree/main/apps/stream-api)
+[![stream-auth](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-auth%2Fpackage.json&label=auth)](https://github.com/nanite-systems/stream/tree/main/apps/stream-auth)
 [![stream-collector](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-collector%2Fpackage.json&label=collector)](https://github.com/nanite-systems/stream/tree/main/apps/stream-collector)
 [![stream-manifold](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-manifold%2Fpackage.json&label=manifold)](https://github.com/nanite-systems/stream/tree/main/apps/stream-manifold)
-[![stream-health](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-health%2Fpackage.json&label=health)](https://github.com/nanite-systems/stream/tree/main/apps/stream-health)
 
 
 </div>
@@ -28,12 +29,13 @@ The service is composed of multiple microservices:
 - Collector service: Maintains connections to the Census ESS instances and collects, deduplicates, and multiplexes the event
   stream;
 - Manifold ESS: The endpoint of the NS ESS that exposes the event stream;
-- Health service: Monitors health of the downstream and upstream ESS.
+- API service: exposes service states and commands like recent characters;
+- Auth service: forward auth service id validator.
 
 ## Requirements
 
 - Node.js v18
-- Pnpm
+- Pnpm v8
 - Docker
 
 ## Installation
