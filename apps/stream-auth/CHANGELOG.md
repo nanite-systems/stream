@@ -1,5 +1,11 @@
 # stream-auth
 
+## 1.0.2
+
+### Patch Changes
+
+- [`74f3ff5`](https://github.com/nanite-systems/stream/commit/74f3ff5ad6b8148284f2677590e8e5e47eda6f02) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - fix generation tags for apps
+
 ## 1.0.1
 
 ### Patch Changes
