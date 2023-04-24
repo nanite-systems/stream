@@ -36,4 +36,16 @@ export const config = () => ({
      */
     apiQueueName: env('RMQ_API_QUEUE_NAME', `nss.api`),
   },
+
+  http: {
+    /**
+     * Header which contains the auth token used for to authenticate the connection
+     */
+    authTokenHeader: env('HTTP_AUTH_TOKEN_HEADER', 'x-auth-token'),
+
+    /**
+     * Whether the connection is behind a proxy like Cloudflare
+     */
+    behindProxy: envBool('HTTP_BEHIND_PROXY', false),
+  },
 });

@@ -17,6 +17,7 @@ import {
   ConnectionAccessorOptions,
   RequestAccessor,
 } from './utils/request.accessor';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -41,11 +42,12 @@ import {
 
     {
       provide: CONNECTION_ACCESSOR_OPTIONS,
-      useFactory: () =>
+      useFactory: (config: ConfigService) =>
         ({
-          tokenHeader: 'x-auth-token',
-          behindProxy: false,
+          tokenHeader: config.get('http.authTokenHeader'),
+          behindProxy: config.get('http.behindProxy'),
         } satisfies ConnectionAccessorOptions),
+      inject: [ConfigService],
     },
     RequestAccessor,
 
