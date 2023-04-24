@@ -1,14 +1,31 @@
 import { Logger, Module, OnModuleDestroy } from '@nestjs/common';
 import { StreamModule } from './stream/stream.module';
 import { HealthModule } from './health/health.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { RabbitMqModule } from '@nss/rabbitmq';
+import { LoggerModule } from '@nss/utils';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    LoggerModule.forRootAsync({
+      global: true,
+      useFactory: (config: ConfigService) => ({
+        level: config.get('log.level'),
+        pretty: config.get('log.pretty'),
+      }),
+      inject: [ConfigService],
+    }),
     PrometheusModule.register(),
+    RabbitMqModule.forRootAsync({
+      global: true,
+      useFactory: (config: ConfigService) => ({
+        urls: config.get('rabbitmq.urls'),
+      }),
+      inject: [ConfigService],
+    }),
     StreamModule,
     HealthModule,
   ],

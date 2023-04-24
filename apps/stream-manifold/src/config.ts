@@ -1,4 +1,4 @@
-import { env, envSplit } from '@nss/utils';
+import { env, envBool, envSplit } from '@nss/utils';
 
 export const config = () => ({
   app: {
@@ -12,7 +12,12 @@ export const config = () => ({
     /**
      * Which level should be logged
      */
-    levels: envSplit('LOG_LEVELS', ['log', 'warn', 'error']),
+    level: env('LOG_LEVEL', 'info'),
+
+    /**
+     * To pretty format the logs
+     */
+    pretty: envBool('LOG_PRETTY', false),
   },
 
   rabbitmq: {

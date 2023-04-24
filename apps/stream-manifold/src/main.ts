@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
 import { WsAdapter } from '@nestjs/platform-ws';
 import {
   FastifyAdapter,
@@ -7,6 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nss/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -14,19 +14,20 @@ async function bootstrap() {
     new FastifyAdapter(),
     {
       bufferLogs: true,
+      autoFlushLogs: false,
     },
   );
 
   const config = await app.resolve(ConfigService);
+  const logger = await app.resolve(Logger);
 
-  app.useLogger(config.get('log.levels'));
-
-  app.useWebSocketAdapter(new WsAdapter(app)).enableShutdownHooks();
+  app.useLogger(logger);
+  app.flushLogs();
+  app.useWebSocketAdapter(new WsAdapter(app));
+  app.enableShutdownHooks();
 
   process.on('uncaughtException', (err) => {
-    const logger = new Logger('App');
-
-    logger.error(err, err.stack);
+    logger.error(err, 'UncaughtException');
     process.exit(1);
   });
 

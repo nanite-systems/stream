@@ -6,13 +6,13 @@
         "engine": "docker",
         "platforms": ["linux/amd64", "linux/arm64"],
         "file": "./Dockerfile",
-        "build-args": ["APP_NAME=stream-collector"],
+        "build-args": ["APP_NAME=stream-auth"],
         "metadata": {
-          "images": ["ghcr.io/nanite-systems/stream-collector"],
+          "images": ["ghcr.io/nanite-systems/stream-auth"],
           "tags": [
-            "type=match,pattern=/stream-collector@(\\d+\\.\\d+\\.\\d+)(?!-)/i,group=1",
-            "type=match,pattern=/stream-collector@(\\d+\\.\\d+)\\.\\d+(?!-)/i,group=1",
-            "type=match,pattern=/stream-collector@(\\d+)\\.\\d+\\.\\d+(?!-)/i,group=1",
+            "type=match,pattern=/stream-auth@(\\d+\\.\\d+\\.\\d+)(?!-)/i,group=1",
+            "type=match,pattern=/stream-auth@(\\d+\\.\\d+)\\.\\d+(?!-)/i,group=1",
+            "type=match,pattern=/stream-auth@(\\d+)\\.\\d+\\.\\d+(?!-)/i,group=1",
             "type=sha"
           ]
         }

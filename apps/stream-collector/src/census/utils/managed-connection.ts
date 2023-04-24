@@ -18,7 +18,7 @@ import {
 import { HeartbeatOffsetAccessorContract } from '../concerns/heartbeat-offset-accessor.contract';
 import { StreamConductorService } from '../services/stream-conductor.service';
 import { DelayPolicyContract } from '../concerns/delay-policy.contract';
-import { Logger } from '@nestjs/common';
+import { Logger } from '@nss/utils';
 
 export enum State {
   DISCONNECTED,
@@ -45,6 +45,7 @@ export class ManagedConnection {
   private readonly stateChange = new Subject<State>();
 
   constructor(
+    private readonly label: string,
     private readonly logger: Logger,
     private readonly connection: ConnectionContract,
     private readonly offsetAccessor: HeartbeatOffsetAccessorContract,
@@ -57,9 +58,11 @@ export class ManagedConnection {
 
       if (this.conductor.claim(this, this.heartbeatOffset)) {
         this.logger.log(
-          `Connection accepted: ${JSON.stringify({
+          `Connection accepted`,
+          {
             heartbeatOffset: this.heartbeatOffset,
-          })}`,
+          },
+          this.label,
         );
         this.accepted = true;
         this.cycleCounter = 0;

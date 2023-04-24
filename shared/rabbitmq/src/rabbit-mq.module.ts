@@ -21,6 +21,7 @@ export interface RabbitMqModuleOptions extends AmqpConnectionManagerOptions {
 
 export interface RabbitMqModuleAsyncOptions
   extends Pick<ModuleMetadata, 'imports' | 'providers'> {
+  global?: boolean;
   useFactory: (
     ...args: any[]
   ) => Promise<RabbitMqModuleOptions> | RabbitMqModuleOptions;
@@ -32,6 +33,7 @@ export class RabbitMqModule implements OnApplicationShutdown {
   static forRootAsync(options: RabbitMqModuleAsyncOptions): DynamicModule {
     return {
       module: RabbitMqModule,
+      global: options.global,
       imports: [TerminusModule, ...(options.imports ?? [])],
       providers: [
         {

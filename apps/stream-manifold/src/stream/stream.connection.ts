@@ -1,7 +1,6 @@
 import {
   Inject,
   Injectable,
-  Logger,
   Scope,
   UseInterceptors,
   UsePipes,
@@ -14,18 +13,19 @@ import { WebSocket } from 'ws';
 import { SubscribeDto } from './dtos/subscribe.dto';
 import { ClearSubscribeDto } from './dtos/clear-subscribe.dto';
 import { first, fromEvent, map, Observable, share, takeUntil } from 'rxjs';
-import { CENSUS_STREAM } from './constants';
+import { CENSUS_STREAM, SESSION_ID } from './constants';
 import { ConnectionContract } from './concers/connection.contract';
 import { EchoDto } from './dtos/echo.dto';
 import { IgnoreErrorInterceptor } from './interceptors/ignore-error.interceptor';
 import { IncomingMessage } from 'http';
-import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
 import { NssApiService } from '../nss-api/services/nss-api.service';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter } from 'prom-client';
+import { RequestAccessor } from './utils/request.accessor';
+import { Logger } from '@nss/utils';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -35,25 +35,29 @@ import { Counter } from 'prom-client';
 )
 @UseInterceptors(new IgnoreErrorInterceptor())
 export class StreamConnection implements ConnectionContract {
-  private static readonly logger = new Logger('StreamConnection');
-
-  private readonly id = randomUUID();
-
   constructor(
+    private readonly logger: Logger,
+    @Inject(SESSION_ID)
+    private readonly sessionId: string,
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
     private readonly api: NssApiService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
     @InjectMetric('nss_connection_change_count')
     private readonly connectionCounter: Counter,
+    private readonly requestAccessor: RequestAccessor,
   ) {}
 
   onConnected(client: WebSocket, request: IncomingMessage): void {
-    StreamConnection.logger.debug(
-      `Client connected ${this.id}: ${JSON.stringify({
+    this.logger.log(
+      `Client connected`,
+      {
+        ipAddresses: this.requestAccessor.getIpAddresses(request),
+        token: this.requestAccessor.getToken(request),
+        sessionId: this.sessionId,
         environment: this.environment.name,
-        headers: request.rawHeaders,
-      })}`,
+      },
+      StreamConnection.name,
     );
 
     this.connectionCounter.inc({
@@ -78,7 +82,11 @@ export class StreamConnection implements ConnectionContract {
       kind: 'disconnect',
     });
 
-    StreamConnection.logger.debug(`Client disconnected ${this.id}`);
+    this.logger.log(
+      `Client disconnected`,
+      { sessionId: this.sessionId },
+      StreamConnection.name,
+    );
   }
 
   private subscribeFromParams(request: IncomingMessage): void {
@@ -141,14 +149,17 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.debug(
-        `Client subscribe ${this.id}: ${JSON.stringify({
+      this.logger.log(
+        `Client subscribe`,
+        {
+          sessionId: this.sessionId,
           eventNames: message.eventNames,
           worlds: message.worlds,
           characters: message.characters,
           logicalAndCharactersWithWorlds:
             message.logicalAndCharactersWithWorlds,
-        })}`,
+        },
+        StreamConnection.name,
       );
 
       this.subscription.merge(message);
@@ -164,9 +175,20 @@ export class StreamConnection implements ConnectionContract {
   clearSubscribe(
     @MessageBody() message: ClearSubscribeDto,
   ): Stream.CensusMessages.Subscription {
-    if (message.all) {
-      StreamConnection.logger.log(`Client unsubscribe all ${this.id}`);
+    this.logger.log(
+      `Client unsubscribe`,
+      {
+        sessionId: this.sessionId,
+        eventNames: message.eventNames,
+        worlds: message.worlds,
+        characters: message.characters,
+        logicalAndCharactersWithWorlds: message.logicalAndCharactersWithWorlds,
+        all: message.all,
+      },
+      StreamConnection.name,
+    );
 
+    if (message.all) {
       this.subscription.clearAll();
     } else if (
       message.characters ||
@@ -174,17 +196,6 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.debug(
-        `Client unsubscribe ${this.id}: ${JSON.stringify({
-          eventNames: message.eventNames,
-          worlds: message.worlds,
-          characters: message.characters,
-          logicalAndCharactersWithWorlds:
-            message.logicalAndCharactersWithWorlds,
-          all: message.all,
-        })}`,
-      );
-
       this.subscription.clear(message);
     }
 

@@ -1,4 +1,4 @@
-import { env, envInt, envSplit } from '@nss/utils';
+import { env, envBool, envInt } from '@nss/utils';
 import { randomUUID } from 'crypto';
 
 export const config = () => ({
@@ -18,7 +18,12 @@ export const config = () => ({
     /**
      * Which level should be logged
      */
-    levels: envSplit('LOG_LEVELS', ['log', 'warn', 'error']),
+    level: env('LOG_LEVEL', 'info'),
+
+    /**
+     * To pretty format the logs
+     */
+    pretty: envBool('LOG_PRETTY', false),
   },
 
   auth: {

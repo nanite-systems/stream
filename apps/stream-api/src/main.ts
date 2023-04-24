@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -8,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { RmqOptions, Transport } from '@nestjs/microservices';
 import { Options } from 'amqplib';
+import { Logger } from '@nss/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -15,12 +15,15 @@ async function bootstrap() {
     new FastifyAdapter(),
     {
       bufferLogs: true,
+      autoFlushLogs: false,
     },
   );
 
   const config = await app.resolve(ConfigService);
+  const logger = await app.resolve(Logger);
 
-  app.useLogger(config.get('log.levels'));
+  app.useLogger(logger);
+  app.flushLogs();
   app.enableShutdownHooks();
 
   app.connectMicroservice({
@@ -34,10 +37,8 @@ async function bootstrap() {
     },
   } satisfies RmqOptions);
 
-  process.on('uncaughtException', async (err) => {
-    const logger = new Logger('UncaughtException');
-
-    logger.error(err, err.stack);
+  process.on('uncaughtException', (err) => {
+    logger.error(err, 'UncaughtException');
     process.exit(1);
   });
 

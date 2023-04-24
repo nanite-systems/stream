@@ -4,8 +4,8 @@ FROM node:18-alpine as workspace
 
 WORKDIR /workspace
 
-RUN npm -g install pnpm
 RUN apk add --no-cache g++ make py3-pip
+RUN npm -g install pnpm@^8.0.0
 
 COPY package.json pnpm-*.yaml .npmrc ./
 

@@ -6,13 +6,13 @@
         "engine": "docker",
         "platforms": ["linux/amd64", "linux/arm64"],
         "file": "./Dockerfile",
-        "build-args": ["APP_NAME=stream-collector"],
+        "build-args": ["APP_NAME=stream-api"],
         "metadata": {
-          "images": ["ghcr.io/nanite-systems/stream-collector"],
+          "images": ["ghcr.io/nanite-systems/stream-api"],
           "tags": [
-            "type=match,pattern=/stream-intelligence@(\\d+\\.\\d+\\.\\d+)(?!-)/i,group=1",
-            "type=match,pattern=/stream-intelligence@(\\d+\\.\\d+)\\.\\d+(?!-)/i,group=1",
-            "type=match,pattern=/stream-intelligence@(\\d+)\\.\\d+\\.\\d+(?!-)/i,group=1",
+            "type=match,pattern=/stream-api@(\\d+\\.\\d+\\.\\d+)(?!-)/i,group=1",
+            "type=match,pattern=/stream-api@(\\d+\\.\\d+)\\.\\d+(?!-)/i,group=1",
+            "type=match,pattern=/stream-api@(\\d+)\\.\\d+\\.\\d+(?!-)/i,group=1",
             "type=sha"
           ]
         }
