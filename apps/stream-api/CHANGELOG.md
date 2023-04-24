@@ -1,4 +1,4 @@
-# @nss/rabbitmq
+# stream-api
 
 ## 1.0.0
 
@@ -6,8 +6,9 @@
 
 - [#9](https://github.com/nanite-systems/stream/pull/9) [`f1188d2`](https://github.com/nanite-systems/stream/commit/f1188d26101dff7781b090d8ba3e397913c14caa) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Improved logging and added metrics to the NSS
 
-## 0.0.2
-
 ### Patch Changes
 
-- [`1b61ff7`](https://github.com/nanite-systems/stream/commit/1b61ff70ca50eb42042f08acabc6aed3738a1f26) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Improvement to rabbitmq and nss service
+- Updated dependencies [[`f1188d2`](https://github.com/nanite-systems/stream/commit/f1188d26101dff7781b090d8ba3e397913c14caa)]:
+  - @nss/ess-concerns@1.0.0
+  - @nss/rabbitmq@1.0.0
+  - @nss/utils@0.1.0
