@@ -1,2 +1,2 @@
-export const STREAMS = Symbol('provide:streams');
-export const MANAGED_STREAMS = Symbol('provide:managed_streams');
+export const CONNECTIONS = Symbol('provide:connections');
+export const MANAGED_CONNECTIONS = Symbol('provide:managed_connections');

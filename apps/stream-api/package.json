@@ -1,0 +1,62 @@
+{
+  "name": "stream-api",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main"
+  },
+  "dependencies": {
+    "@nestjs/common": "^9.4.0",
+    "@nestjs/config": "^2.3.1",
+    "@nestjs/core": "^9.4.0",
+    "@nestjs/microservices": "^9.4.0",
+    "@nestjs/platform-fastify": "^9.4.0",
+    "@nestjs/terminus": "^9.2.2",
+    "@nss/ess-concerns": "workspace:*",
+    "@nss/rabbitmq": "workspace:*",
+    "@nss/utils": "workspace:*",
+    "@willsoto/nestjs-prometheus": "^5.1.1",
+    "amqp-connection-manager": "^4.1.12",
+    "amqplib": "^0.10.3",
+    "cache-manager": "^5.2.0",
+    "class-validator": "^0.14.0",
+    "prom-client": "^14.2.0",
+    "ps2census": "^4.5.5",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^4.4.1",
+    "rxjs": "^7.8.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^6.0.3"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^9.4.1",
+    "@nestjs/schematics": "^9.1.0",
+    "@types/amqplib": "^0.10.1",
+    "@types/node": "^18.16.0",
+    "@types/validator": "^13.7.15",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "source-map-support": "^0.5.21",
+    "ts-loader": "^9.4.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.9.5"
+  }
+}

@@ -91,7 +91,7 @@ export class StreamGateway implements OnGatewayConnection {
     );
 
     if (connection.onConnected)
-      setImmediate(() => {
+      process.nextTick(() => {
         connection.onConnected(client, ...(args as [IncomingMessage]));
       });
 

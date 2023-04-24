@@ -1,2 +1,2 @@
-export const SERVICE_MESSAGE = 'serviceMessage';
-export const SERVICE_STATE_CHANGED = 'serviceStateChanged';
+export const RABBIT_MQ = Symbol('provide:rmq_manager');
+export const RABBIT_MQ_OPTIONS = Symbol('provide:rmq_options');

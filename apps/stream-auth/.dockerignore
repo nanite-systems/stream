@@ -1,0 +1,11 @@
+.env
+.env.*
+node_modules
+Dockerfile
+docker-compose.yml
+.prettierrc
+.gitignore
+.commitlintrc.json
+dist
+.husky
+.github

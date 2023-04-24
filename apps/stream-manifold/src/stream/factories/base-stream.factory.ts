@@ -3,7 +3,7 @@ import { Injectable, Scope } from '@nestjs/common';
 import { FactoryInterface } from '../../utils/factory.interface';
 import { Environment } from '../../environments/utils/environment';
 import { Stream } from 'ps2census';
-import { ServiceState } from '@nss/rabbitmq';
+import { ServiceState } from '@nss/ess-concerns';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BaseStreamFactory implements FactoryInterface<Observable<any>> {

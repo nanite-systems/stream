@@ -1,0 +1,33 @@
+{
+  "name": "@nss/ess-concerns",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "ps2census": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "ps2census": "^4.5.5",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.9.5"
+  }
+}

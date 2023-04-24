@@ -9,10 +9,9 @@ import { Environment } from './utils/environment';
 import { EnvironmentSelectorFactory } from './factories/environment-selector.factory';
 import { EnvironmentAccessor } from './utils/environment.accessor';
 import { EnvironmentName } from '../concerns/environment.type';
-import { NssModule } from '../nss/nss.module';
 
 @Module({
-  imports: [IngressModule, NssModule, ServiceStateModule],
+  imports: [IngressModule, ServiceStateModule],
   providers: [
     EnvironmentFactory,
     EnvironmentService,

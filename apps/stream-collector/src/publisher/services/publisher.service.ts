@@ -1,55 +1,88 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PublisherConfig } from '../publisher.config';
-import { ChannelWrapper } from 'amqp-connection-manager';
-import { COLLECTOR_CHANNEL } from '../constant';
-import { NssStreamMessages, STREAM_MESSAGE_TYPE } from '@nss/rabbitmq';
+import { Inject, Injectable, Optional } from '@nestjs/common';
+import { ServiceState, STREAM_MESSAGE_TYPE } from '@nss/ess-concerns';
+import { EventEntity } from '../../multiplexer/entities/event.entity';
+import { MultiplexerService } from '../../multiplexer/services/multiplexer.service';
+import { Exchange } from '../utils/exchange';
+import { DUPLICATE_EXCHANGE, STREAM_EXCHANGE } from '../constant';
+import { ServiceTrackerService } from '../../service-tracker/services/service-tracker.service';
+
+export const PUBLISHER_OPTIONS = Symbol('provide:publisher_options');
+
+export interface PublisherServiceOptions {
+  exchangeName: string;
+  duplicateExchangeName: string;
+  appId: string;
+}
 
 @Injectable()
 export class PublisherService {
   constructor(
-    @Inject(COLLECTOR_CHANNEL) private readonly channel: ChannelWrapper,
-    private readonly config: PublisherConfig,
-  ) {}
+    private readonly multiplexer: MultiplexerService,
+    private readonly serviceTracker: ServiceTrackerService,
+    @Inject(STREAM_EXCHANGE) private readonly streamExchange: Exchange,
+    @Optional()
+    @Inject(DUPLICATE_EXCHANGE)
+    private readonly duplicateExchange: Exchange,
+    @Inject(PUBLISHER_OPTIONS)
+    private readonly options: PublisherServiceOptions,
+  ) {
+    this.multiplexer
+      .observeStream()
+      .subscribe((event) => this.publishEvent(event));
 
-  async publishServiceState(
-    state: NssStreamMessages.ServiceState,
-  ): Promise<void> {
-    const timestamp = new Date().getTime();
+    this.serviceTracker
+      .observeServiceState()
+      .subscribe((state) => this.publishState(state));
 
-    await this.channel.publish(
-      this.config.exchangeName,
-      `${STREAM_MESSAGE_TYPE.serviceState}.${state.worldId}`,
-      state,
+    if (this.duplicateExchange)
+      this.multiplexer
+        .observeDuplicates()
+        .subscribe((event) => this.publishDuplicate(event));
+  }
+
+  private async publishEvent(event: EventEntity): Promise<void> {
+    const { payload, hash } = event;
+    const { world_id, event_name } = payload;
+
+    await this.streamExchange.publish(
+      `${STREAM_MESSAGE_TYPE.event}.${world_id}.${event_name}`,
+      payload,
       {
-        timestamp,
-        appId: this.config.appId,
-        type: STREAM_MESSAGE_TYPE.serviceState,
+        timestamp: new Date().getTime(),
+        appId: this.options.appId,
+        type: STREAM_MESSAGE_TYPE.event,
         headers: {
-          'x-message-deduplication': `${Math.floor(timestamp / 5000)}:${
-            state.worldId
-          }:${state.online}`,
+          'x-message-deduplication': hash,
         },
       },
     );
   }
 
-  async publishEvent(
-    payload: NssStreamMessages.Event,
-    hash: string,
-  ): Promise<void> {
+  private async publishState(state: ServiceState): Promise<void> {
+    const { worldId } = state;
+
+    await this.duplicateExchange.publish(
+      `${STREAM_MESSAGE_TYPE.serviceState}.${worldId}`,
+      state,
+      {
+        timestamp: new Date().getTime(),
+        appId: this.options.appId,
+        type: STREAM_MESSAGE_TYPE.serviceState,
+      },
+    );
+  }
+
+  private async publishDuplicate(event: EventEntity): Promise<void> {
+    const { payload } = event;
     const { world_id, event_name } = payload;
 
-    await this.channel.publish(
-      this.config.exchangeName,
+    await this.duplicateExchange.publish(
       `${STREAM_MESSAGE_TYPE.event}.${world_id}.${event_name}`,
       payload,
       {
         timestamp: new Date().getTime(),
-        appId: this.config.appId,
+        appId: this.options.appId,
         type: STREAM_MESSAGE_TYPE.event,
-        headers: {
-          'x-message-deduplication': hash,
-        },
       },
     );
   }

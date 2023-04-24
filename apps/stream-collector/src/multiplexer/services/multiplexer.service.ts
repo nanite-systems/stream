@@ -1,35 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { PublisherService } from '../../publisher/services/publisher.service';
-import { Stream } from 'ps2census';
-import { DuplicateFilter } from '../pipes/duplicate.filter';
-import { MultiplexStreamFilter } from '../pipes/multiplex-stream.filter';
+import { Inject, Injectable } from '@nestjs/common';
+import { CONNECTIONS } from '../../census/constants';
+import { ConnectionContract } from '../../census/concerns/connection.contract';
+import { filter, from, map, mergeMap, Observable, share } from 'rxjs';
+import { EventEntity } from '../entities/event.entity';
+import { EventEntityFactory } from '../factories/event-entity.factory';
 
 @Injectable()
 export class MultiplexerService {
+  private readonly streamObservable: Observable<EventEntity>;
+
+  private readonly duplicateObservable: Observable<EventEntity>;
+
   constructor(
-    private readonly publisher: PublisherService,
-    private readonly multiplexer: MultiplexStreamFilter,
-    private readonly duplicateFilter: DuplicateFilter,
-  ) {}
+    @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
+    private readonly eventEntityFactory: EventEntityFactory,
+  ) {
+    const messages = from(connections).pipe(
+      mergeMap((connection) =>
+        connection
+          .observeEventMessage()
+          .pipe(
+            map((payload) =>
+              this.eventEntityFactory.create(payload, connection),
+            ),
+          ),
+      ),
+      share(),
+    );
 
-  handleEvent(event: Stream.PS2Event, id: string): void {
-    const hash = this.hashEvent(event);
+    this.streamObservable = messages.pipe(
+      filter(
+        (event) =>
+          event.sightingMultiplexed == 0 && event.sightingConnection == 0,
+      ),
+      share(),
+    );
 
-    if (!this.multiplexer.filter(hash, id)) return;
-    if (
-      event.event_name != 'GainExperience' &&
-      !this.duplicateFilter.filter(hash)
-    )
-      return;
-
-    void this.publisher.publishEvent(event, hash);
+    this.duplicateObservable = messages.pipe(
+      filter((event) => event.sightingConnection > 0),
+      share(),
+    );
   }
 
-  private hashEvent(event: Stream.PS2Event): string {
-    let hash = '';
+  observeStream(): Observable<EventEntity> {
+    return this.streamObservable;
+  }
 
-    for (const key in event) hash += `:${event[key]}`;
-
-    return hash.slice(1);
+  observeDuplicates(): Observable<EventEntity> {
+    return this.duplicateObservable;
   }
 }

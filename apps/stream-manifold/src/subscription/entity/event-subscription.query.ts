@@ -1,7 +1,7 @@
-import { SubscribeDto } from '../../stream/dtos/subscribe.dto';
 import { Injectable, Scope } from '@nestjs/common';
 import { EventEmitter } from 'eventemitter3';
 import { Stream } from 'ps2census';
+import { EventSubscribeQuery } from '../concerns/event-subscribe-query.type';
 
 type EventSubscriptionQueryEvents = {
   subscribe: () => void;
@@ -59,16 +59,27 @@ export class EventSubscriptionQuery extends EventEmitter<EventSubscriptionQueryE
     return this._logicalAndCharactersWithWorlds;
   }
 
-  merge(subscribe: SubscribeDto): void {
-    subscribe.eventNames?.forEach((event) => {
-      this._events.add(event);
-    });
-    subscribe.worlds?.forEach((world) => {
-      this._worlds.add(world);
-    });
-    subscribe.characters?.forEach((character) => {
-      this._characters.add(character);
-    });
+  merge(subscribe: EventSubscribeQuery): void {
+    if (subscribe.eventNames)
+      for (const event of subscribe.eventNames) {
+        if (this._events.size >= 500) break;
+
+        this._events.add(event);
+      }
+
+    if (subscribe.worlds)
+      for (const world of subscribe.worlds) {
+        if (this._worlds.size >= 500) break;
+
+        this._worlds.add(world);
+      }
+
+    if (subscribe.characters)
+      for (const character of subscribe.characters) {
+        if (this._characters.size >= 500) break;
+
+        this._characters.add(character);
+      }
 
     this._logicalAndCharactersWithWorlds =
       subscribe.logicalAndCharactersWithWorlds ??
@@ -77,7 +88,7 @@ export class EventSubscriptionQuery extends EventEmitter<EventSubscriptionQueryE
     this.emit('subscribe');
   }
 
-  clear(subscribe: SubscribeDto): void {
+  clear(subscribe: EventSubscribeQuery): void {
     subscribe.eventNames?.forEach((event) => {
       this._events.delete(event);
     });

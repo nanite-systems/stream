@@ -1,7 +1,6 @@
 import {
   Inject,
   Injectable,
-  Logger,
   Scope,
   UseInterceptors,
   UsePipes,
@@ -14,17 +13,19 @@ import { WebSocket } from 'ws';
 import { SubscribeDto } from './dtos/subscribe.dto';
 import { ClearSubscribeDto } from './dtos/clear-subscribe.dto';
 import { first, fromEvent, map, Observable, share, takeUntil } from 'rxjs';
-import { CENSUS_STREAM } from './constants';
+import { CENSUS_STREAM, SESSION_ID } from './constants';
 import { ConnectionContract } from './concers/connection.contract';
 import { EchoDto } from './dtos/echo.dto';
 import { IgnoreErrorInterceptor } from './interceptors/ignore-error.interceptor';
 import { IncomingMessage } from 'http';
-import { randomUUID } from 'crypto';
 import { Environment } from '../environments/utils/environment';
 import { EventSubscriptionQuery } from '../subscription/entity/event-subscription.query';
 import { Stream } from 'ps2census';
-import { StreamConfig } from './stream.config';
-import { NSS_COMMANDS } from '@nss/rabbitmq';
+import { NssApiService } from '../nss-api/services/nss-api.service';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Counter } from 'prom-client';
+import { RequestAccessor } from './utils/request.accessor';
+import { Logger } from '@nss/utils';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -34,29 +35,37 @@ import { NSS_COMMANDS } from '@nss/rabbitmq';
 )
 @UseInterceptors(new IgnoreErrorInterceptor())
 export class StreamConnection implements ConnectionContract {
-  private static readonly logger = new Logger('StreamConnection');
-
-  private readonly id = randomUUID();
-
   constructor(
-    private readonly config: StreamConfig,
+    private readonly logger: Logger,
+    @Inject(SESSION_ID)
+    private readonly sessionId: string,
     private readonly subscription: EventSubscriptionQuery,
     private readonly environment: Environment,
+    private readonly api: NssApiService,
     @Inject(CENSUS_STREAM) private readonly stream: Observable<any>,
+    @InjectMetric('nss_connection_change_count')
+    private readonly connectionCounter: Counter,
+    private readonly requestAccessor: RequestAccessor,
   ) {}
 
   onConnected(client: WebSocket, request: IncomingMessage): void {
-    StreamConnection.logger.log(
-      `Client connected ${this.id}: ${JSON.stringify({
+    this.logger.log(
+      `Client connected`,
+      {
+        ipAddresses: this.requestAccessor.getIpAddresses(request),
+        token: this.requestAccessor.getToken(request),
+        sessionId: this.sessionId,
         environment: this.environment.name,
-        headers: Object.fromEntries(
-          this.config.logHeaders.map((header) => [
-            header,
-            request.headers[header],
-          ]),
-        ),
-      })}`,
+      },
+      StreamConnection.name,
     );
+
+    this.connectionCounter.inc({
+      environment: this.environment.name,
+      kind: 'connect',
+    });
+
+    this.subscribeFromParams(request);
 
     const close = fromEvent(client, 'close').pipe(first(), share());
 
@@ -68,7 +77,47 @@ export class StreamConnection implements ConnectionContract {
   onDisconnected(): void {
     this.subscription.clearAll();
 
-    StreamConnection.logger.log(`Client disconnected ${this.id}`);
+    this.connectionCounter.inc({
+      environment: this.environment.name,
+      kind: 'disconnect',
+    });
+
+    this.logger.log(
+      `Client disconnected`,
+      { sessionId: this.sessionId },
+      StreamConnection.name,
+    );
+  }
+
+  private subscribeFromParams(request: IncomingMessage): void {
+    const { searchParams } = new URL(
+      request.url,
+      `http://${request.headers.host}`,
+    );
+
+    this.subscription.merge({
+      eventNames: searchParams
+        .getAll('event_names')
+        .flatMap((v) => v.split(',', 500)),
+      characters: searchParams
+        .getAll('characters')
+        .flatMap((v) => v.split(',', 500)),
+      worlds: searchParams.getAll('worlds').flatMap((v) => v.split(',', 500)),
+      logicalAndCharactersWithWorlds: this.parseLogicalAndCharactersWithWorlds(
+        searchParams.get('logical_and_characters_with_worlds'),
+      ),
+    });
+  }
+
+  private parseLogicalAndCharactersWithWorlds(
+    param?: string,
+  ): boolean | undefined {
+    param = param?.toLowerCase();
+
+    if (['1', 'true'].includes(param)) return true;
+    if (['0', 'false'].includes(param)) return false;
+
+    return undefined;
   }
 
   @SubscribeMessage<EventMessage>({
@@ -100,14 +149,17 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.log(
-        `Client subscribe ${this.id}: ${JSON.stringify({
+      this.logger.log(
+        `Client subscribe`,
+        {
+          sessionId: this.sessionId,
           eventNames: message.eventNames,
           worlds: message.worlds,
           characters: message.characters,
           logicalAndCharactersWithWorlds:
             message.logicalAndCharactersWithWorlds,
-        })}`,
+        },
+        StreamConnection.name,
       );
 
       this.subscription.merge(message);
@@ -123,9 +175,20 @@ export class StreamConnection implements ConnectionContract {
   clearSubscribe(
     @MessageBody() message: ClearSubscribeDto,
   ): Stream.CensusMessages.Subscription {
-    if (message.all) {
-      StreamConnection.logger.log(`Client unsubscribe all ${this.id}`);
+    this.logger.log(
+      `Client unsubscribe`,
+      {
+        sessionId: this.sessionId,
+        eventNames: message.eventNames,
+        worlds: message.worlds,
+        characters: message.characters,
+        logicalAndCharactersWithWorlds: message.logicalAndCharactersWithWorlds,
+        all: message.all,
+      },
+      StreamConnection.name,
+    );
 
+    if (message.all) {
       this.subscription.clearAll();
     } else if (
       message.characters ||
@@ -133,17 +196,6 @@ export class StreamConnection implements ConnectionContract {
       message.eventNames ||
       message.logicalAndCharactersWithWorlds != undefined
     ) {
-      StreamConnection.logger.log(
-        `Client unsubscribe ${this.id}: ${JSON.stringify({
-          eventNames: message.eventNames,
-          worlds: message.worlds,
-          characters: message.characters,
-          logicalAndCharactersWithWorlds:
-            message.logicalAndCharactersWithWorlds,
-          all: message.all,
-        })}`,
-      );
-
       this.subscription.clear(message);
     }
 
@@ -155,18 +207,16 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIds',
   })
   recentCharacterIds(): Observable<Stream.CensusMessages.ServiceMessage> {
-    return this.environment.nssClient
-      .send(NSS_COMMANDS.recentCharacters, {})
-      .pipe(
-        map((characters) => ({
-          service: 'event',
-          type: 'serviceMessage',
-          payload: {
-            recent_character_id_count: characters.length,
-            recent_character_id_list: characters,
-          },
-        })),
-      );
+    return this.api.recentCharacters(this.environment.name).pipe(
+      map((characters) => ({
+        service: 'event',
+        type: 'serviceMessage',
+        payload: {
+          recent_character_id_count: characters.length,
+          recent_character_id_list: characters,
+        },
+      })),
+    );
   }
 
   @SubscribeMessage<EventMessage>({
@@ -174,16 +224,14 @@ export class StreamConnection implements ConnectionContract {
     action: 'recentCharacterIdsCount',
   })
   recentCharacterIdsCount(): Observable<Stream.CensusMessages.ServiceMessage> {
-    return this.environment.nssClient
-      .send(NSS_COMMANDS.recentCharacterCount, {})
-      .pipe(
-        map((recent_character_id_count) => ({
-          service: 'event',
-          type: 'serviceMessage',
-          payload: {
-            recent_character_id_count,
-          },
-        })),
-      );
+    return this.api.recentCharacterCount(this.environment.name).pipe(
+      map((recent_character_id_count) => ({
+        service: 'event',
+        type: 'serviceMessage',
+        payload: {
+          recent_character_id_count,
+        },
+      })),
+    );
   }
 }
