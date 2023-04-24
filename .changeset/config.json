@@ -6,6 +6,10 @@
       "repo": "nanite-systems/stream"
     }
   ],
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  },
   "commit": false,
   "access": "public",
   "baseBranch": "main",
