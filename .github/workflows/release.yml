@@ -12,6 +12,7 @@ jobs:
     name: Release
     if: github.repository == 'nanite-systems/stream'
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v3
 
@@ -32,4 +33,4 @@ jobs:
           publish: pnpm changeset publish
           commit: 'chore: release'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
