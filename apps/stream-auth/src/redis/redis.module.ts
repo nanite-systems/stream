@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { REDIS_OPTIONS } from './constants';
 
 @Module({
-  imports: [TerminusModule],
+  imports: [TerminusModule.forRoot({ logger: false })],
   providers: [
     RedisIndicator,
 

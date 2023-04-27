@@ -4,7 +4,7 @@ import { RedisModule } from '../redis/redis.module';
 import { HealthController } from './health.controller';
 
 @Module({
-  imports: [TerminusModule, RedisModule],
+  imports: [TerminusModule.forRoot({ logger: false }), RedisModule],
   controllers: [HealthController],
 })
 export class HealthModule {}

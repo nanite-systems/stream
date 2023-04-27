@@ -1,8 +1,10 @@
-import { LoggerService } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import winston from 'winston';
+import { BASE_LOGGER } from './constants';
 
+@Injectable()
 export class Logger implements LoggerService {
-  constructor(private readonly logger: winston.Logger) {
+  constructor(@Inject(BASE_LOGGER) private readonly logger: winston.Logger) {
     this.verbose = this.createLogFunc('verbose');
     this.debug = this.createLogFunc('debug');
     this.log = this.createLogFunc('info');

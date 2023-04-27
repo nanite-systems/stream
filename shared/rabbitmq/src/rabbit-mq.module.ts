@@ -13,7 +13,6 @@ import {
   connect,
   ConnectionUrl,
 } from 'amqp-connection-manager';
-import { TerminusModule } from '@nestjs/terminus';
 
 export interface RabbitMqModuleOptions extends AmqpConnectionManagerOptions {
   urls: ConnectionUrl | ConnectionUrl[];
@@ -34,7 +33,7 @@ export class RabbitMqModule implements OnApplicationShutdown {
     return {
       module: RabbitMqModule,
       global: options.global,
-      imports: [TerminusModule, ...(options.imports ?? [])],
+      imports: options.imports,
       providers: [
         {
           provide: RABBIT_MQ_OPTIONS,

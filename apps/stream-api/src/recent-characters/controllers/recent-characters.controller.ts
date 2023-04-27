@@ -1,6 +1,4 @@
 import {
-  CacheInterceptor,
-  CacheKey,
   CacheTTL,
   Controller,
   ParseEnumPipe,
@@ -14,6 +12,7 @@ import {
   RecentCharactersResponse,
 } from '@nss/ess-concerns';
 import { Environment } from '../concerns/environments.enum';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @Controller()
 @UseInterceptors(CacheInterceptor)
