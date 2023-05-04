@@ -1,29 +1,43 @@
 import { Module } from '@nestjs/common';
-import { RedisModule } from '../redis/redis.module';
 import {
-  AUTH_SERVICE_OPTIONS,
-  AuthService,
-  AuthServiceOptions,
-} from './services/auth.service';
-import { AuthController } from './controllers/auth.controller';
+  TOKEN_EXCHANGE_SERVICE_OPTIONS,
+  TokenExchangeService,
+  TokenExchangeServiceOptions,
+} from './services/token-exchange.service';
+import {
+  AUTH_CONTROLLER_OPTIONS,
+  AuthController,
+  AuthControllerOptions,
+} from './controllers/auth.controller';
 import { Axios } from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { CENSUS_API } from './constants';
+import { ServiceIdValidationService } from './services/service-id-validation.service';
 
 @Module({
-  imports: [RedisModule],
   providers: [
-    AuthService,
+    TokenExchangeService,
+    ServiceIdValidationService,
 
     {
-      provide: AUTH_SERVICE_OPTIONS,
+      provide: TOKEN_EXCHANGE_SERVICE_OPTIONS,
       useFactory: (config: ConfigService) =>
         ({
           salt: config.getOrThrow('auth.salt'),
-          ttl: config.get('auth.ttl'),
-        } satisfies AuthServiceOptions),
+        } satisfies TokenExchangeServiceOptions),
+      inject: [ConfigService],
     },
     {
-      provide: Axios,
+      provide: AUTH_CONTROLLER_OPTIONS,
+      useFactory: (config: ConfigService) =>
+        ({
+          cacheTtl: config.get('auth.ttl'),
+        } satisfies AuthControllerOptions),
+      inject: [ConfigService],
+    },
+
+    {
+      provide: CENSUS_API,
       useFactory: () =>
         new Axios({
           baseURL: 'https://census.daybreakgames.com',

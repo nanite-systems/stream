@@ -9,7 +9,11 @@ import { LoggerModule } from '@nss/utils';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      expandVariables: true,
+      load: [config],
+    }),
     LoggerModule.forRootAsync({
       global: true,
       useFactory: (config: ConfigService) => ({

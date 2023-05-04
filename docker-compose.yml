@@ -97,6 +97,25 @@ services:
     profiles:
       - full
 
+  auth:
+    image: ghcr.io/nanite-systems/stream-auth
+    build:
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: stream-auth
+    restart: unless-stopped
+    networks:
+      - ns-stream
+    ports:
+      - '${AUTH_PORT:-3030}:3000'
+    env_file:
+      - .env
+      - apps/stream-auth/.env
+    environment:
+      APP_PORT: 3000
+    profiles:
+      - full
+
 networks:
   ns-stream:
     name: 'ns-stream'

@@ -1,5 +1,6 @@
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
-import { createLogger, format, transports } from 'winston';
+import { createLogger, transports } from 'winston';
+import { format } from 'logform';
 import { Logger } from './logger';
 import { BASE_LOGGER, LOGGER_OPTIONS } from './constants';
 import { prettyPrint } from './utils/pretty-print';
