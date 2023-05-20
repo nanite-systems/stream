@@ -4,7 +4,7 @@ import { HealthController } from './health.controller';
 import { CensusModule } from '../census/census.module';
 
 @Module({
-  imports: [TerminusModule, CensusModule],
+  imports: [TerminusModule.forRoot({ logger: false }), CensusModule],
   controllers: [HealthController],
 })
 export class HealthModule {}

@@ -41,3 +41,5 @@ jobs:
         run: pnpm nx container ${GITHUB_REF_NAME%@*} --push
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_CACHE_TO: type=gha,mode=max
+          INPUT_CACHE_FROM: type=gha

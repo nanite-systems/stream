@@ -4,5 +4,6 @@ export const HEARTBEAT_OFFSET_ACCESSOR = Symbol(
 
 export interface HeartbeatOffsetAccessorContract {
   timestampToOffset(ts: number): number;
+
   deltaOffsets(a: number, b: number): number;
 }

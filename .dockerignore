@@ -1,6 +1,6 @@
-.env
-.env.*
-node_modules
+**/.env
+**/.env.*
+**/node_modules
 Dockerfile
-dist
-.nx*
+**/dist
+**/.nx*

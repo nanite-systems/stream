@@ -1,5 +1,6 @@
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
-import winston, { createLogger, format, transports } from 'winston';
+import { createLogger, transports } from 'winston';
+import { format } from 'logform';
 import { Logger } from './logger';
 import { BASE_LOGGER, LOGGER_OPTIONS } from './constants';
 import { prettyPrint } from './utils/pretty-print';
@@ -54,11 +55,7 @@ export class LoggerModule {
             }),
           inject: [LOGGER_OPTIONS],
         },
-        {
-          provide: Logger,
-          useFactory: (logger: winston.Logger) => new Logger(logger),
-          inject: [BASE_LOGGER],
-        },
+        Logger,
       ],
       exports: [Logger],
     };

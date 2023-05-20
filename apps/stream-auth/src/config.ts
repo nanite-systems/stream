@@ -35,18 +35,6 @@ export const config = () => ({
     /**
      * Time that a validated service id is cached in seconds
      */
-    ttl: envInt('AUTH_EXPIRE', 10, 3 * 24 * 3600),
-  },
-
-  redis: {
-    host: env('REDIS_HOST', '127.0.0.1'),
-
-    port: envInt('REDIS_PORT', 10, 6379),
-
-    username: env('REDIS_USER'),
-
-    password: env('REDIS_PASS'),
-
-    db: envInt('REDIS_DB', 10),
+    ttl: envInt('AUTH_TTL', 10, 3 * 24 * 3600) * 1000,
   },
 });

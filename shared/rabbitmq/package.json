@@ -14,33 +14,29 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^9.2.1",
-    "@nestjs/microservices": "^9.2.1",
-    "@nestjs/terminus": "^9.1.4",
     "amqp-connection-manager": "^4.1.9",
     "amqplib": "^0.10.3",
     "ps2census": "^4.5.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "@nestjs/common": "^9.4.0",
-    "@nestjs/microservices": "^9.4.0",
-    "@nestjs/terminus": "^9.2.2",
+    "@nestjs/common": "^9.4.1",
     "@types/amqplib": "^0.10.1",
-    "@types/node": "^18.16.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
-    "amqp-connection-manager": "^4.1.12",
+    "@types/node": "^18.16.13",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "amqp-connection-manager": "^4.1.13",
     "amqplib": "^0.10.3",
-    "eslint": "^8.39.0",
+    "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8",
     "ps2census": "^4.5.5",
     "rimraf": "^4.4.1",
-    "rxjs": "^7.8.0",
+    "rxjs": "^7.8.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.4"
   }
 }

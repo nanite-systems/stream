@@ -5,11 +5,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { LoggerModule } from '@nss/utils';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      expandVariables: true,
       load: [config],
     }),
     LoggerModule.forRootAsync({
@@ -21,6 +23,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
       inject: [ConfigService],
     }),
     PrometheusModule.register(),
+    CacheModule.register({ isGlobal: true }),
     AuthModule,
     HealthModule,
   ],
