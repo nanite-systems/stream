@@ -1,5 +1,11 @@
 # stream-collector
 
+## 3.0.3
+
+### Patch Changes
+
+- [#17](https://github.com/nanite-systems/stream/pull/17) [`90cf083`](https://github.com/nanite-systems/stream/commit/90cf083b8db60cbd4b973a19ef95be9e821e7864) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Chore/prep release
+
 ## 3.0.2
 
 ### Patch Changes
