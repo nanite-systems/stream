@@ -87,7 +87,7 @@ export const config = () => ({
     /**
      * The minimum absolute difference that heartbeats of connections should have
      */
-    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 1000),
+    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 600),
 
     /**
      * List of worlds to subscribe to delimited by commas
