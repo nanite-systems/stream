@@ -12,9 +12,9 @@ export class ConnectionFactory {
     private readonly config: ConfigService,
   ) {}
 
-  createConnection(): ConnectionContract {
+  createConnection(serviceId: string): ConnectionContract {
     return new EssAdapter(
-      this.createStream(),
+      this.createStream(serviceId),
       {
         eventNames: this.config.get('ess.events'),
         worlds: this.config.get('ess.worlds'),
@@ -25,10 +25,7 @@ export class ConnectionFactory {
     );
   }
 
-  private createStream(): Stream.Client {
-    return new Stream.Client(
-      this.config.get('ess.serviceId'),
-      this.config.get('ess.environment'),
-    );
+  private createStream(serviceId: string): Stream.Client {
+    return new Stream.Client(serviceId, this.config.get('ess.environment'));
   }
 }

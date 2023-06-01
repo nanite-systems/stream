@@ -29,8 +29,6 @@ import {
 } from '@willsoto/nestjs-prometheus';
 import { CensusMetricsService } from './services/census-metrics.service';
 
-const range = (n: number) => Array.from(Array(n).keys());
-
 @Module({
   providers: [
     ConnectionFactory,
@@ -85,9 +83,9 @@ const range = (n: number) => Array.from(Array(n).keys());
       provide: CONNECTIONS,
       useFactory: (factory: ConnectionFactory, config: ConfigService) =>
         Object.freeze(
-          range(config.get('ess.replication')).map(() =>
-            factory.createConnection(),
-          ),
+          config
+            .get('ess.serviceIds')
+            .map((serviceId) => factory.createConnection(serviceId)),
         ),
       inject: [ConnectionFactory, ConfigService],
     },
