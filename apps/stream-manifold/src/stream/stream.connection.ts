@@ -26,6 +26,7 @@ import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter } from 'prom-client';
 import { RequestAccessor } from './utils/request.accessor';
 import { Logger } from '@nss/utils';
+import { CommandCountInterceptor } from './interceptors/command-count.interceptor';
 
 @Injectable({ scope: Scope.REQUEST })
 @UsePipes(
@@ -33,7 +34,7 @@ import { Logger } from '@nss/utils';
     transform: true,
   }),
 )
-@UseInterceptors(new IgnoreErrorInterceptor())
+@UseInterceptors(IgnoreErrorInterceptor, CommandCountInterceptor)
 export class StreamConnection implements ConnectionContract {
   constructor(
     private readonly logger: Logger,
@@ -62,7 +63,7 @@ export class StreamConnection implements ConnectionContract {
 
     this.connectionCounter.inc({
       environment: this.environment.name,
-      kind: 'connect',
+      type: 'Connect',
     });
 
     this.subscribeFromParams(request);
@@ -79,7 +80,7 @@ export class StreamConnection implements ConnectionContract {
 
     this.connectionCounter.inc({
       environment: this.environment.name,
-      kind: 'disconnect',
+      type: 'Disconnect',
     });
 
     this.logger.log(

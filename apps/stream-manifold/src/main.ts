@@ -28,6 +28,7 @@ async function bootstrap() {
 
   process.on('uncaughtException', (err) => {
     logger.error(err, 'UncaughtException');
+    app.flushLogs();
     process.exit(1);
   });
 

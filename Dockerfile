@@ -13,7 +13,7 @@ RUN pnpm fetch
 
 COPY . .
 
-RUN pnpm i --frozen-lockfile --offline --silent
+RUN pnpm -r i --frozen-lockfile --offline --silent
 
 ARG APP_NAME
 

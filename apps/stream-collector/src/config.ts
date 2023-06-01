@@ -47,7 +47,7 @@ export const config = () => ({
     /**
      * Census Service ID for authentication
      */
-    serviceId: env('ESS_SERVICE_ID'),
+    serviceIds: envSplit('ESS_SERVICE_IDS'),
 
     /**
      * The environment to collect from
@@ -58,11 +58,6 @@ export const config = () => ({
      * The heartbeat interval
      */
     heartbeatInterval: envInt('ESS_HEARTBEAT_INTERVAL', 10, 30) * 1000,
-
-    /**
-     * How many connection to run
-     */
-    replication: envInt('ESS_CONNECTION_REPLICATION', 10, 4),
 
     /**
      * How many seconds to wait before reconnecting
@@ -87,7 +82,7 @@ export const config = () => ({
     /**
      * The minimum absolute difference that heartbeats of connections should have
      */
-    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 1000),
+    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 600),
 
     /**
      * List of worlds to subscribe to delimited by commas

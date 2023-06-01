@@ -70,10 +70,12 @@ export class ManagedConnection {
         this.stateChange.next(State.ACCEPTED);
       } else {
         this.logger.verbose(
-          `Cycling connection: ${JSON.stringify({
+          `Cycling connection`,
+          {
             cycle: ++this.cycleCounter,
             heartbeatOffset: this.heartbeatOffset,
-          })}`,
+          },
+          this.label,
         );
 
         timer(this.delayPolicy.next(true, 0, this.cycleCounter))
@@ -92,7 +94,7 @@ export class ManagedConnection {
       .observeDisconnect()
       .pipe(filter(() => this.accepted))
       .subscribe((details) => {
-        this.logger.log(`Disconnected: ${JSON.stringify(details)}`);
+        this.logger.log(`Disconnected`, details, this.label);
 
         this.stateChange.next(State.DISCONNECTED);
       });
