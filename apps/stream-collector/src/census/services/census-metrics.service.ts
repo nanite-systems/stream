@@ -35,24 +35,26 @@ export class CensusMetricsService {
         ),
       )
       .subscribe(({ connection, state, prev, i }) => {
+        const id = i + 1;
+
         this.states.set(i, state);
 
         if (connection.connectedAt)
           this.connectionStartGauge.set(
-            { connection: i },
+            { connection: id },
             connection.connectedAt,
           );
-        else this.connectionStartGauge.remove({ connection: i });
+        else this.connectionStartGauge.remove({ connection: id });
 
         if (connection.heartbeatOffset)
           this.heartbeatOffsetGauge.set(
-            { connection: i },
+            { connection: id },
             connection.heartbeatOffset,
           );
-        else this.heartbeatOffsetGauge.remove({ connection: i });
+        else this.heartbeatOffsetGauge.remove({ connection: id });
 
         this.stateCounter.inc({
-          connection: i,
+          connection: id,
           type: State[state],
         });
         this.stateGauge.inc({ type: State[state] });
