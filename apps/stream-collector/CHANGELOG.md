@@ -1,5 +1,23 @@
 # stream-collector
 
+## 4.0.0
+
+### Major Changes
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Allow use of multiple service ids for replication
+
+### Minor Changes
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Modified kind label to type as it was more appropriate
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Fix connection state counter not recording connection id
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Connection metrics start at 1 instead of 0
+
+### Patch Changes
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Fix connection logging to expose metadata and label properly
+
 ## 3.0.3
 
 ### Patch Changes

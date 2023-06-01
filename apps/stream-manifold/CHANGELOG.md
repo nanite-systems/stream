@@ -1,5 +1,17 @@
 # stream-manifold
 
+## 3.1.0
+
+### Minor Changes
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Modified kind label to type as it was more appropriate
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Added new metrics for commands and messages send
+
+### Patch Changes
+
+- [#21](https://github.com/nanite-systems/stream/pull/21) [`6113726`](https://github.com/nanite-systems/stream/commit/6113726b96994eacc36ea5d7fe586233715a9e5b) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Fix error not logging in certain cases
+
 ## 3.0.3
 
 ### Patch Changes
