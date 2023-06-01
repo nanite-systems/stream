@@ -53,11 +53,10 @@ export class CensusMetricsService {
 
         this.stateCounter.inc({
           connection: i,
-          kind: State[state].toLocaleLowerCase(),
+          type: State[state],
         });
-        this.stateGauge.inc({ kind: State[state].toLocaleLowerCase() });
-        if (prev != undefined)
-          this.stateGauge.dec({ kind: State[prev].toLocaleLowerCase() });
+        this.stateGauge.inc({ type: State[state] });
+        if (prev != undefined) this.stateGauge.dec({ type: State[prev] });
       });
   }
 }

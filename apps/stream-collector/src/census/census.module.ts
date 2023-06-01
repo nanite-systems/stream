@@ -116,12 +116,12 @@ const range = (n: number) => Array.from(Array(n).keys());
     makeCounterProvider({
       name: 'ess_connection_state_count',
       help: 'Counter that tracks disconnects',
-      labelNames: ['connection', 'kind'],
+      labelNames: ['connection', 'type'],
     }),
     makeGaugeProvider({
       name: 'ess_connection_state_total',
       help: 'Current number of connections in a certain state',
-      labelNames: ['kind'],
+      labelNames: ['type'],
     }),
   ],
   exports: [CONNECTIONS, StreamIndicator],

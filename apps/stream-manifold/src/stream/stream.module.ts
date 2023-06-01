@@ -18,6 +18,7 @@ import {
   RequestAccessor,
 } from './utils/request.accessor';
 import { ConfigService } from '@nestjs/config';
+import { CommandCountInterceptor } from './interceptors/command-count.interceptor';
 
 @Module({
   imports: [
@@ -51,6 +52,8 @@ import { ConfigService } from '@nestjs/config';
     },
     RequestAccessor,
 
+    CommandCountInterceptor,
+
     StreamGateway,
     StreamConnection,
 
@@ -60,7 +63,17 @@ import { ConfigService } from '@nestjs/config';
     makeCounterProvider({
       name: 'nss_connection_change_count',
       help: 'connects and disconnect counter to different environments',
-      labelNames: ['environment', 'kind'],
+      labelNames: ['environment', 'type'],
+    }),
+    makeCounterProvider({
+      name: 'nss_command_count',
+      help: 'commands received by the manifold',
+      labelNames: ['command', 'environment'],
+    }),
+    makeCounterProvider({
+      name: 'nss_message_count',
+      help: 'messages send out by the manifold',
+      labelNames: ['world', 'event'],
     }),
 
     provideFactory(BASE_STREAM, BaseStreamFactory),
