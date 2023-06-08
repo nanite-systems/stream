@@ -15,15 +15,17 @@ export class StreamMetricService {
     @InjectMetric('ess_duplicate_count')
     private readonly duplicateCounter: Counter,
   ) {
-    this.connections.forEach((connection, id) =>
+    this.connections.forEach((connection, i) => {
+      const id = i + 1;
+
       connection.observeEventMessage().subscribe((event) =>
         this.messageCounter.inc({
           connection: id,
           event: event.event_name,
           world: event.world_id,
         }),
-      ),
-    );
+      );
+    });
 
     this.multiplexer.observeStream().subscribe((event) =>
       this.messageCounter.inc({
@@ -35,7 +37,7 @@ export class StreamMetricService {
 
     this.multiplexer.observeDuplicates().subscribe((event) =>
       this.duplicateCounter.inc({
-        connection: this.connections.indexOf(event.connection),
+        connection: this.connections.indexOf(event.connection) + 1,
         event: event.payload.event_name,
         world: event.payload.world_id,
       }),
