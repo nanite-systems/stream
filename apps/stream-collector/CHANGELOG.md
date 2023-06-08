@@ -1,5 +1,11 @@
 # stream-collector
 
+## 4.0.1
+
+### Patch Changes
+
+- [#23](https://github.com/nanite-systems/stream/pull/23) [`081473b`](https://github.com/nanite-systems/stream/commit/081473bd45d2334464ffe065fe41652d1c1bf4f8) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - fix connection ids in metrics of messages being off by 1
+
 ## 4.0.0
 
 ### Major Changes
