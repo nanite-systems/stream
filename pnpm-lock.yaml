@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -2621,15 +2625,15 @@ packages:
       '@commitlint/execute-rule': registry.npmjs.org/@commitlint/execute-rule@17.4.0
       '@commitlint/resolve-extends': registry.npmjs.org/@commitlint/resolve-extends@17.4.4
       '@commitlint/types': registry.npmjs.org/@commitlint/types@17.4.4
-      '@types/node': registry.npmjs.org/@types/node@20.2.1
+      '@types/node': registry.npmjs.org/@types/node@18.16.13
       chalk: registry.npmjs.org/chalk@4.1.2
       cosmiconfig: registry.npmjs.org/cosmiconfig@8.1.3
-      cosmiconfig-typescript-loader: registry.npmjs.org/cosmiconfig-typescript-loader@4.3.0(@types/node@20.2.1)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4)
+      cosmiconfig-typescript-loader: registry.npmjs.org/cosmiconfig-typescript-loader@4.3.0(@types/node@18.16.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4)
       lodash.isplainobject: registry.npmjs.org/lodash.isplainobject@4.0.6
       lodash.merge: registry.npmjs.org/lodash.merge@4.6.2
       lodash.uniq: registry.npmjs.org/lodash.uniq@4.5.0
       resolve-from: registry.npmjs.org/resolve-from@5.0.0
-      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.2.1)(typescript@5.0.4)
+      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@18.16.13)(typescript@5.0.4)
       typescript: registry.npmjs.org/typescript@5.0.4
     transitivePeerDependencies:
       - '@swc/core'
@@ -4168,12 +4172,6 @@ packages:
     version: 18.16.13
     dev: true
 
-  registry.npmjs.org/@types/node@20.2.1:
-    resolution: {integrity: sha512-DqJociPbZP1lbZ5SQPk4oag6W7AyaGMO6gSfRwq3PWl4PXTwJpRQJhDq4W0kzrg3w6tJ1SwlvGZ5uKFHY13LIg==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.2.1.tgz}
-    name: '@types/node'
-    version: 20.2.1
-    dev: true
-
   registry.npmjs.org/@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz}
     name: '@types/normalize-package-data'
@@ -5582,7 +5580,7 @@ packages:
     name: core-util-is
     version: 1.0.3
 
-  registry.npmjs.org/cosmiconfig-typescript-loader@4.3.0(@types/node@20.2.1)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4):
+  registry.npmjs.org/cosmiconfig-typescript-loader@4.3.0(@types/node@18.16.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4):
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/cosmiconfig-typescript-loader/-/cosmiconfig-typescript-loader-4.3.0.tgz}
     id: registry.npmjs.org/cosmiconfig-typescript-loader/4.3.0
     name: cosmiconfig-typescript-loader
@@ -5594,9 +5592,9 @@ packages:
       ts-node: '>=10'
       typescript: '>=3'
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.2.1
+      '@types/node': registry.npmjs.org/@types/node@18.16.13
       cosmiconfig: registry.npmjs.org/cosmiconfig@8.1.3
-      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.2.1)(typescript@5.0.4)
+      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@18.16.13)(typescript@5.0.4)
       typescript: registry.npmjs.org/typescript@5.0.4
     dev: true
 
@@ -9792,40 +9790,6 @@ packages:
       '@tsconfig/node14': registry.npmjs.org/@tsconfig/node14@1.0.3
       '@tsconfig/node16': registry.npmjs.org/@tsconfig/node16@1.0.4
       '@types/node': registry.npmjs.org/@types/node@18.16.13
-      acorn: registry.npmjs.org/acorn@8.8.2
-      acorn-walk: registry.npmjs.org/acorn-walk@8.2.0
-      arg: registry.npmjs.org/arg@4.1.3
-      create-require: registry.npmjs.org/create-require@1.1.1
-      diff: registry.npmjs.org/diff@4.0.2
-      make-error: registry.npmjs.org/make-error@1.3.6
-      typescript: registry.npmjs.org/typescript@5.0.4
-      v8-compile-cache-lib: registry.npmjs.org/v8-compile-cache-lib@3.0.1
-      yn: registry.npmjs.org/yn@3.1.1
-    dev: true
-
-  registry.npmjs.org/ts-node@10.9.1(@types/node@20.2.1)(typescript@5.0.4):
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/ts-node/-/ts-node-10.9.1.tgz}
-    id: registry.npmjs.org/ts-node/10.9.1
-    name: ts-node
-    version: 10.9.1
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': registry.npmjs.org/@cspotcode/source-map-support@0.8.1
-      '@tsconfig/node10': registry.npmjs.org/@tsconfig/node10@1.0.9
-      '@tsconfig/node12': registry.npmjs.org/@tsconfig/node12@1.0.11
-      '@tsconfig/node14': registry.npmjs.org/@tsconfig/node14@1.0.3
-      '@tsconfig/node16': registry.npmjs.org/@tsconfig/node16@1.0.4
-      '@types/node': registry.npmjs.org/@types/node@20.2.1
       acorn: registry.npmjs.org/acorn@8.8.2
       acorn-walk: registry.npmjs.org/acorn-walk@8.2.0
       arg: registry.npmjs.org/arg@4.1.3
