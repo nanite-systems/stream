@@ -3,7 +3,7 @@ import { CONNECTIONS } from '../../census/constants';
 import { ConnectionContract } from '../../census/concerns/connection.contract';
 import { MultiplexerService } from '../../multiplexer/services/multiplexer.service';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { Counter, Histogram } from 'prom-client';
+import { Counter, Summary } from 'prom-client';
 
 @Injectable()
 export class StreamMetricService {
@@ -15,7 +15,7 @@ export class StreamMetricService {
     @InjectMetric('ess_duplicate_count')
     private readonly duplicateCounter: Counter,
     @InjectMetric('ess_message_latency_seconds')
-    private readonly latencyHistogram: Histogram,
+    private readonly latencyHistogram: Summary,
   ) {
     this.connections.forEach((connection, i) => {
       const id = i + 1;

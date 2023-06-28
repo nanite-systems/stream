@@ -8,6 +8,8 @@ import {
 import { DistributorService } from '../services/distributor.service';
 import { ConsumeMessage } from 'amqplib';
 import { ConfigService } from '@nestjs/config';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Histogram } from 'prom-client';
 
 @Injectable()
 export class StreamChannelFactory {
@@ -15,6 +17,8 @@ export class StreamChannelFactory {
     @Inject(RABBIT_MQ) private readonly rabbit: AmqpConnectionManager,
     private readonly distributor: DistributorService,
     private readonly config: ConfigService,
+    @InjectMetric('nss_message_latency_milliseconds')
+    private readonly messageLatency: Histogram,
   ) {}
 
   create(): ChannelWrapper {
@@ -38,6 +42,10 @@ export class StreamChannelFactory {
   }
 
   private handleMessage(message: ConsumeMessage, channel: Channel): void {
+    this.messageLatency.observe(
+      new Date().getTime() - message.properties.timestamp,
+    );
+
     try {
       const payload = JSON.parse(message.content.toString());
 

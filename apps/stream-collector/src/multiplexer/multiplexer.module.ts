@@ -4,7 +4,7 @@ import { EventEntityFactory } from './factories/event-entity.factory';
 import { CensusModule } from '../census/census.module';
 import {
   makeCounterProvider,
-  makeHistogramProvider,
+  makeSummaryProvider,
 } from '@willsoto/nestjs-prometheus';
 import { StreamMetricService } from './services/stream-metric.service';
 
@@ -25,11 +25,13 @@ import { StreamMetricService } from './services/stream-metric.service';
       help: 'Duplicate messages received from ess',
       labelNames: ['connection', 'event', 'world'],
     }),
-    makeHistogramProvider({
+    makeSummaryProvider({
       name: 'ess_message_latency_seconds',
       help: 'Latency in seconds of messages received based on timestamp in the message',
       labelNames: ['world', 'connection'],
-      buckets: [0, 1, 2, 5, 10, 30, 60],
+      percentiles: [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99],
+      maxAgeSeconds: 600,
+      ageBuckets: 5,
     }),
   ],
   exports: [MultiplexerService],
