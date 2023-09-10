@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:18-alpine as workspace
+FROM node:20-alpine as workspace
 
 WORKDIR /workspace
 
@@ -20,7 +20,7 @@ ARG APP_NAME
 RUN pnpm nx build $APP_NAME
 RUN pnpm -F $APP_NAME --prod deploy /app
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 

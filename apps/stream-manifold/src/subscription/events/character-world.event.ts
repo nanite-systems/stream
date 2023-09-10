@@ -18,7 +18,7 @@ export class CharacterWorldEventSubscription<
 
   constructor(
     readonly eventName: EventName<Event>,
-    readonly world,
+    readonly world: string,
     query: EventSubscriptionQuery,
     stream: Observable<Event>,
     callback: (message: Event) => void,

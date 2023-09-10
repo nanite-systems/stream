@@ -7,6 +7,11 @@ import {
   makeSummaryProvider,
 } from '@willsoto/nestjs-prometheus';
 import { StreamMetricService } from './services/stream-metric.service';
+import {
+  essDuplicateCount,
+  essMessageCount,
+  essMessageLatencySeconds,
+} from '../metrics';
 
 @Module({
   imports: [CensusModule],
@@ -16,21 +21,21 @@ import { StreamMetricService } from './services/stream-metric.service';
     StreamMetricService,
 
     makeCounterProvider({
-      name: 'ess_message_count',
+      name: essMessageCount,
       help: 'Messages received from ess',
       labelNames: ['connection', 'event', 'world'],
     }),
     makeCounterProvider({
-      name: 'ess_duplicate_count',
+      name: essDuplicateCount,
       help: 'Duplicate messages received from ess',
       labelNames: ['connection', 'event', 'world'],
     }),
     makeSummaryProvider({
-      name: 'ess_message_latency_seconds',
+      name: essMessageLatencySeconds,
       help: 'Latency in seconds of messages received based on timestamp in the message',
       labelNames: ['world', 'connection'],
       percentiles: [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99],
-      maxAgeSeconds: 600,
+      maxAgeSeconds: 300,
       ageBuckets: 5,
     }),
   ],

@@ -1,31 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  HEARTBEAT_OFFSET_ACCESSOR,
-  HeartbeatOffsetAccessorContract,
-} from '../concerns/heartbeat-offset-accessor.contract';
-
-export const CONDUCTOR_OPTIONS = Symbol('provide:conductor_options');
-
-export interface StreamConductorServiceOptions {
-  minAcceptedOffsetThreshold: number;
-}
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class StreamConductorService {
-  private readonly accepted = new Map<any, number>();
+  private readonly accepted = new Map<string, number>();
 
-  constructor(
-    @Inject(HEARTBEAT_OFFSET_ACCESSOR)
-    private readonly offsetAccessor: HeartbeatOffsetAccessorContract,
-    @Inject(CONDUCTOR_OPTIONS)
-    private readonly options: StreamConductorServiceOptions,
-  ) {}
-
-  claim(connection: any, offset: number): boolean {
-    for (const [, accepted] of this.accepted) {
-      const delta = this.offsetAccessor.deltaOffsets(accepted, offset);
-      if (delta <= this.options.minAcceptedOffsetThreshold) return false;
-    }
+  claim(connection: string, offset: number): boolean {
+    for (const [, accepted] of this.accepted)
+      if (accepted == offset) return false;
 
     this.accepted.set(connection, offset);
     return true;

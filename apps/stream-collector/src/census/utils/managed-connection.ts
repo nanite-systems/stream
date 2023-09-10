@@ -15,7 +15,6 @@ import {
   tap,
   timer,
 } from 'rxjs';
-import { HeartbeatOffsetAccessorContract } from '../concerns/heartbeat-offset-accessor.contract';
 import { StreamConductorService } from '../services/stream-conductor.service';
 import { DelayPolicyContract } from '../concerns/delay-policy.contract';
 import { Logger } from '@nss/utils';
@@ -47,16 +46,16 @@ export class ManagedConnection {
   constructor(
     private readonly label: string,
     private readonly logger: Logger,
-    private readonly connection: ConnectionContract,
-    private readonly offsetAccessor: HeartbeatOffsetAccessorContract,
+    readonly connection: ConnectionContract,
     private readonly delayPolicy: DelayPolicyContract,
     private readonly conductor: StreamConductorService,
+    heartbeatInterval: number,
   ) {
     /** Cycle connection logic */
     this.observeInitHeartbeat().subscribe((heartbeat) => {
-      this.heartbeatOffset = this.offsetAccessor.timestampToOffset(heartbeat);
+      this.heartbeatOffset = heartbeat % heartbeatInterval;
 
-      if (this.conductor.claim(this, this.heartbeatOffset)) {
+      if (this.conductor.claim(this.label, this.heartbeatOffset)) {
         this.logger.log(
           `Connection accepted`,
           {

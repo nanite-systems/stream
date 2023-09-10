@@ -12,6 +12,9 @@ import {
 } from 'rxjs';
 import { Stream } from 'ps2census';
 import { EventPayload, ServiceState } from '@nss/ess-concerns';
+import { Counter } from 'prom-client';
+import { Logger } from '@nss/utils';
+import { CensusMessages } from 'ps2census/stream';
 
 export class EssAdapter implements ConnectionContract {
   private readonly readyObservable: Observable<void>;
@@ -21,30 +24,41 @@ export class EssAdapter implements ConnectionContract {
   private readonly eventMessageObservable: Observable<EventPayload>;
 
   constructor(
+    readonly label: string,
     readonly stream: Stream.Client,
-    subscription: Omit<Stream.CensusCommands.Subscribe, 'service' | 'action'>,
+    subscriptionAlterCounter: Counter,
+    logger: Logger,
+    subscribeTo: Omit<Stream.CensusCommands.Subscribe, 'service' | 'action'>,
     subscriptionInterval: number,
   ) {
-    const message = fromEvent(stream, 'message').pipe(
-      filter((msg: any) => msg.service == 'event'),
-      share(),
-    );
+    const message = fromEvent<Stream.CensusMessageWithoutEcho>(
+      stream,
+      'message',
+    ).pipe(share());
 
     this.readyObservable = fromEvent(stream, 'ready').pipe<any>(share());
-
-    this.disconnectObservable = fromEvent(stream, 'close').pipe(
+    this.disconnectObservable = fromEvent<[number, string]>(
+      stream,
+      'close',
+    ).pipe(
       map(([code, reason]) => ({ code, reason })),
       share(),
     );
 
     this.heartbeatObservable = message.pipe(
-      filter((msg) => msg.type == 'heartbeat'),
-      map(() => new Date().getTime()),
+      filter(
+        (msg): msg is Stream.CensusMessages.Heartbeat =>
+          'type' in msg && msg.type == 'heartbeat',
+      ),
+      map((msg) => parseInt(msg.timestamp, 10)),
       share(),
     );
 
     this.serviceStateObservable = message.pipe(
-      filter((msg) => msg.type == 'serviceStateChanged'),
+      filter(
+        (msg): msg is CensusMessages.ServiceStateChanged =>
+          'type' in msg && msg.type == 'serviceStateChanged',
+      ),
       map(
         (msg): ServiceState => ({
           worldId: /\d+/.exec(msg.detail)[0],
@@ -57,8 +71,11 @@ export class EssAdapter implements ConnectionContract {
     );
 
     this.eventMessageObservable = message.pipe(
-      filter((msg) => msg.type == 'serviceMessage'),
-      map((msg): EventPayload => msg.payload),
+      filter(
+        (msg): msg is { service: any; type: any; payload: Stream.PS2Event } =>
+          'payload' in msg && 'event_name' in msg.payload,
+      ),
+      map((msg) => msg.payload),
       share(),
     );
 
@@ -76,7 +93,48 @@ export class EssAdapter implements ConnectionContract {
           stream.send({
             service: 'event',
             action: 'subscribe',
-            ...subscription,
+          });
+        } catch {}
+      });
+
+    message
+      .pipe(
+        filter(
+          (msg): msg is Stream.CensusMessages.Subscription =>
+            'subscription' in msg,
+        ),
+      )
+      .subscribe(({ subscription }) => {
+        const charactersValid =
+          'characterCount' in subscription
+            ? subscription.characterCount == subscribeTo.characters.length
+            : subscription.characters.includes('all') ==
+              subscribeTo.characters.includes('all');
+
+        const worldsValid = subscribeTo.worlds.every((world) =>
+          subscription.worlds.includes(world),
+        );
+
+        const eventsValid = subscribeTo.eventNames.every((event) =>
+          subscription.eventNames.includes(event),
+        );
+
+        const logicalAndValid =
+          subscription.logicalAndCharactersWithWorlds ==
+          subscribeTo.logicalAndCharactersWithWorlds;
+
+        if (charactersValid && worldsValid && eventsValid && logicalAndValid)
+          return;
+
+        logger.log('Subscription altered', subscription, this.label);
+
+        subscriptionAlterCounter.inc({});
+
+        try {
+          stream.send({
+            service: 'event',
+            action: 'subscribe',
+            ...subscribeTo,
           });
         } catch {}
       });

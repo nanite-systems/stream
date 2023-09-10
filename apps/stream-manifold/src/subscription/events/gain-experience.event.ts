@@ -19,7 +19,7 @@ export class GainExperienceEventSubscription<
   readonly eventName = 'GainExperience';
 
   constructor(
-    readonly world,
+    readonly world: string,
     query: EventSubscriptionQuery,
     stream: Observable<Event>,
     callback: (message: Event) => void,

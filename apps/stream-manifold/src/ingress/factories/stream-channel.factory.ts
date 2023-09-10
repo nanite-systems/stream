@@ -23,8 +23,8 @@ export class StreamChannelFactory {
 
   create(): ChannelWrapper {
     return this.rabbit.createChannel({
-      setup: async (channel) => {
-        const { queue } = channel.assertQueue(null, {
+      setup: async (channel: Channel) => {
+        const { queue } = await channel.assertQueue(null, {
           exclusive: true,
         });
 
@@ -32,6 +32,7 @@ export class StreamChannelFactory {
           channel.bindQueue(
             queue,
             this.config.get('rabbitmq.streamExchangeName'),
+            null,
           ),
           channel.consume(queue, (message) =>
             this.handleMessage(message, channel),

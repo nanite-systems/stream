@@ -1,9 +1,4 @@
-import {
-  CacheTTL,
-  Controller,
-  ParseEnumPipe,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, ParseEnumPipe, UseInterceptors } from '@nestjs/common';
 import { RecentCharacterService } from '../services/recent-character.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import {
@@ -12,7 +7,7 @@ import {
   RecentCharactersResponse,
 } from '@nss/ess-concerns';
 import { Environment } from '../concerns/environments.enum';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @Controller()
 @UseInterceptors(CacheInterceptor)

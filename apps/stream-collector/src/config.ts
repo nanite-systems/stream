@@ -80,11 +80,6 @@ export const config = () => ({
     longCycleInterval: envInt('ESS_LONG_CYCLE_INTERVAL', 10, 14),
 
     /**
-     * The minimum absolute difference that heartbeats of connections should have
-     */
-    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 600),
-
-    /**
      * List of worlds to subscribe to delimited by commas
      */
     worlds: envSplit('ESS_SUBSCRIPTION_WORLDS', ['all']),

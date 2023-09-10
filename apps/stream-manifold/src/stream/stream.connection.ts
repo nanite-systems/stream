@@ -7,14 +7,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { MessageBody, SubscribeMessage } from '@nestjs/websockets';
-import { EventMessage } from './concers/message.types';
+import { EventMessage } from './concerns/message.types';
 import { HELP_EVENT_MESSAGE } from './messages/help-event.message';
 import { WebSocket } from 'ws';
 import { SubscribeDto } from './dtos/subscribe.dto';
 import { ClearSubscribeDto } from './dtos/clear-subscribe.dto';
 import { first, fromEvent, map, Observable, share, takeUntil } from 'rxjs';
 import { CENSUS_STREAM, SESSION_ID } from './constants';
-import { ConnectionContract } from './concers/connection.contract';
+import { ConnectionContract } from './concerns/connection.contract';
 import { EchoDto } from './dtos/echo.dto';
 import { IgnoreErrorInterceptor } from './interceptors/ignore-error.interceptor';
 import { IncomingMessage } from 'http';

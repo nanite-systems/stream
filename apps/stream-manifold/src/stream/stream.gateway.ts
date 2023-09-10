@@ -23,7 +23,7 @@ import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-cr
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { IncomingMessage } from 'http';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
-import { ConnectionContract } from './concers/connection.contract';
+import { ConnectionContract } from './concerns/connection.contract';
 import { EnvironmentAccessor } from '../environments/utils/environment.accessor';
 import { EnvironmentManifest } from '../environments/environment.manifest';
 

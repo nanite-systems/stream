@@ -3,42 +3,63 @@ import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter, Gauge } from 'prom-client';
 import { MANAGED_CONNECTIONS } from '../constants';
 import { ManagedConnection, State } from '../utils/managed-connection';
-import { from, map, mergeMap } from 'rxjs';
+import { from, map, mergeMap, scan } from 'rxjs';
+import {
+  essConnectionClockOffsetSeconds,
+  essConnectionHeartbeatOffsetSeconds,
+  essConnectionStartTimeSeconds,
+  essConnectionStateCount,
+  essConnectionStateTotal,
+} from '../../metrics';
+
+interface StateMemo {
+  connection: ManagedConnection;
+  prev?: State;
+  state: State;
+  id: number;
+}
 
 @Injectable()
 export class CensusMetricsService {
-  private readonly states = new Map<number, State>();
-
   constructor(
     @Inject(MANAGED_CONNECTIONS)
     private readonly connections: ManagedConnection[],
-    @InjectMetric('ess_connection_start_time_seconds')
+    @InjectMetric(essConnectionStartTimeSeconds)
     private readonly connectionStartGauge: Gauge,
-    @InjectMetric('ess_connection_heartbeat_offset_seconds')
+    @InjectMetric(essConnectionHeartbeatOffsetSeconds)
     private readonly heartbeatOffsetGauge: Gauge,
-    @InjectMetric('ess_connection_state_count')
+    @InjectMetric(essConnectionStateCount)
     private readonly stateCounter: Counter,
-    @InjectMetric('ess_connection_state_total')
+    @InjectMetric(essConnectionStateTotal)
     private readonly stateGauge: Gauge,
+    @InjectMetric(essConnectionClockOffsetSeconds)
+    private readonly clockOffset: Gauge,
   ) {
-    from(connections)
+    this.watchState();
+    this.watchTimeDiff();
+  }
+
+  private watchState(): void {
+    from(this.connections)
       .pipe(
-        mergeMap((connection, i) =>
+        mergeMap((connection, id) =>
           connection.observeStateChange().pipe(
-            map((state) => ({
-              connection,
-              state,
-              prev: this.states.get(i),
-              i,
-            })),
+            scan(
+              (prev: StateMemo, state) => ({
+                ...prev,
+                prev: prev.state,
+                state,
+              }),
+              {
+                connection,
+                state: undefined,
+                id,
+              },
+            ),
           ),
         ),
       )
-      .subscribe(({ connection, state, prev, i }) => {
-        const id = i + 1;
-
-        this.states.set(i, state);
-
+      .subscribe(({ connection, state, prev, id }) => {
         if (connection.connectedAt)
           this.connectionStartGauge.set(
             { connection: id },
@@ -59,6 +80,23 @@ export class CensusMetricsService {
         });
         this.stateGauge.inc({ type: State[state] });
         if (prev != undefined) this.stateGauge.dec({ type: State[prev] });
+      });
+  }
+
+  private watchTimeDiff(): void {
+    from(this.connections)
+      .pipe(
+        mergeMap(({ connection }, id) =>
+          connection.observeHeartbeat().pipe(
+            map((heartbeat) => ({
+              id,
+              offset: heartbeat - Math.floor(new Date().getTime() / 1000),
+            })),
+          ),
+        ),
+      )
+      .subscribe(({ id, offset }) => {
+        this.clockOffset.set({ connection: id }, offset);
       });
   }
 }

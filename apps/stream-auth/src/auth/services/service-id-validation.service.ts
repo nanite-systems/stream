@@ -3,12 +3,12 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { Axios } from 'axios';
+import { AxiosInstance } from 'axios';
 import { CENSUS_API } from '../constants';
 
 @Injectable()
 export class ServiceIdValidationService {
-  constructor(@Inject(CENSUS_API) private readonly census: Axios) {}
+  constructor(@Inject(CENSUS_API) private readonly census: AxiosInstance) {}
 
   async validate(serviceId: string): Promise<boolean> {
     if (!this.validateFormat(serviceId)) return false;

@@ -1,5 +1,4 @@
-import { ChannelWrapper } from 'amqp-connection-manager';
-import { PublishOptions } from 'amqp-connection-manager/dist/esm/ChannelWrapper';
+import { ChannelWrapper, Options } from 'amqp-connection-manager';
 
 export class Exchange {
   constructor(
@@ -7,7 +6,7 @@ export class Exchange {
     private readonly exchangeName: string,
   ) {}
 
-  publish(routingKey: string, content: unknown, options: PublishOptions) {
+  publish(routingKey: string, content: unknown, options: Options.Publish) {
     return this.channel.publish(
       this.exchangeName,
       routingKey,
