@@ -3,7 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
-import { LoggerModule } from '@nss/utils';
+import { envSplit, LoggerModule } from '@nss/utils';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { CacheModule } from '@nestjs/cache-manager';
 
@@ -12,6 +12,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
+      envFilePath: envSplit('ENV_PATHS', ['.env']),
       load: [config],
     }),
     LoggerModule.forRootAsync({
@@ -22,7 +23,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       }),
       inject: [ConfigService],
     }),
-    PrometheusModule.register(),
+    PrometheusModule.register({ global: true }),
     CacheModule.register({ isGlobal: true }),
     AuthModule,
     HealthModule,

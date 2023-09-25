@@ -25,6 +25,10 @@ async function bootstrap() {
   app.flushLogs();
   app.useWebSocketAdapter(new WsAdapter(app));
   app.enableShutdownHooks();
+  // Mimics the behaviour of ESS on http
+  app.useGlobalFilters({
+    catch() {},
+  });
 
   process.on('uncaughtException', (err) => {
     logger.error(err, 'UncaughtException');

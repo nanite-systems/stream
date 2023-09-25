@@ -24,6 +24,7 @@ import { CensusMetricsService } from './services/census-metrics.service';
 import { StreamClientFactory } from './factories/stream-client.factory';
 import { Stream } from 'ps2census';
 import {
+  essConnectionClockOffsetSeconds,
   essConnectionHeartbeatOffsetSeconds,
   essConnectionStartTimeSeconds,
   essConnectionStateCount,
@@ -74,7 +75,7 @@ import { EssAdapter } from './adapters/ess.adapter';
       useFactory: (factory: StreamClientFactory, config: ConfigService) =>
         Object.freeze(
           config
-            .get('ess.serviceIds')
+            .getOrThrow('ess.serviceIds')
             .map((serviceId) => factory.create(serviceId)),
         ),
       inject: [StreamClientFactory, ConfigService],
@@ -126,6 +127,12 @@ import { EssAdapter } from './adapters/ess.adapter';
     makeCounterProvider({
       name: essConnectionSubscriptionAlterationCount,
       help: 'Counter that tracks how many times a subscription to a connection has been altered',
+      labelNames: ['connection'],
+    }),
+
+    makeGaugeProvider({
+      name: essConnectionClockOffsetSeconds,
+      help: 'Clock offset between ess and system',
       labelNames: ['connection'],
     }),
   ],

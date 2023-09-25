@@ -1,121 +1,148 @@
 version: '3.8'
 
 services:
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    restart: unless-stopped
-    networks:
-      - ns-stream
-    ports:
-      - '5672:${RABBITMQ_PORT:-5672}'
-      - '15672:${RABBITMQ_MANAGEMENT_PORT:-15672}'
-    env_file: .env
-
-  collector-pc: &collector
+  # NSS base services
+  collector-pc:
     image: ghcr.io/nanite-systems/stream-collector
     build:
-      dockerfile: Dockerfile
+      target: release-default
       args:
         APP_NAME: stream-collector
-    env_file:
-      - .env
-      - apps/stream-collector/.env
-    environment: &collector_environment
-      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      APP_PORT: 3000
-      ESS_ENVIRONMENT: ps2
     restart: unless-stopped
     depends_on:
       - rabbitmq
-    networks:
-      - ns-stream
-    ports:
-      - '${COLLECTOR_PC_PORT:-3002}:3000'
-    profiles:
-      - full
-      - back-end
+    environment:
+      LOG_PRETTY:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:5672
+      ESS_ENVIRONMENT: ps2
+      ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   collector-ps4eu:
-    <<: *collector
+    image: ghcr.io/nanite-systems/stream-collector
+    build:
+      target: release-default
+      args:
+        APP_NAME: stream-collector
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
     environment:
-      <<: *collector_environment
+      LOG_PRETTY:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:5672
       ESS_ENVIRONMENT: ps2ps4eu
-    ports:
-      - '${COLLECTOR_PS4EU_PORT:-3003}:3000'
+      ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   collector-ps4us:
-    <<: *collector
+    image: ghcr.io/nanite-systems/stream-collector
+    build:
+      target: release-default
+      args:
+        APP_NAME: stream-collector
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
     environment:
-      <<: *collector_environment
+      LOG_PRETTY:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:5672
       ESS_ENVIRONMENT: ps2ps4us
-    ports:
-      - '${COLLECTOR_PS4US_PORT:-3004}:3000'
+      ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   api:
     image: ghcr.io/nanite-systems/stream-api
     build:
-      dockerfile: Dockerfile
+      target: release-default
       args:
         APP_NAME: stream-api
     restart: unless-stopped
-    env_file:
-      - .env
-      - apps/stream-api/.env
-    environment:
-      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      APP_PORT: 3000
     depends_on:
       - rabbitmq
-    networks:
-      - ns-stream
-    ports:
-      - '${API_PORT:-3001}:3000'
+    environment:
+      LOG_PRETTY:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:5672
+      ESS_SERVICE_ID: $API_ESS_SERVICE_ID
 
   manifold:
     image: ghcr.io/nanite-systems/stream-manifold
     build:
-      dockerfile: Dockerfile
+      target: release-default
       args:
         APP_NAME: stream-manifold
     restart: unless-stopped
     depends_on:
-      - collector-pc
-      - collector-ps4eu
-      - collector-ps4us
-      - api
       - rabbitmq
-    networks:
-      - ns-stream
-    ports:
-      - '${MANIFOLD_PORT:-3000}:3000'
-    env_file:
-      - .env
-      - apps/stream-manifold/.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nss.rule: Host(`nss.localhost`)
+      traefik.http.routers.nss.middlewares: nss-auth@docker
+      traefik.http.middlewares.nss-auth.forwardauth.address: http://auth:3000/auth
     environment:
-      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:${RABBITMQ_PORT:-5672}
-      APP_PORT: 3000
-    profiles:
-      - full
+      LOG_PRETTY:
+      RMQ_URLS: amqp://${RABBITMQ_DEFAULT_PASS:-guest}:${RABBITMQ_DEFAULT_USER:-guest}@rabbitmq:5672
 
+  # NSS support services
   auth:
     image: ghcr.io/nanite-systems/stream-auth
     build:
-      dockerfile: Dockerfile
+      target: release-default
       args:
         APP_NAME: stream-auth
     restart: unless-stopped
-    networks:
-      - ns-stream
-    ports:
-      - '${AUTH_PORT:-3030}:3000'
-    env_file:
-      - .env
-      - apps/stream-auth/.env
     environment:
-      APP_PORT: 3000
+      LOG_PRETTY:
+      AUTH_SALT:
     profiles:
       - full
+      - proxy
 
-networks:
-  ns-stream:
-    name: 'ns-stream'
+  # NSS 3rd party services
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    hostname: rabbitmq
+    #    ports:
+    #      - '${RABBITMQ_PORT:-5672}:5672'
+    #      - '${RABBITMQ_MANAGEMENT_PORT:-15672}:15672'
+    env_file: .env
+
+  # NSS reverse proxy
+  traefik:
+    image: traefik
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker/traefik.yml:/traefik.yml
+    ports:
+      - "${TRAEFIK_API_PORT:-8080}:8080"
+      - "${TRAEFIK_WEB_PORT:-80}:80"
+    profiles:
+      - full
+      - proxy
+
+  # NSS metric services
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    profiles:
+      - full
+      - metrics
+
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      GF_SERVER_ROOT_URL: http://${GRAFANA_HOST:-grafana.localhost}
+    labels:
+      traefik.enable: true
+      traefik.http.routers.grafana.rule: Host(`${GRAFANA_HOST:-grafana.localhost}`)
+    profiles:
+      - full
+      - metrics
+
+volumes:
+  prometheus-data:
+  grafana-data:

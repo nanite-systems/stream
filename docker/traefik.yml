@@ -1,0 +1,19 @@
+api:
+  insecure: true
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+
+providers:
+  docker:
+    exposedByDefault: false
+    defaultRule: "Host(`{{ .Name }}.localhost`)"
+
+entryPoints:
+  web:
+    address: ":80"
+  metrics:
+    address: ":4000"
+
+

@@ -31,9 +31,11 @@ import { EnvironmentManifest } from '../environments/environment.manifest';
   verifyClient: ({ req }, callback) => {
     const { environment } = new EnvironmentAccessor(req);
 
-    if (EnvironmentManifest.validateEnvironmentKey(environment))
+    if (EnvironmentManifest.validateEnvironmentKey(environment)) {
       callback(true, 200);
-    else callback(false, 403, '403 Forbidden');
+    } else {
+      callback(false, 403, '403 Forbidden');
+    }
   },
 })
 export class StreamGateway implements OnGatewayConnection {

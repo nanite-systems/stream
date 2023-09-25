@@ -19,10 +19,11 @@
     "@commitlint/config-conventional": "^17.7.0",
     "@nx-tools/container-metadata": "5.0.2",
     "@nx-tools/nx-container": "5.0.2",
-    "@nx/js": "^16.7.4",
+    "@nx/js": "^16.8.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.3.0",
-    "nx": "^16.7.4",
+    "nodemon": "^3.0.1",
+    "nx": "^16.8.1",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
