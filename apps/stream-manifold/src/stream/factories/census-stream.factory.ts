@@ -18,8 +18,8 @@ export class CensusStreamFactory
     private readonly messageCounter: Counter,
   ) {}
 
-  create(): Observable<Stream.CensusMessage> {
-    return merge<Stream.CensusMessage>(
+  create(): Observable<Stream.CensusMessageWithoutEcho> {
+    return merge(
       this.baseStreamFactory.create(),
       this.eventSubscriptionService.stream.pipe(
         tap((event) =>

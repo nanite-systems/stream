@@ -5,7 +5,7 @@ import { ServiceTrackerModule } from './service-tracker/service-tracker.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
-import { Logger, LoggerModule } from '@nss/utils';
+import { envSplit, Logger, LoggerModule } from '@nss/utils';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
@@ -13,6 +13,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
+      envFilePath: envSplit('ENV_PATHS', ['.env']),
       load: [config],
     }),
     LoggerModule.forRootAsync({
@@ -23,7 +24,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       }),
       inject: [ConfigService],
     }),
-    PrometheusModule.register(),
+    PrometheusModule.register({ global: true }),
     CacheModule.register({ isGlobal: true }),
     RecentCharactersModule,
     ServiceTrackerModule,

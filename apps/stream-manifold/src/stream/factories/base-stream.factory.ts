@@ -9,7 +9,7 @@ import { ServiceState } from '@nss/ess-concerns';
 export class BaseStreamFactory implements FactoryInterface<Observable<any>> {
   constructor(private readonly environment: Environment) {}
 
-  create(): Observable<Stream.CensusMessage> {
+  create(): Observable<Stream.CensusMessageWithoutEcho> {
     return merge(
       this.connectionState(),
       this.sendHelp(),
@@ -41,6 +41,7 @@ export class BaseStreamFactory implements FactoryInterface<Observable<any>> {
               state.online ? 'true' : 'false',
             ]),
         ),
+        timestamp: Math.floor(new Date().getTime() / 1000).toString(10),
         service: 'event',
         type: 'heartbeat',
       })),

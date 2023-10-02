@@ -4,13 +4,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { PublisherModule } from './publisher/publisher.module';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
-import { Logger, LoggerModule } from '@nss/utils';
+import { envSplit, Logger, LoggerModule } from '@nss/utils';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
+      envFilePath: envSplit('ENV_PATHS', ['.env']),
       load: [config],
     }),
     LoggerModule.forRootAsync({
@@ -21,7 +22,7 @@ import { Logger, LoggerModule } from '@nss/utils';
       }),
       inject: [ConfigService],
     }),
-    PrometheusModule.register(),
+    PrometheusModule.register({ global: true }),
     HealthModule,
     PublisherModule,
   ],

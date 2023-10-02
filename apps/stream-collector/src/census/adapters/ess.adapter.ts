@@ -1,17 +1,32 @@
 import { ConnectionContract } from '../concerns/connection.contract';
 import {
+  catchError,
+  EMPTY,
   filter,
   from,
   fromEvent,
   map,
+  mergeWith,
   Observable,
+  of,
+  OperatorFunction,
   share,
+  Subject,
   switchMap,
   takeUntil,
+  tap,
+  timeout,
   timer,
+  zipWith,
 } from 'rxjs';
 import { Stream } from 'ps2census';
 import { EventPayload, ServiceState } from '@nss/ess-concerns';
+import { CensusMessages } from 'ps2census/stream';
+import { ConnectionDetails } from '../utils/connection-details';
+import { Logger } from '@nss/utils';
+import { Counter, Summary } from 'prom-client';
+
+type Subscription = Omit<Stream.CensusCommands.Subscribe, 'service' | 'action'>;
 
 export class EssAdapter implements ConnectionContract {
   private readonly readyObservable: Observable<void>;
@@ -21,30 +36,45 @@ export class EssAdapter implements ConnectionContract {
   private readonly eventMessageObservable: Observable<EventPayload>;
 
   constructor(
+    logger: Logger,
     readonly stream: Stream.Client,
-    subscription: Omit<Stream.CensusCommands.Subscribe, 'service' | 'action'>,
+    readonly details: ConnectionDetails,
+    private readonly connectionReadyLatency: Summary,
+    subscriptionAlterCounter: Counter,
+    subscriptionLatency: Summary,
+    subscriptionTimeoutCounter: Counter,
+    subscribeTo: Subscription,
     subscriptionInterval: number,
+    subscriptionTimeout: number,
   ) {
-    const message = fromEvent(stream, 'message').pipe(
-      filter((msg: any) => msg.service == 'event'),
-      share(),
-    );
+    const message = fromEvent<Stream.CensusMessageWithoutEcho>(
+      stream,
+      'message',
+    ).pipe(share());
 
     this.readyObservable = fromEvent(stream, 'ready').pipe<any>(share());
-
-    this.disconnectObservable = fromEvent(stream, 'close').pipe(
+    this.disconnectObservable = fromEvent<[number, string]>(
+      stream,
+      'close',
+    ).pipe(
       map(([code, reason]) => ({ code, reason })),
       share(),
     );
 
     this.heartbeatObservable = message.pipe(
-      filter((msg) => msg.type == 'heartbeat'),
-      map(() => new Date().getTime()),
+      filter(
+        (msg): msg is Stream.CensusMessages.Heartbeat =>
+          'type' in msg && msg.type == 'heartbeat',
+      ),
+      map((msg) => parseInt(msg.timestamp, 10)),
       share(),
     );
 
     this.serviceStateObservable = message.pipe(
-      filter((msg) => msg.type == 'serviceStateChanged'),
+      filter(
+        (msg): msg is CensusMessages.ServiceStateChanged =>
+          'type' in msg && msg.type == 'serviceStateChanged',
+      ),
       map(
         (msg): ServiceState => ({
           worldId: /\d+/.exec(msg.detail)[0],
@@ -57,33 +87,138 @@ export class EssAdapter implements ConnectionContract {
     );
 
     this.eventMessageObservable = message.pipe(
-      filter((msg) => msg.type == 'serviceMessage'),
-      map((msg): EventPayload => msg.payload),
+      filter(
+        (msg): msg is { service: any; type: any; payload: Stream.PS2Event } =>
+          'payload' in msg && 'event_name' in msg.payload,
+      ),
+      map((msg) => msg.payload),
       share(),
     );
 
     /** Subscription logic */
+    const sendSubscribe =
+      (
+        subscription?: Subscription,
+      ): OperatorFunction<any, { recordLatency(): void }> =>
+      (o) =>
+        o.pipe(
+          tap(() => {
+            try {
+              this.stream.send({
+                service: 'event',
+                action: 'subscribe',
+                ...subscription,
+              });
+            } catch {}
+          }),
+          map(() => ({
+            recordLatency: subscriptionLatency.startTimer({
+              connection: details.id,
+            }),
+          })),
+        );
+
+    const resubscribe = new Subject<null>();
+
     this.readyObservable
       .pipe(
-        switchMap(() =>
-          timer(0, subscriptionInterval).pipe(
+        sendSubscribe(subscribeTo),
+
+        switchMap((v) =>
+          of(v).pipe(
+            mergeWith(
+              timer(subscriptionInterval, subscriptionInterval).pipe(
+                sendSubscribe(),
+              ),
+              resubscribe.pipe(sendSubscribe(subscribeTo)),
+            ),
+
+            zipWith(
+              message.pipe(
+                filter(
+                  (msg): msg is Stream.CensusMessages.Subscription =>
+                    'subscription' in msg,
+                ),
+              ),
+            ),
+
+            timeout(subscriptionTimeout),
+
+            catchError(() => {
+              logger.warn(
+                'Too long without a subscription response',
+                details.label,
+              );
+
+              subscriptionTimeoutCounter.inc({ connection: details.id });
+
+              this.stream.destroy();
+
+              return EMPTY;
+            }),
+
             takeUntil(this.disconnectObservable),
           ),
         ),
+
+        tap(([{ recordLatency }]) => recordLatency()),
+        map((v) => v[1]),
+        map(({ subscription }) => ({
+          charactersValid:
+            'characterCount' in subscription
+              ? subscription.characterCount == subscribeTo.characters.length
+              : subscription.characters.includes('all') ==
+                subscribeTo.characters.includes('all'),
+          worldsValid: subscribeTo.worlds.every((world) =>
+            subscription.worlds.includes(world),
+          ),
+          eventsValid: subscribeTo.eventNames.every((event) =>
+            subscription.eventNames.includes(event),
+          ),
+          logicalAndValid:
+            subscription.logicalAndCharactersWithWorlds ==
+            subscribeTo.logicalAndCharactersWithWorlds,
+          subscription,
+        })),
+        filter((v) => Object.values(v).includes(false)),
       )
-      .subscribe(() => {
-        try {
-          stream.send({
-            service: 'event',
-            action: 'subscribe',
-            ...subscription,
+      .subscribe((v) => {
+        logger.log('Subscription altered', v.subscription, details.label);
+
+        if (!v.charactersValid)
+          subscriptionAlterCounter.inc({
+            connection: details.id,
+            key: 'characters',
           });
-        } catch {}
+
+        if (!v.worldsValid)
+          subscriptionAlterCounter.inc({
+            connection: details.id,
+            key: 'worlds',
+          });
+
+        if (!v.eventsValid)
+          subscriptionAlterCounter.inc({
+            connection: details.id,
+            key: 'events',
+          });
+
+        if (!v.logicalAndValid)
+          subscriptionAlterCounter.inc({
+            connection: details.id,
+            key: 'logicalAnd',
+          });
+
+        resubscribe.next(null);
       });
   }
 
   connect(): Observable<void> {
-    return from(this.stream.connect());
+    const recordLatency = this.connectionReadyLatency.startTimer({
+      connection: this.details.id,
+    });
+
+    return from(this.stream.connect()).pipe(tap(() => recordLatency()));
   }
 
   disconnect(): void {

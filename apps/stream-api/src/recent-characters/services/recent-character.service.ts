@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CensusClient } from 'ps2census';
 import { STREAM_PC, STREAM_PS4EU, STREAM_PS4US } from '../../census/constants';
-import { Environment } from '../concerns/environments.enum';
 import {
+  Environments,
   RecentCharacterCountResponse,
   RecentCharactersResponse,
 } from '@nss/ess-concerns';
@@ -16,16 +16,16 @@ export class RecentCharacterService {
   ) {}
 
   async recentCharacters(
-    environment: Environment,
+    environment: Environments,
   ): Promise<RecentCharactersResponse> {
     switch (environment) {
-      case Environment.PC:
+      case Environments.PC:
         return this.pc.recentCharacters();
-      case Environment.PS4EU:
+      case Environments.PS4EU:
         return this.ps4eu.recentCharacters();
-      case Environment.PS4US:
+      case Environments.PS4US:
         return this.ps4us.recentCharacters();
-      case Environment.ALL:
+      case Environments.ALL:
         return Promise.all(this.streams.map((s) => s.recentCharacters())).then(
           (r) => r.flat(),
         );
@@ -33,16 +33,16 @@ export class RecentCharacterService {
   }
 
   async recentCharacterCount(
-    environment: Environment,
+    environment: Environments,
   ): Promise<RecentCharacterCountResponse> {
     switch (environment) {
-      case Environment.PC:
+      case Environments.PC:
         return this.pc.recentCharacterCount();
-      case Environment.PS4EU:
+      case Environments.PS4EU:
         return this.ps4eu.recentCharacterCount();
-      case Environment.PS4US:
+      case Environments.PS4US:
         return this.ps4us.recentCharacterCount();
-      case Environment.ALL:
+      case Environments.ALL:
         return Promise.all(
           this.streams.map((s) => s.recentCharacterCount()),
         ).then((r) => r.reduce((a, b) => a + b));

@@ -1,12 +1,11 @@
 import { filter, from, merge, Observable } from 'rxjs';
 import { ServiceStateService } from '../../service-state/services/service-state.service';
 import { EnvironmentDescription } from './environment.description';
-import { ServiceState } from '@nss/ess-concerns';
-import { EnvironmentName } from '../../concerns/environment.type';
+import { Environments, ServiceState } from '@nss/ess-concerns';
 
 export class Environment {
   constructor(
-    readonly name: EnvironmentName,
+    readonly name: Environments,
     readonly description: EnvironmentDescription,
     private readonly serviceStateService: ServiceStateService,
   ) {}

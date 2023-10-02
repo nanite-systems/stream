@@ -20,7 +20,7 @@ import { NssApiService } from './services/nss-api.service';
                 durable: false,
               } satisfies Options.AssertQueue,
             },
-          } satisfies RmqOptions),
+          }) satisfies RmqOptions,
         inject: [ConfigService],
       },
     ]),

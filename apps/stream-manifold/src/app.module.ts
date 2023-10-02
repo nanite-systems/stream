@@ -5,13 +5,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { RabbitMqModule } from '@nss/rabbitmq';
-import { LoggerModule } from '@nss/utils';
+import { envSplit, LoggerModule } from '@nss/utils';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
+      envFilePath: envSplit('ENV_PATHS', ['.env']),
       load: [config],
     }),
     LoggerModule.forRootAsync({
@@ -22,7 +23,7 @@ import { LoggerModule } from '@nss/utils';
       }),
       inject: [ConfigService],
     }),
-    PrometheusModule.register(),
+    PrometheusModule.register({ global: true }),
     RabbitMqModule.forRootAsync({
       global: true,
       useFactory: (config: ConfigService) => ({

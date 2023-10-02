@@ -57,7 +57,7 @@ export const config = () => ({
     /**
      * The heartbeat interval
      */
-    heartbeatInterval: envInt('ESS_HEARTBEAT_INTERVAL', 10, 30) * 1000,
+    heartbeatInterval: envInt('ESS_HEARTBEAT_INTERVAL', 10, 30),
 
     /**
      * How many seconds to wait before reconnecting
@@ -80,11 +80,6 @@ export const config = () => ({
     longCycleInterval: envInt('ESS_LONG_CYCLE_INTERVAL', 10, 14),
 
     /**
-     * The minimum absolute difference that heartbeats of connections should have
-     */
-    minAcceptedOffsetThreshold: envInt('ESS_MIN_OFFSET_THRESHOLD', 10, 600),
-
-    /**
      * List of worlds to subscribe to delimited by commas
      */
     worlds: envSplit('ESS_SUBSCRIPTION_WORLDS', ['all']),
@@ -103,5 +98,10 @@ export const config = () => ({
      * The interval used for resending interval
      */
     subscriptionInterval: envInt('ESS_SUBSCRIPTION_INTERVAL', 10, 60) * 1000,
+
+    /**
+     * The timeout when not receiving a reply, should be larger then interval
+     */
+    subscriptionTimeout: envInt('ESS_SUBSCRIPTION_TIMEOUT', 10, 180) * 1000,
   },
 });

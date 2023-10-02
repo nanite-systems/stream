@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CONNECTIONS } from '../../census/constants';
-import { ConnectionContract } from '../../census/concerns/connection.contract';
+import { DETAILED_CONNECTIONS } from '../../census/constants';
 import { ServiceState } from '@nss/ess-concerns';
 import { filter, from, mergeMap, Observable, share, tap } from 'rxjs';
+import { DetailedConnectionContract } from '../../census/concerns/detailed-connection.contract';
 
 @Injectable()
 export class ServiceTrackerService {
@@ -11,10 +11,11 @@ export class ServiceTrackerService {
   private readonly observable: Observable<ServiceState>;
 
   constructor(
-    @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
+    @Inject(DETAILED_CONNECTIONS)
+    private readonly connections: DetailedConnectionContract[],
   ) {
     this.observable = from(connections).pipe(
-      mergeMap((connection) => connection.observeServiceState()),
+      mergeMap(({ connection }) => connection.observeServiceState()),
       filter((state) => {
         const prev = this.cache.get(state.worldId);
         return !prev || prev.online != state.online;

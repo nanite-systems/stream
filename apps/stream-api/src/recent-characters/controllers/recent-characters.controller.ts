@@ -1,18 +1,13 @@
-import {
-  CacheTTL,
-  Controller,
-  ParseEnumPipe,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, ParseEnumPipe, UseInterceptors } from '@nestjs/common';
 import { RecentCharacterService } from '../services/recent-character.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import {
   ApiCommands,
+  Environments,
   RecentCharacterCountResponse,
   RecentCharactersResponse,
 } from '@nss/ess-concerns';
-import { Environment } from '../concerns/environments.enum';
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @Controller()
 @UseInterceptors(CacheInterceptor)
@@ -23,8 +18,8 @@ export class RecentCharactersController {
   @MessagePattern(ApiCommands.recentCharacters)
   @CacheKey('recent_characters')
   recentCharacters(
-    @Payload('environment', new ParseEnumPipe(Environment))
-    environment: Environment,
+    @Payload('environment', new ParseEnumPipe(Environments))
+    environment: Environments,
   ): Promise<RecentCharactersResponse> {
     return this.service.recentCharacters(environment);
   }
@@ -32,8 +27,8 @@ export class RecentCharactersController {
   @MessagePattern(ApiCommands.recentCharacterCount)
   @CacheKey('recent_character_count')
   recentCharacterCount(
-    @Payload('environment', new ParseEnumPipe(Environment))
-    environment: Environment,
+    @Payload('environment', new ParseEnumPipe(Environments))
+    environment: Environments,
   ): Promise<RecentCharacterCountResponse> {
     return this.service.recentCharacterCount(environment);
   }

@@ -2,23 +2,27 @@ import { EventEntity } from '../entities/event.entity';
 import { DuplicateService } from '../services/duplicate.service';
 import { Injectable } from '@nestjs/common';
 import { EventPayload } from '@nss/ess-concerns';
+import { ConnectionDetails } from '../../census/utils/connection-details';
 
 @Injectable()
 export class EventEntityFactory {
-  private readonly duplicateFilters = new WeakMap<any, DuplicateService>();
+  private readonly duplicateFilters = new Map<number, DuplicateService>();
   private readonly multiplexer = new DuplicateService(20 * 1000);
 
-  create(payload: EventPayload, connection: any): EventEntity {
+  create(
+    payload: EventPayload,
+    connectionDetails: ConnectionDetails,
+  ): EventEntity {
     const hash = this.hashEvent(payload);
     const sightingConnection =
-      this.getDuplicateService(connection).checkAndIncr(hash);
+      this.getDuplicateService(connectionDetails).checkAndIncr(hash);
     const sightingMultiplexed = this.multiplexer.checkAndIncr(
       `${sightingConnection}::${hash}`,
     );
 
     return new EventEntity(
       payload,
-      connection,
+      connectionDetails,
       hash,
       sightingConnection,
       sightingMultiplexed,
@@ -33,12 +37,11 @@ export class EventEntityFactory {
     return hash.slice(1);
   }
 
-  private getDuplicateService(connection: any): DuplicateService {
-    if (this.duplicateFilters.has(connection))
-      return this.duplicateFilters.get(connection);
+  private getDuplicateService({ id }: ConnectionDetails): DuplicateService {
+    if (this.duplicateFilters.has(id)) return this.duplicateFilters.get(id);
 
     const filter = new DuplicateService(20 * 1000);
-    this.duplicateFilters.set(connection, filter);
+    this.duplicateFilters.set(id, filter);
 
     return filter;
   }

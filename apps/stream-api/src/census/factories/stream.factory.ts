@@ -7,6 +7,9 @@ export class StreamFactory {
   constructor(private readonly config: ConfigService) {}
 
   createStream(environment: PS2Environment): CensusClient {
-    return new CensusClient(this.config.get('ess.serviceId'), environment);
+    return new CensusClient(
+      this.config.getOrThrow('ess.serviceId'),
+      environment,
+    );
   }
 }

@@ -1,49 +1,49 @@
 import { Module } from '@nestjs/common';
+import { StreamConductorService } from './services/stream-conductor.service';
+import { EssAdapterFactory } from './factories/ess-adapter.factory';
 import {
-  CONDUCTOR_OPTIONS,
-  StreamConductorService,
-  StreamConductorServiceOptions,
-} from './services/stream-conductor.service';
-import { ConnectionFactory } from './factories/connection.factory';
-import { CONNECTIONS, MANAGED_CONNECTIONS } from './constants';
+  CONNECTIONS,
+  DETAILED_CONNECTIONS,
+  ESS_ADAPTERS,
+  MANAGED_CONNECTIONS,
+} from './constants';
 import { StreamIndicator } from './indicators/stream.indicator';
 import { StreamManagerService } from './services/stream-manager.service';
-import { HEARTBEAT_OFFSET_ACCESSOR } from './concerns/heartbeat-offset-accessor.contract';
-import {
-  HEARTBEAT_OFFSET_ACCESSOR_OPTIONS,
-  HeartbeatOffsetAccessor,
-  HeartbeatOffsetAccessorOptions,
-} from './utils/heartbeat-offset.accessor';
 import { DELAY_POLICY } from './concerns/delay-policy.contract';
 import {
   ALTERNATE_DELAY_POLICY_OPTIONS,
   AlternateDelayPolicy,
   AlternateDelayPolicyOptions,
 } from './policies/delay/alternate-delay.policy';
-import { ConnectionContract } from './concerns/connection.contract';
-import { ManagedConnectionFactory } from './factories/managed-connection.factory';
-import { ConfigService } from '@nestjs/config';
 import {
-  makeCounterProvider,
-  makeGaugeProvider,
-} from '@willsoto/nestjs-prometheus';
-import { CensusMetricsService } from './services/census-metrics.service';
+  MANAGED_CONNECTION_FACTORY_OPTIONS,
+  ManagedConnectionFactory,
+  ManagedConnectionFactoryOptions,
+} from './factories/managed-connection.factory';
+import { ConfigService } from '@nestjs/config';
+import { ManagedConnectionsMetricsService } from './services/managed-connections-metrics.service';
+import { EssAdapter } from './adapters/ess.adapter';
+import { ConnectionDetails } from './utils/connection-details';
+import { MetricModule } from './modules/metric.module';
+import { DetailedConnectionContract } from './concerns/detailed-connection.contract';
 
 @Module({
+  imports: [MetricModule],
   providers: [
-    ConnectionFactory,
+    EssAdapterFactory,
     ManagedConnectionFactory,
+
     StreamConductorService,
     StreamManagerService,
     StreamIndicator,
 
     /** Options */
     {
-      provide: HEARTBEAT_OFFSET_ACCESSOR_OPTIONS,
+      provide: MANAGED_CONNECTION_FACTORY_OPTIONS,
       useFactory: (config: ConfigService) =>
         ({
           heartbeatInterval: config.get('ess.heartbeatInterval'),
-        } satisfies HeartbeatOffsetAccessorOptions),
+        }) satisfies ManagedConnectionFactoryOptions,
       inject: [ConfigService],
     },
     {
@@ -54,25 +54,11 @@ import { CensusMetricsService } from './services/census-metrics.service';
           cycleDelay: config.get('ess.cycleDelay'),
           longCycleInterval: config.get('ess.longCycleInterval'),
           longCycleDelay: config.get('ess.longCycleDelay'),
-        } satisfies AlternateDelayPolicyOptions),
-      inject: [ConfigService],
-    },
-    {
-      provide: CONDUCTOR_OPTIONS,
-      useFactory: (config: ConfigService) =>
-        ({
-          minAcceptedOffsetThreshold: config.get(
-            'ess.minAcceptedOffsetThreshold',
-          ),
-        } satisfies StreamConductorServiceOptions),
+        }) satisfies AlternateDelayPolicyOptions,
       inject: [ConfigService],
     },
 
     /** Satisfy contracts */
-    {
-      provide: HEARTBEAT_OFFSET_ACCESSOR,
-      useClass: HeartbeatOffsetAccessor,
-    },
     {
       provide: DELAY_POLICY,
       useClass: AlternateDelayPolicy,
@@ -80,48 +66,48 @@ import { CensusMetricsService } from './services/census-metrics.service';
 
     /** Connections */
     {
-      provide: CONNECTIONS,
-      useFactory: (factory: ConnectionFactory, config: ConfigService) =>
+      provide: ESS_ADAPTERS,
+      useFactory: (config: ConfigService, factory: EssAdapterFactory) =>
         Object.freeze(
           config
-            .get('ess.serviceIds')
-            .map((serviceId) => factory.createConnection(serviceId)),
+            .getOrThrow<string[]>('ess.serviceIds')
+            .map((serviceId, i) =>
+              factory.create(serviceId, new ConnectionDetails(i + 1)),
+            ),
         ),
-      inject: [ConnectionFactory, ConfigService],
+      inject: [ConfigService, EssAdapterFactory],
+    },
+    {
+      provide: CONNECTIONS,
+      useExisting: ESS_ADAPTERS,
     },
     {
       provide: MANAGED_CONNECTIONS,
       useFactory: (
-        connections: ConnectionContract[],
+        connections: EssAdapter[],
         factory: ManagedConnectionFactory,
-      ) => Object.freeze(connections.map((c, i) => factory.create(i, c))),
-      inject: [CONNECTIONS, ManagedConnectionFactory],
+      ) =>
+        Object.freeze(
+          connections.map((connection) =>
+            factory.create(connection.details, connection),
+          ),
+        ),
+      inject: [ESS_ADAPTERS, ManagedConnectionFactory],
+    },
+
+    {
+      provide: DETAILED_CONNECTIONS,
+      useFactory: (connections: EssAdapter[]) =>
+        connections.map((connection) => ({
+          details: connection.details,
+          connection,
+        })) satisfies DetailedConnectionContract[],
+      inject: [ESS_ADAPTERS],
     },
 
     /** Metrics */
-    CensusMetricsService,
-
-    makeGaugeProvider({
-      name: 'ess_connection_start_time_seconds',
-      help: 'Start time of ess connection unix epoch',
-      labelNames: ['connection'],
-    }),
-    makeGaugeProvider({
-      name: 'ess_connection_heartbeat_offset_seconds',
-      help: 'Residual of unix epoch divided by heartbeat interval',
-      labelNames: ['connection'],
-    }),
-    makeCounterProvider({
-      name: 'ess_connection_state_count',
-      help: 'Counter that tracks disconnects',
-      labelNames: ['connection', 'type'],
-    }),
-    makeGaugeProvider({
-      name: 'ess_connection_state_total',
-      help: 'Current number of connections in a certain state',
-      labelNames: ['type'],
-    }),
+    ManagedConnectionsMetricsService,
   ],
-  exports: [CONNECTIONS, StreamIndicator],
+  exports: [DETAILED_CONNECTIONS, StreamIndicator],
 })
 export class CensusModule {}
