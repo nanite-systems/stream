@@ -57,7 +57,7 @@ export const config = () => ({
     /**
      * The heartbeat interval
      */
-    heartbeatInterval: envInt('ESS_HEARTBEAT_INTERVAL', 10, 30) * 1000,
+    heartbeatInterval: envInt('ESS_HEARTBEAT_INTERVAL', 10, 30),
 
     /**
      * How many seconds to wait before reconnecting
@@ -98,5 +98,10 @@ export const config = () => ({
      * The interval used for resending interval
      */
     subscriptionInterval: envInt('ESS_SUBSCRIPTION_INTERVAL', 10, 60) * 1000,
+
+    /**
+     * The timeout when not receiving a reply, should be larger then interval
+     */
+    subscriptionTimeout: envInt('ESS_SUBSCRIPTION_TIMEOUT', 10, 180) * 1000,
   },
 });

@@ -8,7 +8,7 @@ import { provideFactory } from '../utils/provide.helpers';
 import { Environment } from './utils/environment';
 import { EnvironmentSelectorFactory } from './factories/environment-selector.factory';
 import { EnvironmentAccessor } from './utils/environment.accessor';
-import { EnvironmentName } from '../concerns/environment.type';
+import { Environments } from '@nss/ess-concerns';
 
 @Module({
   imports: [IngressModule, ServiceStateModule],
@@ -33,7 +33,7 @@ export class EnvironmentsModule implements OnModuleInit {
       EnvironmentManifest.environments,
     ))
       this.service.register(
-        this.factory.create(environment as EnvironmentName, description),
+        this.factory.create(environment as Environments, description),
       );
   }
 }

@@ -18,6 +18,7 @@ import {
 import { StreamConductorService } from '../services/stream-conductor.service';
 import { DelayPolicyContract } from '../concerns/delay-policy.contract';
 import { Logger } from '@nss/utils';
+import { ConnectionDetails } from './connection-details';
 
 export enum State {
   DISCONNECTED,
@@ -44,7 +45,7 @@ export class ManagedConnection {
   private readonly stateChange = new Subject<State>();
 
   constructor(
-    private readonly label: string,
+    readonly details: ConnectionDetails,
     private readonly logger: Logger,
     readonly connection: ConnectionContract,
     private readonly delayPolicy: DelayPolicyContract,
@@ -55,13 +56,13 @@ export class ManagedConnection {
     this.observeInitHeartbeat().subscribe((heartbeat) => {
       this.heartbeatOffset = heartbeat % heartbeatInterval;
 
-      if (this.conductor.claim(this.label, this.heartbeatOffset)) {
+      if (this.conductor.claim(this.details.label, this.heartbeatOffset)) {
         this.logger.log(
           `Connection accepted`,
           {
             heartbeatOffset: this.heartbeatOffset,
           },
-          this.label,
+          this.details.label,
         );
         this.accepted = true;
         this.cycleCounter = 0;
@@ -74,7 +75,7 @@ export class ManagedConnection {
             cycle: ++this.cycleCounter,
             heartbeatOffset: this.heartbeatOffset,
           },
-          this.label,
+          this.details.label,
         );
 
         timer(this.delayPolicy.next(true, 0, this.cycleCounter))
@@ -93,7 +94,7 @@ export class ManagedConnection {
       .observeDisconnect()
       .pipe(filter(() => this.accepted))
       .subscribe((details) => {
-        this.logger.log(`Disconnected`, details, this.label);
+        this.logger.log(`Disconnected`, details, this.details.label);
 
         this.stateChange.next(State.DISCONNECTED);
       });
@@ -120,14 +121,17 @@ export class ManagedConnection {
 
           this.conductor.release(this);
 
-          this.logger.verbose('Connecting');
+          this.logger.verbose('Connecting', this.details.label);
           this.stateChange.next(State.CONNECTING);
         }),
         exhaustMap(() =>
           defer(() => this.connection.connect()).pipe(
             tap({
               error: (err) => {
-                this.logger.debug(`Connection failed: ${err}`);
+                this.logger.debug(
+                  `Connection failed: ${err}`,
+                  this.details.label,
+                );
 
                 this.stateChange.next(State.FAILED);
               },
@@ -146,7 +150,7 @@ export class ManagedConnection {
         ),
       )
       .subscribe(() => {
-        this.logger.debug('Connected');
+        this.logger.debug('Connected', this.details.label);
 
         this.connectedAt = new Date().getTime();
         this.wasForcedDisconnect = false;

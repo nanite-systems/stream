@@ -7,6 +7,7 @@ import {
 } from '../concerns/delay-policy.contract';
 import { StreamConductorService } from '../services/stream-conductor.service';
 import { Logger } from '@nss/utils';
+import { ConnectionDetails } from '../utils/connection-details';
 
 export const MANAGED_CONNECTION_FACTORY_OPTIONS = Symbol(
   'provide:managed_connection_factory_options',
@@ -27,9 +28,12 @@ export class ManagedConnectionFactory {
     private readonly options: ManagedConnectionFactoryOptions,
   ) {}
 
-  create(label: string, connection: ConnectionContract): ManagedConnection {
+  create(
+    details: ConnectionDetails,
+    connection: ConnectionContract,
+  ): ManagedConnection {
     return new ManagedConnection(
-      label,
+      details,
       this.logger,
       connection,
       this.delayPolicy,

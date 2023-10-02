@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CONNECTIONS } from '../../census/constants';
-import { ConnectionContract } from '../../census/concerns/connection.contract';
+import { DETAILED_CONNECTIONS } from '../../census/constants';
 import { filter, from, map, mergeMap, Observable, share } from 'rxjs';
 import { EventEntity } from '../entities/event.entity';
 import { EventEntityFactory } from '../factories/event-entity.factory';
+import { DetailedConnectionContract } from '../../census/concerns/detailed-connection.contract';
 
 @Injectable()
 export class MultiplexerService {
@@ -12,17 +12,16 @@ export class MultiplexerService {
   private readonly duplicateObservable: Observable<EventEntity>;
 
   constructor(
-    @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
+    @Inject(DETAILED_CONNECTIONS)
+    private readonly connections: DetailedConnectionContract[],
     private readonly eventEntityFactory: EventEntityFactory,
   ) {
-    const messages = from(connections).pipe(
-      mergeMap((connection) =>
+    const messages = from(this.connections).pipe(
+      mergeMap(({ details, connection }) =>
         connection
           .observeEventMessage()
           .pipe(
-            map((payload) =>
-              this.eventEntityFactory.create(payload, connection),
-            ),
+            map((payload) => this.eventEntityFactory.create(payload, details)),
           ),
       ),
       share(),

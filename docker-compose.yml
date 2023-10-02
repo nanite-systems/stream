@@ -102,7 +102,10 @@ services:
     #    ports:
     #      - '${RABBITMQ_PORT:-5672}:5672'
     #      - '${RABBITMQ_MANAGEMENT_PORT:-15672}:15672'
-    env_file: .env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.rabbitmq.rule: Host(`${RABBITMQ_HOST:-rabbitmq.localhost}`)
+      traefik.http.services.rabbitmq-ns-stream.loadbalancer.server.port: 15672
 
   # NSS reverse proxy
   traefik:
@@ -110,7 +113,7 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./docker/traefik.yml:/traefik.yml
+      - ./.docker/traefik.yml:/traefik.yml
     ports:
       - "${TRAEFIK_API_PORT:-8080}:8080"
       - "${TRAEFIK_WEB_PORT:-80}:80"
@@ -123,7 +126,7 @@ services:
     image: prom/prometheus
     restart: unless-stopped
     volumes:
-      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./.docker/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     profiles:
       - full

@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { StreamConductorService } from './services/stream-conductor.service';
 import { EssAdapterFactory } from './factories/ess-adapter.factory';
-import { CONNECTIONS, MANAGED_CONNECTIONS, STREAM_CLIENTS } from './constants';
+import {
+  CONNECTIONS,
+  DETAILED_CONNECTIONS,
+  ESS_ADAPTERS,
+  MANAGED_CONNECTIONS,
+} from './constants';
 import { StreamIndicator } from './indicators/stream.indicator';
 import { StreamManagerService } from './services/stream-manager.service';
 import { DELAY_POLICY } from './concerns/delay-policy.contract';
@@ -16,28 +21,18 @@ import {
   ManagedConnectionFactoryOptions,
 } from './factories/managed-connection.factory';
 import { ConfigService } from '@nestjs/config';
-import {
-  makeCounterProvider,
-  makeGaugeProvider,
-} from '@willsoto/nestjs-prometheus';
-import { CensusMetricsService } from './services/census-metrics.service';
-import { StreamClientFactory } from './factories/stream-client.factory';
-import { Stream } from 'ps2census';
-import {
-  essConnectionClockOffsetSeconds,
-  essConnectionHeartbeatOffsetSeconds,
-  essConnectionStartTimeSeconds,
-  essConnectionStateCount,
-  essConnectionStateTotal,
-  essConnectionSubscriptionAlterationCount,
-} from '../metrics';
+import { ManagedConnectionsMetricsService } from './services/managed-connections-metrics.service';
 import { EssAdapter } from './adapters/ess.adapter';
+import { ConnectionDetails } from './utils/connection-details';
+import { MetricModule } from './modules/metric.module';
+import { DetailedConnectionContract } from './concerns/detailed-connection.contract';
 
 @Module({
+  imports: [MetricModule],
   providers: [
-    StreamClientFactory,
     EssAdapterFactory,
     ManagedConnectionFactory,
+
     StreamConductorService,
     StreamManagerService,
     StreamIndicator,
@@ -71,20 +66,20 @@ import { EssAdapter } from './adapters/ess.adapter';
 
     /** Connections */
     {
-      provide: STREAM_CLIENTS,
-      useFactory: (factory: StreamClientFactory, config: ConfigService) =>
+      provide: ESS_ADAPTERS,
+      useFactory: (config: ConfigService, factory: EssAdapterFactory) =>
         Object.freeze(
           config
-            .getOrThrow('ess.serviceIds')
-            .map((serviceId) => factory.create(serviceId)),
+            .getOrThrow<string[]>('ess.serviceIds')
+            .map((serviceId, i) =>
+              factory.create(serviceId, new ConnectionDetails(i + 1)),
+            ),
         ),
-      inject: [StreamClientFactory, ConfigService],
+      inject: [ConfigService, EssAdapterFactory],
     },
     {
       provide: CONNECTIONS,
-      useFactory: (clients: Stream.Client[], factory: EssAdapterFactory) =>
-        Object.freeze(clients.map((client, id) => factory.create(id, client))),
-      inject: [STREAM_CLIENTS, EssAdapterFactory],
+      useExisting: ESS_ADAPTERS,
     },
     {
       provide: MANAGED_CONNECTIONS,
@@ -94,48 +89,25 @@ import { EssAdapter } from './adapters/ess.adapter';
       ) =>
         Object.freeze(
           connections.map((connection) =>
-            factory.create(connection.label, connection),
+            factory.create(connection.details, connection),
           ),
         ),
-      inject: [CONNECTIONS, ManagedConnectionFactory],
+      inject: [ESS_ADAPTERS, ManagedConnectionFactory],
+    },
+
+    {
+      provide: DETAILED_CONNECTIONS,
+      useFactory: (connections: EssAdapter[]) =>
+        connections.map((connection) => ({
+          details: connection.details,
+          connection,
+        })) satisfies DetailedConnectionContract[],
+      inject: [ESS_ADAPTERS],
     },
 
     /** Metrics */
-    CensusMetricsService,
-
-    makeGaugeProvider({
-      name: essConnectionStartTimeSeconds,
-      help: 'Start time of ess connection unix epoch',
-      labelNames: ['connection'],
-    }),
-    makeGaugeProvider({
-      name: essConnectionHeartbeatOffsetSeconds,
-      help: 'Residual of unix epoch divided by heartbeat interval',
-      labelNames: ['connection'],
-    }),
-    makeCounterProvider({
-      name: essConnectionStateCount,
-      help: 'Counter that tracks disconnects',
-      labelNames: ['connection', 'type'],
-    }),
-    makeGaugeProvider({
-      name: essConnectionStateTotal,
-      help: 'Current number of connections in a certain state',
-      labelNames: ['type'],
-    }),
-
-    makeCounterProvider({
-      name: essConnectionSubscriptionAlterationCount,
-      help: 'Counter that tracks how many times a subscription to a connection has been altered',
-      labelNames: ['connection'],
-    }),
-
-    makeGaugeProvider({
-      name: essConnectionClockOffsetSeconds,
-      help: 'Clock offset between ess and system',
-      labelNames: ['connection'],
-    }),
+    ManagedConnectionsMetricsService,
   ],
-  exports: [CONNECTIONS, StreamIndicator],
+  exports: [DETAILED_CONNECTIONS, StreamIndicator],
 })
 export class CensusModule {}

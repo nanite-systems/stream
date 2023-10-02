@@ -16,11 +16,10 @@ interface StateMemo {
   connection: ManagedConnection;
   prev?: State;
   state: State;
-  id: number;
 }
 
 @Injectable()
-export class CensusMetricsService {
+export class ManagedConnectionsMetricsService {
   constructor(
     @Inject(MANAGED_CONNECTIONS)
     private readonly connections: ManagedConnection[],
@@ -42,7 +41,7 @@ export class CensusMetricsService {
   private watchState(): void {
     from(this.connections)
       .pipe(
-        mergeMap((connection, id) =>
+        mergeMap((connection) =>
           connection.observeStateChange().pipe(
             scan(
               (prev: StateMemo, state) => ({
@@ -53,13 +52,14 @@ export class CensusMetricsService {
               {
                 connection,
                 state: undefined,
-                id,
               },
             ),
           ),
         ),
       )
-      .subscribe(({ connection, state, prev, id }) => {
+      .subscribe(({ connection, state, prev }) => {
+        const { id } = connection.details;
+
         if (connection.connectedAt)
           this.connectionStartGauge.set(
             { connection: id },

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CONNECTIONS } from '../../census/constants';
-import { ConnectionContract } from '../../census/concerns/connection.contract';
+import { DETAILED_CONNECTIONS } from '../../census/constants';
 import { MultiplexerService } from '../../multiplexer/services/multiplexer.service';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter, Summary } from 'prom-client';
@@ -9,11 +8,14 @@ import {
   essMessageCount,
   essMessageLatencySeconds,
 } from '../../metrics';
+import { DetailedConnectionContract } from '../../census/concerns/detailed-connection.contract';
+import { from } from 'rxjs';
 
 @Injectable()
 export class StreamMetricService {
   constructor(
-    @Inject(CONNECTIONS) private readonly connections: ConnectionContract[],
+    @Inject(DETAILED_CONNECTIONS)
+    private readonly connections: DetailedConnectionContract[],
     private readonly multiplexer: MultiplexerService,
     @InjectMetric(essMessageCount)
     private readonly messageCounter: Counter,
@@ -22,7 +24,13 @@ export class StreamMetricService {
     @InjectMetric(essMessageLatencySeconds)
     private readonly latencyHistogram: Summary,
   ) {
-    this.connections.forEach((connection, id) => {
+    this.messageMetrics();
+    this.multiplexedMessageMetrics();
+    this.duplicateMetrics();
+  }
+
+  private messageMetrics(): void {
+    from(this.connections).subscribe(({ details: { id }, connection }) => {
       connection.observeEventMessage().subscribe((event) => {
         this.latencyHistogram.observe(
           {
@@ -40,7 +48,9 @@ export class StreamMetricService {
         });
       });
     });
+  }
 
+  private multiplexedMessageMetrics(): void {
     this.multiplexer.observeStream().subscribe((event) =>
       this.messageCounter.inc({
         connection: 'multiplexed',
@@ -48,10 +58,12 @@ export class StreamMetricService {
         world: event.payload.world_id,
       }),
     );
+  }
 
+  private duplicateMetrics(): void {
     this.multiplexer.observeDuplicates().subscribe((event) =>
       this.duplicateCounter.inc({
-        connection: this.connections.indexOf(event.connection) + 1,
+        connection: event.connectionDetails.id,
         event: event.payload.event_name,
         world: event.payload.world_id,
       }),
