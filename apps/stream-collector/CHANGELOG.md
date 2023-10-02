@@ -1,5 +1,16 @@
 # stream-collector
 
+## 5.0.0
+
+### Major Changes
+
+- [#26](https://github.com/nanite-systems/stream/pull/26) [`b4fb65d`](https://github.com/nanite-systems/stream/commit/b4fb65d086de8591f68ea2928adf41618463bfef) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - improved metrics, updated dependencies, and numerous fixes
+
+### Patch Changes
+
+- Updated dependencies [[`b4fb65d`](https://github.com/nanite-systems/stream/commit/b4fb65d086de8591f68ea2928adf41618463bfef)]:
+  - @nss/ess-concerns@1.0.1
+
 ## 4.0.1
 
 ### Patch Changes

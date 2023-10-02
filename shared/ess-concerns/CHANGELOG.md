@@ -1,5 +1,11 @@
 # @nss/ess-concerns
 
+## 1.0.1
+
+### Patch Changes
+
+- [#26](https://github.com/nanite-systems/stream/pull/26) [`b4fb65d`](https://github.com/nanite-systems/stream/commit/b4fb65d086de8591f68ea2928adf41618463bfef) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - improved metrics, updated dependencies, and numerous fixes
+
 ## 1.0.0
 
 ### Major Changes
