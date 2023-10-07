@@ -48,7 +48,7 @@ import {
     makeCounterProvider({
       name: essSubscriptionAlterationCount,
       help: 'Counter that tracks how many times a subscription to a connection has been altered',
-      labelNames: ['connection'],
+      labelNames: ['connection', 'key'],
     }),
     makeCounterProvider({
       name: essSubscriptionMessageTimeoutCount,
