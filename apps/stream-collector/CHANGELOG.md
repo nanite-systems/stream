@@ -1,5 +1,11 @@
 # stream-collector
 
+## 5.0.1
+
+### Patch Changes
+
+- [#30](https://github.com/nanite-systems/stream/pull/30) [`19db576`](https://github.com/nanite-systems/stream/commit/19db576f78711018b776e2ea09315d4c2d81e2e8) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Added missing label prometheus
+
 ## 5.0.0
 
 ### Major Changes
