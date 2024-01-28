@@ -117,10 +117,20 @@ export class EventSubscriptionQuery extends EventEmitter<EventSubscriptionQueryE
   }
 
   format(listCharacters = false): Stream.CensusMessages.Subscription {
-    if (this._characters.has('all') || listCharacters)
+    if (this._characters.has('all'))
       return {
         subscription: {
           characters: ['all'],
+          eventNames: Array.from(this._events) as any,
+          logicalAndCharactersWithWorlds: this._logicalAndCharactersWithWorlds,
+          worlds: Array.from(this._worlds),
+        },
+      };
+
+    if (listCharacters)
+      return {
+        subscription: {
+          characters: Array.from(this._characters),
           eventNames: Array.from(this._events) as any,
           logicalAndCharactersWithWorlds: this._logicalAndCharactersWithWorlds,
           worlds: Array.from(this._worlds),
