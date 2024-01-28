@@ -1,5 +1,18 @@
 # stream-manifold
 
+## 3.1.2
+
+### Patch Changes
+
+- [#35](https://github.com/nanite-systems/stream/pull/35) [`4240ef8fff9d6bb5921e78ee68d173c5d71b245c`](https://github.com/nanite-systems/stream/commit/4240ef8fff9d6bb5921e78ee68d173c5d71b245c) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Bumped dependencies
+
+- [#35](https://github.com/nanite-systems/stream/pull/35) [`4240ef8fff9d6bb5921e78ee68d173c5d71b245c`](https://github.com/nanite-systems/stream/commit/4240ef8fff9d6bb5921e78ee68d173c5d71b245c) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Fixed format of subscription message
+
+- Updated dependencies [[`4240ef8fff9d6bb5921e78ee68d173c5d71b245c`](https://github.com/nanite-systems/stream/commit/4240ef8fff9d6bb5921e78ee68d173c5d71b245c)]:
+  - @nss/ess-concerns@1.0.2
+  - @nss/rabbitmq@1.0.1
+  - @nss/utils@0.1.1
+
 ## 3.1.1
 
 ### Patch Changes
