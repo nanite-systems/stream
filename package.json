@@ -9,7 +9,7 @@
   "type": "commonjs",
   "scripts": {
     "changelog": "pnpm changeset version",
-    "lint": "prettier **/*.{ts,js,json}",
+    "lint": "prettier . --check",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -29,7 +29,7 @@
   },
   "lint-staged": {
     "**/*.{ts,js,json}": [
-      "prettier --ignore-path ./.prettierignore --write"
+      "prettier . --write"
     ]
   }
 }

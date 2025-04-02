@@ -34,7 +34,7 @@ import { ServiceTrackerModule } from '../service-tracker/service-tracker.module'
           exchangeName: config.get('rabbitmq.streamExchangeName'),
           duplicateExchangeName: config.get('rabbitmq.duplicateExchangeName'),
           appId: config.get('app.id'),
-        } satisfies PublisherServiceOptions),
+        }) satisfies PublisherServiceOptions,
       inject: [ConfigService],
     },
 

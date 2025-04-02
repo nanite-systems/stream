@@ -17,7 +17,6 @@
 [![stream-collector](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-collector%2Fpackage.json&label=collector)](https://github.com/nanite-systems/stream/tree/main/apps/stream-collector)
 [![stream-manifold](https://img.shields.io/github/package-json/v/nanite-systems/stream?color=blue&filename=apps%2Fstream-manifold%2Fpackage.json&label=manifold)](https://github.com/nanite-systems/stream/tree/main/apps/stream-manifold)
 
-
 </div>
 
 ## Description

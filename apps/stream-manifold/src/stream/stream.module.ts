@@ -47,7 +47,7 @@ import { CommandCountInterceptor } from './interceptors/command-count.intercepto
         ({
           tokenHeader: config.get('http.authTokenHeader'),
           behindProxy: config.get('http.behindProxy'),
-        } satisfies ConnectionAccessorOptions),
+        }) satisfies ConnectionAccessorOptions,
       inject: [ConfigService],
     },
     RequestAccessor,

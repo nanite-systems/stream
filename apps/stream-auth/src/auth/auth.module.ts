@@ -24,7 +24,7 @@ import { ServiceIdValidationService } from './services/service-id-validation.ser
       useFactory: (config: ConfigService) =>
         ({
           salt: config.getOrThrow('auth.salt'),
-        } satisfies TokenExchangeServiceOptions),
+        }) satisfies TokenExchangeServiceOptions,
       inject: [ConfigService],
     },
     {
@@ -32,7 +32,7 @@ import { ServiceIdValidationService } from './services/service-id-validation.ser
       useFactory: (config: ConfigService) =>
         ({
           cacheTtl: config.get('auth.ttl'),
-        } satisfies AuthControllerOptions),
+        }) satisfies AuthControllerOptions,
       inject: [ConfigService],
     },
 
