@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
 
 # Workspace
-FROM node:20-alpine as workspace
+FROM node:22-alpine as workspace
 
 WORKDIR /workspace
 
 RUN apk add --no-cache g++ make py3-pip
-RUN npm -g install pnpm@^8.0.0
+RUN npm -g install pnpm@^10.0.0
 
 COPY package.json pnpm-*.yaml .npmrc ./
 
@@ -25,7 +25,7 @@ RUN pnpm nx build $APP_NAME
 RUN pnpm -F $APP_NAME --prod deploy /app
 
 # Release app(default template)
-FROM node:20-alpine as release-default
+FROM node:22-alpine as release-default
 
 WORKDIR /app
 
