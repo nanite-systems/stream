@@ -7,16 +7,15 @@ import {
 } from 'amqp-connection-manager';
 import { DistributorService } from '../services/distributor.service';
 import { ConsumeMessage } from 'amqplib';
-import { ConfigService } from '@nestjs/config';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Histogram } from 'prom-client';
+import { config } from '../../config';
 
 @Injectable()
 export class StreamChannelFactory {
   constructor(
     @Inject(RABBIT_MQ) private readonly rabbit: AmqpConnectionManager,
     private readonly distributor: DistributorService,
-    private readonly config: ConfigService,
     @InjectMetric('nss_message_latency_milliseconds')
     private readonly messageLatency: Histogram,
   ) {}
@@ -29,11 +28,7 @@ export class StreamChannelFactory {
         });
 
         await Promise.all([
-          channel.bindQueue(
-            queue,
-            this.config.get('rabbitmq.streamExchangeName'),
-            '',
-          ),
+          channel.bindQueue(queue, config.rabbitmq.streamExchangeName, ''),
           channel.consume(queue, (message) =>
             this.handleMessage(message, channel),
           ),

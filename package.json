@@ -4,32 +4,32 @@
   "repository": "git@github.com:nanite-systems/stream.git",
   "author": "Microwavekonijn <microwavekonijn@pm.me>",
   "license": "Apache-2.0",
-  "packageManager": "^pnpm@8.0.0",
+  "packageManager": "pnpm@10.0.0",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "changelog": "pnpm changeset version",
-    "lint": "prettier **/*.{ts,js,json}",
+    "lint": "prettier . --check",
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.8",
-    "@changesets/cli": "^2.27.1",
-    "@commitlint/cli": "^17.8.1",
-    "@commitlint/config-conventional": "^17.8.1",
-    "@nx-tools/container-metadata": "5.0.2",
-    "@nx-tools/nx-container": "5.0.2",
-    "@nx/js": "^16.10.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.3.0",
-    "nodemon": "^3.0.3",
-    "nx": "^16.10.0",
-    "prettier": "^3.2.4",
-    "typescript": "^5.3.3"
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.28.1",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@nx-tools/container-metadata": "^6.1.1",
+    "@nx-tools/nx-container": "^6.2.0",
+    "@nx/js": "^20.7.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "nodemon": "^3.1.9",
+    "nx": "^20.7.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
   },
   "lint-staged": {
     "**/*.{ts,js,json}": [
-      "prettier --ignore-path ./.prettierignore --write"
+      "prettier . --write"
     ]
   }
 }

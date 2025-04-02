@@ -11,18 +11,16 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: ^8.0.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+          node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --silent
 
       - name: Lint
-        run: pnpm nx run-many --target=lint
+        run: pnpm lint

@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { StreamConductorService } from './services/stream-conductor.service';
-import { EssAdapterFactory } from './factories/ess-adapter.factory';
+import {
+  EssAdapterFactory,
+  EssAdapterFactoryOptions,
+} from './factories/ess-adapter.factory';
 import {
   CONNECTIONS,
   DETAILED_CONNECTIONS,
@@ -20,12 +23,12 @@ import {
   ManagedConnectionFactory,
   ManagedConnectionFactoryOptions,
 } from './factories/managed-connection.factory';
-import { ConfigService } from '@nestjs/config';
 import { ManagedConnectionsMetricsService } from './services/managed-connections-metrics.service';
 import { EssAdapter } from './adapters/ess.adapter';
 import { ConnectionDetails } from './utils/connection-details';
 import { MetricModule } from './modules/metric.module';
 import { DetailedConnectionContract } from './concerns/detailed-connection.contract';
+import { config } from '../config';
 
 @Module({
   imports: [MetricModule],
@@ -40,22 +43,33 @@ import { DetailedConnectionContract } from './concerns/detailed-connection.contr
     /** Options */
     {
       provide: MANAGED_CONNECTION_FACTORY_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          heartbeatInterval: config.get('ess.heartbeatInterval'),
+          heartbeatInterval: config.ess.heartbeatInterval,
         }) satisfies ManagedConnectionFactoryOptions,
-      inject: [ConfigService],
     },
     {
       provide: ALTERNATE_DELAY_POLICY_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          reconnectDelay: config.get('ess.reconnectDelay'),
-          cycleDelay: config.get('ess.cycleDelay'),
-          longCycleInterval: config.get('ess.longCycleInterval'),
-          longCycleDelay: config.get('ess.longCycleDelay'),
+          reconnectDelay: config.ess.reconnectDelay,
+          cycleDelay: config.ess.cycleDelay,
+          longCycleInterval: config.ess.longCycleInterval,
+          longCycleDelay: config.ess.longCycleDelay,
         }) satisfies AlternateDelayPolicyOptions,
-      inject: [ConfigService],
+    },
+    {
+      provide: EssAdapterFactory.OPTIONS,
+      useFactory: () =>
+        ({
+          environment: config.ess.environment as any,
+          events: config.ess.events as any,
+          worlds: config.ess.worlds,
+          characters: ['all'],
+          logicalAnd: config.ess.logicalAnd,
+          subscriptionInterval: config.ess.subscriptionInterval,
+          subscriptionTimeout: config.ess.subscriptionTimeout,
+        }) satisfies EssAdapterFactoryOptions,
     },
 
     /** Satisfy contracts */
@@ -67,15 +81,13 @@ import { DetailedConnectionContract } from './concerns/detailed-connection.contr
     /** Connections */
     {
       provide: ESS_ADAPTERS,
-      useFactory: (config: ConfigService, factory: EssAdapterFactory) =>
+      useFactory: (factory: EssAdapterFactory) =>
         Object.freeze(
-          config
-            .getOrThrow<string[]>('ess.serviceIds')
-            .map((serviceId, i) =>
-              factory.create(serviceId, new ConnectionDetails(i + 1)),
-            ),
+          config.ess.serviceIds.map((serviceId, i) =>
+            factory.create(serviceId, new ConnectionDetails(i + 1)),
+          ),
         ),
-      inject: [ConfigService, EssAdapterFactory],
+      inject: [EssAdapterFactory],
     },
     {
       provide: CONNECTIONS,

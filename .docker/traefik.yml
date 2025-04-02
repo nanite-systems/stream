@@ -8,12 +8,10 @@ metrics:
 providers:
   docker:
     exposedByDefault: false
-    defaultRule: "Host(`{{ .Name }}.localhost`)"
+    defaultRule: 'Host(`{{ .Name }}.localhost`)'
 
 entryPoints:
   web:
-    address: ":80"
+    address: ':80'
   metrics:
-    address: ":4000"
-
-
+    address: ':4000'

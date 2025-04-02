@@ -8,7 +8,7 @@ import {
 } from '@nestjs/terminus';
 import { StreamIndicator } from '../census/indicators/stream.indicator';
 import { RmqOptions, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
+import { config } from '../config';
 
 @Controller('health')
 export class HealthController {
@@ -18,12 +18,11 @@ export class HealthController {
     private readonly health: HealthCheckService,
     private readonly microservice: MicroserviceHealthIndicator,
     private readonly census: StreamIndicator,
-    config: ConfigService,
   ) {
     this.rabbitmq = {
       transport: Transport.RMQ,
       options: {
-        urls: config.get('rabbitmq.urls'),
+        urls: config.rabbitmq.urls,
       },
     } satisfies RmqOptions;
   }

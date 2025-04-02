@@ -2,27 +2,19 @@ import { Module, OnModuleDestroy } from '@nestjs/common';
 import { HealthModule } from './health/health.module';
 import { RecentCharactersModule } from './recent-characters/recent-characters.module';
 import { ServiceTrackerModule } from './service-tracker/service-tracker.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from './config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
-import { envSplit, Logger, LoggerModule } from '@nss/utils';
+import { Logger, LoggerModule } from '@nss/utils';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      expandVariables: true,
-      envFilePath: envSplit('ENV_PATHS', ['.env']),
-      load: [config],
-    }),
     LoggerModule.forRootAsync({
       global: true,
-      useFactory: (config: ConfigService) => ({
-        level: config.get('log.level'),
-        pretty: config.get('log.pretty'),
+      useFactory: () => ({
+        level: config.log.level as any,
+        pretty: config.log.pretty,
       }),
-      inject: [ConfigService],
     }),
     PrometheusModule.register({ global: true }),
     CacheModule.register({ isGlobal: true }),

@@ -115,8 +115,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./.docker/traefik.yml:/traefik.yml
     ports:
-      - "${TRAEFIK_API_PORT:-8080}:8080"
-      - "${TRAEFIK_WEB_PORT:-80}:80"
+      - '${TRAEFIK_API_PORT:-8080}:8080'
+      - '${TRAEFIK_WEB_PORT:-80}:80'
     profiles:
       - full
       - proxy

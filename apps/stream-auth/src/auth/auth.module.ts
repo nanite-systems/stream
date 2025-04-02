@@ -10,9 +10,9 @@ import {
   AuthControllerOptions,
 } from './controllers/auth.controller';
 import { Axios } from 'axios';
-import { ConfigService } from '@nestjs/config';
 import { CENSUS_API } from './constants';
 import { ServiceIdValidationService } from './services/service-id-validation.service';
+import { config } from '../config';
 
 @Module({
   providers: [
@@ -21,19 +21,17 @@ import { ServiceIdValidationService } from './services/service-id-validation.ser
 
     {
       provide: TOKEN_EXCHANGE_SERVICE_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          salt: config.getOrThrow('auth.salt'),
-        } satisfies TokenExchangeServiceOptions),
-      inject: [ConfigService],
+          salt: config.auth.salt,
+        }) satisfies TokenExchangeServiceOptions,
     },
     {
       provide: AUTH_CONTROLLER_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          cacheTtl: config.get('auth.ttl'),
-        } satisfies AuthControllerOptions),
-      inject: [ConfigService],
+          cacheTtl: config.auth.ttl,
+        }) satisfies AuthControllerOptions,
     },
 
     {
