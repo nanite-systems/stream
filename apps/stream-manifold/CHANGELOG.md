@@ -1,5 +1,13 @@
 # stream-manifold
 
+## 3.2.0
+
+### Minor Changes
+
+- [#42](https://github.com/nanite-systems/stream/pull/42) [`5f826e4`](https://github.com/nanite-systems/stream/commit/5f826e43355044f0186e1a799528530fa3675501) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Feat/fish events support
+
+- [#42](https://github.com/nanite-systems/stream/pull/42) [`5f826e4`](https://github.com/nanite-systems/stream/commit/5f826e43355044f0186e1a799528530fa3675501) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Deprecated @nestjs/config
+
 ## 3.1.2
 
 ### Patch Changes
