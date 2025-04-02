@@ -4,10 +4,10 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ConfigService } from '@nestjs/config';
 import { RmqOptions, Transport } from '@nestjs/microservices';
 import { Options } from 'amqplib';
 import { Logger } from '@nss/utils';
+import { config } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,7 +19,6 @@ async function bootstrap() {
     },
   );
 
-  const config = await app.resolve(ConfigService);
   const logger = await app.resolve(Logger);
 
   app.useLogger(logger);
@@ -29,8 +28,8 @@ async function bootstrap() {
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
-      urls: config.get('rabbitmq.urls'),
-      queue: config.get('rabbitmq.apiQueueName'),
+      urls: config.rabbitmq.urls,
+      queue: config.rabbitmq.apiQueueName,
       queueOptions: {
         durable: false,
       } satisfies Options.AssertQueue,
@@ -43,7 +42,7 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices();
-  await app.listen(config.get('app.port'), '0.0.0.0');
+  await app.listen(config.app.port, '0.0.0.0');
 }
 
 void bootstrap();

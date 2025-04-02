@@ -17,8 +17,8 @@ import {
   ConnectionAccessorOptions,
   RequestAccessor,
 } from './utils/request.accessor';
-import { ConfigService } from '@nestjs/config';
 import { CommandCountInterceptor } from './interceptors/command-count.interceptor';
+import { config } from '../config';
 
 @Module({
   imports: [
@@ -43,12 +43,11 @@ import { CommandCountInterceptor } from './interceptors/command-count.intercepto
 
     {
       provide: CONNECTION_ACCESSOR_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          tokenHeader: config.get('http.authTokenHeader'),
-          behindProxy: config.get('http.behindProxy'),
+          tokenHeader: config.http.authTokenHeader,
+          behindProxy: config.http.behindProxy,
         }) satisfies ConnectionAccessorOptions,
-      inject: [ConfigService],
     },
     RequestAccessor,
 

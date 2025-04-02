@@ -5,8 +5,8 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nss/utils';
+import { config } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -18,7 +18,6 @@ async function bootstrap() {
     },
   );
 
-  const config = await app.resolve(ConfigService);
   const logger = await app.resolve(Logger);
 
   app.useLogger(logger);
@@ -36,7 +35,7 @@ async function bootstrap() {
     process.exit(1);
   });
 
-  await app.listen(config.get('app.port'), '0.0.0.0');
+  await app.listen(config.app.port, '0.0.0.0');
 }
 
 void bootstrap();

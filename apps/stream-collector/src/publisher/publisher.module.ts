@@ -7,17 +7,16 @@ import {
 import { RabbitMqModule } from '@nss/rabbitmq';
 import { DUPLICATE_EXCHANGE, STREAM_EXCHANGE } from './constant';
 import { ExchangeFactory } from './factories/exchange.factory';
-import { ConfigService } from '@nestjs/config';
 import { MultiplexerModule } from '../multiplexer/multiplexer.module';
 import { ServiceTrackerModule } from '../service-tracker/service-tracker.module';
+import { config } from '../config';
 
 @Module({
   imports: [
     RabbitMqModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
-        urls: config.get('rabbitmq.urls'),
+      useFactory: () => ({
+        urls: config.rabbitmq.urls,
       }),
-      inject: [ConfigService],
     }),
     MultiplexerModule,
     ServiceTrackerModule,
@@ -29,31 +28,30 @@ import { ServiceTrackerModule } from '../service-tracker/service-tracker.module'
     /** Options */
     {
       provide: PUBLISHER_OPTIONS,
-      useFactory: (config: ConfigService) =>
+      useFactory: () =>
         ({
-          exchangeName: config.get('rabbitmq.streamExchangeName'),
-          duplicateExchangeName: config.get('rabbitmq.duplicateExchangeName'),
-          appId: config.get('app.id'),
+          exchangeName: config.rabbitmq.streamExchangeName,
+          duplicateExchangeName: config.rabbitmq.duplicateExchangeName,
+          appId: config.app.id,
         }) satisfies PublisherServiceOptions,
-      inject: [ConfigService],
     },
 
     /** Exchanges */
     {
       provide: STREAM_EXCHANGE,
-      useFactory: (config: ConfigService, factory: ExchangeFactory) =>
-        factory.create(config.get('rabbitmq.streamExchangeName'), 'fanout', {
+      useFactory: (factory: ExchangeFactory) =>
+        factory.create(config.rabbitmq.streamExchangeName, 'fanout', {
           durable: true,
         }),
-      inject: [ConfigService, ExchangeFactory],
+      inject: [ExchangeFactory],
     },
     {
       provide: DUPLICATE_EXCHANGE,
-      useFactory: (config: ConfigService, factory: ExchangeFactory) =>
-        factory.create(config.get('rabbitmq.duplicateExchangeName'), 'fanout', {
+      useFactory: (factory: ExchangeFactory) =>
+        factory.create(config.rabbitmq.duplicateExchangeName, 'fanout', {
           durable: true,
         }),
-      inject: [ConfigService, ExchangeFactory],
+      inject: [ExchangeFactory],
     },
   ],
   exports: [PublisherService],

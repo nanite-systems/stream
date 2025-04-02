@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CensusClient, PS2Environment } from 'ps2census';
-import { ConfigService } from '@nestjs/config';
+import { config } from '../../config';
 
 @Injectable()
 export class StreamFactory {
-  constructor(private readonly config: ConfigService) {}
-
   createStream(environment: PS2Environment): CensusClient {
-    return new CensusClient(
-      this.config.getOrThrow('ess.serviceId'),
-      environment,
-    );
+    return new CensusClient(config.ess.serviceId, environment);
   }
 }
