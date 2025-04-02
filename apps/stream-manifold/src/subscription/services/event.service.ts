@@ -19,6 +19,7 @@ export class EventService {
 
       new CharacterEvent('AchievementEarned', eventStreamFactory),
       new CharacterEvent('BattleRankUp', eventStreamFactory),
+      new CharacterEvent('FishScan', eventStreamFactory),
       new CharacterEvent('ItemAdded', eventStreamFactory),
       new CharacterEvent('PlayerFacilityCapture', eventStreamFactory),
       new CharacterEvent('PlayerFacilityDefend', eventStreamFactory),
