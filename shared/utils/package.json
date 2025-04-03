@@ -19,12 +19,12 @@
     "winston": "^3.17.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^9.4.0",
-    "@nestjs/core": "^9.4.0"
+    "@nestjs/common": "^11.0.13",
+    "@nestjs/core": "^11.0.13"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.0.12",
-    "@nestjs/core": "^11.0.12",
+    "@nestjs/common": "^11.0.13",
+    "@nestjs/core": "^11.0.13",
     "@types/node": "^22.14.0",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",

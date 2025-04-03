@@ -5,7 +5,7 @@ export const config = buildConfig((e) => ({
     /**
      * Port the app is exposed on
      */
-    port: e.getInt('APP_PORT', 3000),
+    port: e.getInt('APP_PORT', 10, 3000),
   },
 
   log: {

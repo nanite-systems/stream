@@ -11,7 +11,7 @@
     "package.json"
   ],
   "peerDependencies": {
-    "ps2census": "^4.5.2"
+    "ps2census": "^4.8.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
