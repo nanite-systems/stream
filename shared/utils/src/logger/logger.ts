@@ -1,5 +1,5 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import winston from 'winston';
+import * as winston from 'winston';
 import { BASE_LOGGER } from './constants';
 
 @Injectable()
@@ -56,12 +56,12 @@ export class Logger implements LoggerService {
   log(message: string, metadata: object, context?: string): void;
   log() {}
 
-  warn(err: Error, context?: string);
+  warn(err: Error, context?: string): void;
   warn(message: string, context?: string): void;
   warn(message: string, metadata: object, context?: string): void;
   warn() {}
 
-  error(err: Error, context?: string);
+  error(err: Error, context?: string): void;
   error(message: string, context?: string): void;
   error(message: string, metadata: object, context?: string): void;
   error() {}

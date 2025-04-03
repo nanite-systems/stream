@@ -8,11 +8,6 @@
     "dist",
     "package.json"
   ],
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/main"
-  },
   "dependencies": {
     "@nestjs/common": "^11.0.12",
     "@nestjs/core": "^11.0.12",
@@ -35,7 +30,6 @@
     "bufferutil": "^4.0.9"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.1",
     "@types/amqplib": "^0.10.7",
     "@types/node": "^22.14.0",
     "@types/validator": "^13.12.3",

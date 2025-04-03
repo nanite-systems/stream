@@ -32,7 +32,7 @@ export class EventEntityFactory {
   private hashEvent(event: EventPayload): string {
     let hash = '';
 
-    for (const key in event) hash += `:${event[key]}`;
+    for (const key in event) hash += `:${event[key as keyof EventPayload]}`;
 
     return hash.slice(1);
   }

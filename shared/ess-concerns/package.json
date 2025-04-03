@@ -10,15 +10,10 @@
     "dist",
     "package.json"
   ],
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc"
-  },
   "peerDependencies": {
     "ps2census": "^4.5.2"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
     "ps2census": "^4.8.0",
     "rimraf": "^6.0.1",

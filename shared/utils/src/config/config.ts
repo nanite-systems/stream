@@ -1,6 +1,5 @@
-import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
-import process from 'process';
+import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
 
 export function buildConfig<T>(constructor: (env: Environment) => T) {
   dotenvExpand.expand(dotenv.config());
@@ -11,7 +10,7 @@ export function buildConfig<T>(constructor: (env: Environment) => T) {
 
 export class Environment {
   get(name: string): string | undefined;
-  get(name: string, def): string;
+  get(name: string, def: string): string;
   get(name: string, def?: string): string | undefined {
     return process.env[name] ?? def;
   }
