@@ -93,8 +93,8 @@ jobs:
           build-args: |
             APP_NAME=${{ matrix.app.name }}
           tags: |
-            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:latest
-            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION }}
-            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MINOR }}
-            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MAJOR }}
-            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ github.sha }}
+            ${{ env.APP_IMAGE }}:latest
+            ${{ env.APP_IMAGE }}:${{ env.APP_VERSION }}
+            ${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MINOR }}
+            ${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MAJOR }}
+            ${{ env.APP_IMAGE }}:${{ github.sha }}
