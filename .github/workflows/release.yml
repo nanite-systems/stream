@@ -89,11 +89,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
-          build-args:
-            - APP_NAME=${{ matrix.apps.name }}
-          tags:
-            - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:latest
-            - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION }}
-            - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MINOR }}
-            - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MAJOR }}
-            - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ github.sha }}
+          build-args: |
+            APP_NAME=${{ matrix.apps.name }}
+          tags: |
+            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:latest
+            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION }}
+            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MINOR }}
+            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MAJOR }}
+            ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ github.sha }}
