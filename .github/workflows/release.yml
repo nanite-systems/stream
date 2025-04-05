@@ -97,4 +97,3 @@ jobs:
             - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MINOR }}
             - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION_MAJOR }}
             - ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ github.sha }}
-

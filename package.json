@@ -10,6 +10,7 @@
   "scripts": {
     "changelog": "pnpm changeset version",
     "lint": "prettier . --check",
+    "format": "prettier . --write",
     "prepare": "husky install"
   },
   "devDependencies": {
