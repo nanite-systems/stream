@@ -49,10 +49,10 @@ jobs:
     name: Publish Docker image
     runs-on: ubuntu-latest
     needs: release
-    if: needs.release.outputs.published != '[]'
+    if: needs.release.outputs.publishedApps != '[]'
     strategy:
       matrix:
-        app: ${{ fromJson(needs.release.outputs.published) }}
+        app: ${{ fromJson(needs.release.outputs.publishedApps) }}
     steps:
       - uses: actions/checkout@v4
 
