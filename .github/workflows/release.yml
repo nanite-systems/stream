@@ -91,7 +91,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
           build-args: |
-            APP_NAME=${{ matrix.apps.name }}
+            APP_NAME=${{ matrix.app.name }}
           tags: |
             ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:latest
             ghcr.io/nanite-systems/${{ env.APP_IMAGE }}:${{ env.APP_VERSION }}
