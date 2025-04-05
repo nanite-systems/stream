@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RABBIT_MQ } from '@nss/rabbitmq';
-import { AmqpConnectionManager, Channel } from 'amqp-connection-manager';
+import {
+  AmqpConnectionManager,
+  Channel,
+  Options,
+} from 'amqp-connection-manager';
 import { Exchange } from '../utils/exchange';
 
 @Injectable()
@@ -9,7 +13,11 @@ export class ExchangeFactory {
     @Inject(RABBIT_MQ) private readonly rabbit: AmqpConnectionManager,
   ) {}
 
-  create(name: string, type: string, options): Exchange {
+  create(
+    name: string,
+    type: string,
+    options: Options.AssertExchange,
+  ): Exchange {
     const channel = this.rabbit.createChannel({
       json: true,
       setup: async (channel: Channel) => {

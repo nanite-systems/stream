@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   # NSS base services
   collector-pc:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-collector
     build:
       target: release-default
@@ -18,6 +17,7 @@ services:
       ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   collector-ps4eu:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-collector
     build:
       target: release-default
@@ -33,6 +33,7 @@ services:
       ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   collector-ps4us:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-collector
     build:
       target: release-default
@@ -48,6 +49,7 @@ services:
       ESS_SERVICE_IDS: $COLLECTORS_ESS_SERVICE_IDS
 
   api:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-api
     build:
       target: release-default
@@ -62,6 +64,7 @@ services:
       ESS_SERVICE_ID: $API_ESS_SERVICE_ID
 
   manifold:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-manifold
     build:
       target: release-default
@@ -81,6 +84,7 @@ services:
 
   # NSS support services
   auth:
+    pull_policy: build
     image: ghcr.io/nanite-systems/stream-auth
     build:
       target: release-default

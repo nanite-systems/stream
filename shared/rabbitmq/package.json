@@ -10,10 +10,6 @@
     "package.json"
   ],
   "type": "commonjs",
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc"
-  },
   "peerDependencies": {
     "@nestjs/common": "^9.2.1",
     "amqp-connection-manager": "^4.1.9",
@@ -22,8 +18,7 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.0.12",
-    "@tsconfig/node22": "^22.0.1",
+    "@nestjs/common": "^11.0.13",
     "@types/amqplib": "^0.10.7",
     "@types/node": "^22.14.0",
     "amqp-connection-manager": "^4.1.14",

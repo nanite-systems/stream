@@ -144,7 +144,9 @@ export class StreamGateway implements OnGatewayConnection {
     try {
       const message = JSON.parse(buffer.data);
       const messageHandler = handlers.find(({ message: pt }) =>
-        Object.keys(pt).every((key) => pt[key] === message[key]),
+        Object.keys(pt).every(
+          (key) => pt[key as keyof typeof pt] === message[key],
+        ),
       );
       const { callback } = messageHandler;
       return transform(callback(message));
@@ -155,7 +157,7 @@ export class StreamGateway implements OnGatewayConnection {
 
   private getContextId<T = any>(request: T): ContextId {
     const contextId = ContextIdFactory.getByRequest(request);
-    if (!request[REQUEST_CONTEXT_ID as any]) {
+    if (!request[REQUEST_CONTEXT_ID as keyof typeof request]) {
       Object.defineProperty(request, REQUEST_CONTEXT_ID, {
         value: contextId,
         enumerable: false,

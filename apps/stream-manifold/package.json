@@ -8,19 +8,14 @@
     "dist",
     "package.json"
   ],
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/main"
-  },
   "dependencies": {
-    "@nestjs/common": "^11.0.12",
-    "@nestjs/core": "^11.0.12",
-    "@nestjs/microservices": "^11.0.12",
-    "@nestjs/platform-fastify": "^11.0.12",
-    "@nestjs/platform-ws": "^11.0.12",
+    "@nestjs/common": "^11.0.13",
+    "@nestjs/core": "^11.0.13",
+    "@nestjs/microservices": "^11.0.13",
+    "@nestjs/platform-fastify": "^11.0.13",
+    "@nestjs/platform-ws": "^11.0.13",
     "@nestjs/terminus": "^11.0.0",
-    "@nestjs/websockets": "^11.0.12",
+    "@nestjs/websockets": "^11.0.13",
     "@nss/ess-concerns": "workspace:*",
     "@nss/rabbitmq": "workspace:*",
     "@nss/utils": "workspace:*",
@@ -42,7 +37,6 @@
     "bufferutil": "^4.0.9"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.1",
     "@types/amqplib": "^0.10.7",
     "@types/node": "^22.14.0",
     "@types/supertest": "^6.0.3",

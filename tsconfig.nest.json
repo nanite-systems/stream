@@ -1,0 +1,40 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": false,
+    "strictNullChecks": false,
+    "strictBindCallApply": false
+  },
+  "exclude": ["node_modules", "tmp", "dist"]
+}
+//{
+//  "extends": "@tsconfig/node22/tsconfig.json",
+//  "compilerOptions": {
+//    "outDir": "./dist",
+//    "baseUrl": "./",
+//    "declaration": true,
+//    "removeComments": true,
+//    "emitDecoratorMetadata": true,
+//    "experimentalDecorators": true,
+//    "allowSyntheticDefaultImports": true,
+//    "sourceMap": true,
+//    "incremental": true,
+//    "skipLibCheck": true,
+//    "strictNullChecks": false,
+//    "noImplicitAny": false,
+//    "strictBindCallApply": false,
+//    "forceConsistentCasingInFileNames": false,
+//    "noFallthroughCasesInSwitch": false
+//  },
+//  "include": ["src/"]
+//}
