@@ -9,10 +9,10 @@
     "package.json"
   ],
   "dependencies": {
-    "@nestjs/common": "^11.0.13",
-    "@nestjs/core": "^11.0.13",
-    "@nestjs/microservices": "^11.0.13",
-    "@nestjs/platform-fastify": "^11.0.13",
+    "@nestjs/common": "^11.0.20",
+    "@nestjs/core": "^11.0.20",
+    "@nestjs/microservices": "^11.0.20",
+    "@nestjs/platform-fastify": "^11.0.20",
     "@nestjs/terminus": "^11.0.0",
     "@nss/ess-concerns": "workspace:*",
     "@nss/rabbitmq": "workspace:*",
@@ -35,6 +35,6 @@
     "@types/validator": "^13.12.3",
     "@types/ws": "^8.18.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
