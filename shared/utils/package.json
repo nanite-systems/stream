@@ -11,7 +11,7 @@
     "package.json"
   ],
   "dependencies": {
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "dotenv-expand": "^12.0.1",
     "logform": "^2.7.0",
     "safe-stable-stringify": "^2.5.0",
@@ -23,11 +23,11 @@
     "@nestjs/core": "^11.0.13"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.0.13",
-    "@nestjs/core": "^11.0.13",
+    "@nestjs/common": "^11.0.20",
+    "@nestjs/core": "^11.0.20",
     "@types/node": "^22.14.0",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
