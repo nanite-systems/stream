@@ -9,40 +9,40 @@
     "package.json"
   ],
   "dependencies": {
-    "@nestjs/common": "^11.0.13",
-    "@nestjs/core": "^11.0.13",
-    "@nestjs/microservices": "^11.0.13",
-    "@nestjs/platform-fastify": "^11.0.13",
-    "@nestjs/platform-ws": "^11.0.13",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/microservices": "^11.1.6",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/platform-ws": "^11.1.6",
     "@nestjs/terminus": "^11.0.0",
-    "@nestjs/websockets": "^11.0.13",
+    "@nestjs/websockets": "^11.1.6",
     "@nss/ess-concerns": "workspace:*",
     "@nss/rabbitmq": "workspace:*",
     "@nss/utils": "workspace:*",
     "@willsoto/nestjs-prometheus": "^6.0.2",
     "amqp-connection-manager": "^4.1.14",
-    "amqplib": "^0.10.7",
+    "amqplib": "^0.10.9",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "class-validator": "^0.14.2",
     "eventemitter3": "^5.0.1",
     "iterare": "^1.2.1",
     "prom-client": "^15.1.3",
-    "ps2census": "^4.8.0",
+    "ps2census": "^4.9.0",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^6.0.1",
     "rxjs": "^7.8.2",
-    "ws": "^8.18.1"
+    "ws": "^8.18.3"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.9"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7",
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.18.3",
     "@types/supertest": "^6.0.3",
-    "@types/validator": "^13.12.3",
+    "@types/validator": "^13.15.3",
     "@types/ws": "^8.18.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.2"
   }
 }
