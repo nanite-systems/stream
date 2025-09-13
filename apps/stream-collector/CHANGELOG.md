@@ -1,5 +1,18 @@
 # stream-collector
 
+## 5.1.1
+
+### Patch Changes
+
+- [#52](https://github.com/nanite-systems/stream/pull/52) [`9060a18`](https://github.com/nanite-systems/stream/commit/9060a18c6f78a6507d3252f7c12892f038bbcc5c) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - Fixed managed connection entering infinite cycle
+
+- [#48](https://github.com/nanite-systems/stream/pull/48) [`2f78302`](https://github.com/nanite-systems/stream/commit/2f783028329fcc4c9f3758f1a03e0cb825497839) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2025-04-20)
+
+- Updated dependencies [[`2f78302`](https://github.com/nanite-systems/stream/commit/2f783028329fcc4c9f3758f1a03e0cb825497839)]:
+  - @nss/ess-concerns@1.0.3
+  - @nss/rabbitmq@1.0.2
+  - @nss/utils@0.1.2
+
 ## 5.1.0
 
 ### Minor Changes
