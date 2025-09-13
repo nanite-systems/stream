@@ -12,7 +12,7 @@ export class StreamConductorService {
     return true;
   }
 
-  release(connection: any): void {
+  release(connection: string): void {
     this.accepted.delete(connection);
   }
 }

@@ -119,7 +119,7 @@ export class ManagedConnection {
           delete this.connectedAt;
           delete this.heartbeatOffset;
 
-          this.conductor.release(this);
+          this.conductor.release(this.details.label);
 
           this.logger.verbose('Connecting', this.details.label);
           this.stateChange.next(State.CONNECTING);
