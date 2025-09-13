@@ -1,5 +1,16 @@
 # stream-manifold
 
+## 3.2.1
+
+### Patch Changes
+
+- [#48](https://github.com/nanite-systems/stream/pull/48) [`2f78302`](https://github.com/nanite-systems/stream/commit/2f783028329fcc4c9f3758f1a03e0cb825497839) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2025-04-20)
+
+- Updated dependencies [[`2f78302`](https://github.com/nanite-systems/stream/commit/2f783028329fcc4c9f3758f1a03e0cb825497839)]:
+  - @nss/ess-concerns@1.0.3
+  - @nss/rabbitmq@1.0.2
+  - @nss/utils@0.1.2
+
 ## 3.2.0
 
 ### Minor Changes
