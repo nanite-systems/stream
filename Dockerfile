@@ -37,4 +37,4 @@ EXPOSE $APP_PORT
 ENTRYPOINT ["node", "dist/main"]
 
 HEALTHCHECK --interval=12s --timeout=12s --start-period=30s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:$APP_PORT/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:$APP_PORT/health || exit 1
