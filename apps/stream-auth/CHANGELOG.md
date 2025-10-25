@@ -1,5 +1,14 @@
 # stream-auth
 
+## 1.1.2
+
+### Patch Changes
+
+- [#54](https://github.com/nanite-systems/stream/pull/54) [`a66b53c`](https://github.com/nanite-systems/stream/commit/a66b53cf1c85a810001d24662632440ec5d0d383) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2025-10-18)
+
+- Updated dependencies [[`a66b53c`](https://github.com/nanite-systems/stream/commit/a66b53cf1c85a810001d24662632440ec5d0d383)]:
+  - @nss/utils@0.1.3
+
 ## 1.1.1
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # stream-manifold
 
+## 3.2.2
+
+### Patch Changes
+
+- [#55](https://github.com/nanite-systems/stream/pull/55) [`4c6a397`](https://github.com/nanite-systems/stream/commit/4c6a3976d09ca32bc524718f4e3b3eee9804b03d) Thanks [@microwavekonijn](https://github.com/microwavekonijn)! - fix: make exclusive queue transient
+
+- [#54](https://github.com/nanite-systems/stream/pull/54) [`a66b53c`](https://github.com/nanite-systems/stream/commit/a66b53cf1c85a810001d24662632440ec5d0d383) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2025-10-18)
+
+- Updated dependencies [[`a66b53c`](https://github.com/nanite-systems/stream/commit/a66b53cf1c85a810001d24662632440ec5d0d383)]:
+  - @nss/ess-concerns@1.0.4
+  - @nss/rabbitmq@1.0.3
+  - @nss/utils@0.1.3
+
 ## 3.2.1
 
 ### Patch Changes
