@@ -25,7 +25,7 @@ export class StreamChannelFactory {
       setup: async (channel: Channel) => {
         const { queue } = await channel.assertQueue('', {
           exclusive: true,
-          durable: false
+          durable: false,
         });
 
         await Promise.all([
