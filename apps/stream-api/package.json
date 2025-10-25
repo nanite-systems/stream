@@ -18,7 +18,7 @@
     "@nss/ess-concerns": "workspace:*",
     "@nss/utils": "workspace:*",
     "@willsoto/nestjs-prometheus": "^6.0.2",
-    "amqp-connection-manager": "^4.1.14",
+    "amqp-connection-manager": "^4.1.15",
     "amqplib": "^0.10.9",
     "cache-manager": "^6.4.3",
     "class-validator": "^0.14.2",
@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7",
-    "@types/node": "^22.18.3",
+    "@types/node": "^22.18.12",
     "@types/validator": "^13.15.3",
     "@types/ws": "^8.18.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
