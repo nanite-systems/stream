@@ -23,9 +23,9 @@
     "@nestjs/core": "^11.0.13"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.1.6",
-    "@nestjs/core": "^11.1.6",
-    "@types/node": "^22.18.12",
+    "@nestjs/common": "^11.1.8",
+    "@nestjs/core": "^11.1.8",
+    "@types/node": "^22.18.13",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

@@ -14,7 +14,7 @@
     "ps2census": "^4.8.0"
   },
   "devDependencies": {
-    "@types/node": "^22.18.12",
+    "@types/node": "^22.18.13",
     "ps2census": "^4.9.0",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
