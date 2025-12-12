@@ -75,7 +75,7 @@ services:
       - rabbitmq
     labels:
       traefik.enable: true
-      traefik.http.routers.nss.rule: Host(`nss.localhost`)
+      traefik.http.routers.nss.rule: Host(`${NSS_HOST:-nss.localhost}`)
       traefik.http.routers.nss.middlewares: nss-auth@docker
       traefik.http.middlewares.nss-auth.forwardauth.address: http://auth:3000/auth
     environment:
