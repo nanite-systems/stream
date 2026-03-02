@@ -13,7 +13,7 @@
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
     "@nestjs/microservices": "^11.1.6",
-    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/platform-fastify": "^11.1.14",
     "@nestjs/terminus": "^11.0.0",
     "@nss/ess-concerns": "workspace:*",
     "@nss/utils": "workspace:*",

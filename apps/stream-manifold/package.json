@@ -12,7 +12,7 @@
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
     "@nestjs/microservices": "^11.1.6",
-    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/platform-fastify": "^11.1.14",
     "@nestjs/platform-ws": "^11.1.6",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/websockets": "^11.1.6",
