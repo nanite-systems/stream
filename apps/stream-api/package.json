@@ -10,8 +10,8 @@
   ],
   "dependencies": {
     "@nestjs/cache-manager": "^3.0.1",
-    "@nestjs/common": "^11.1.6",
-    "@nestjs/core": "^11.1.6",
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/core": "^11.1.18",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-fastify": "^11.1.6",
     "@nestjs/terminus": "^11.0.0",

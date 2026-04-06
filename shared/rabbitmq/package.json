@@ -18,7 +18,7 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.1.18",
     "@types/amqplib": "^0.10.7",
     "@types/node": "^22.18.12",
     "amqp-connection-manager": "^4.1.15",
