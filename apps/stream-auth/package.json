@@ -12,7 +12,7 @@
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
-    "@nestjs/microservices": "^11.1.6",
+    "@nestjs/microservices": "^11.1.19",
     "@nestjs/platform-fastify": "^11.1.6",
     "@nestjs/terminus": "^11.0.0",
     "@nss/utils": "workspace:*",
