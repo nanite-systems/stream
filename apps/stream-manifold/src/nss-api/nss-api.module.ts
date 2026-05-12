@@ -17,7 +17,7 @@ import { config } from '../config';
               urls: config.rabbitmq.urls,
               queue: config.rabbitmq.apiQueueName,
               queueOptions: {
-                durable: false,
+                autoDelete: true,
               } satisfies Options.AssertQueue,
             },
           }) satisfies RmqOptions,
