@@ -62,7 +62,7 @@ export class StreamGateway implements OnGatewayConnection {
       <NestGateway>connection,
     );
     const messageHandlers = nativeMessagesHandlers.map(
-      ({ callback, message, methodName }) => ({
+      ({ callback, isAckHandledManually, message, methodName }) => ({
         message,
         methodName,
         callback: this.contextCreator.create(
@@ -80,12 +80,14 @@ export class StreamGateway implements OnGatewayConnection {
           },
           'ws',
         ),
+        isAckHandledManually,
       }),
     );
 
-    const handlers = messageHandlers.map(({ callback, message }) => ({
+    const handlers = messageHandlers.map(({ callback, isAckHandledManually, message }) => ({
       message,
       callback: callback.bind(connection, client),
+      isAckHandledManually,
     }));
 
     this.bindMessageHandlers(client, handlers, (data) =>
