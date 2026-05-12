@@ -1,5 +1,16 @@
 # stream-collector
 
+## 5.1.3
+
+### Patch Changes
+
+- [#58](https://github.com/nanite-systems/stream/pull/58) [`1dada12`](https://github.com/nanite-systems/stream/commit/1dada12ea938e66b23f187aab0203eb82b173aa3) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2026-05-12)
+
+- Updated dependencies [[`1dada12`](https://github.com/nanite-systems/stream/commit/1dada12ea938e66b23f187aab0203eb82b173aa3)]:
+  - @nss/ess-concerns@1.0.5
+  - @nss/rabbitmq@1.0.4
+  - @nss/utils@0.1.4
+
 ## 5.1.2
 
 ### Patch Changes

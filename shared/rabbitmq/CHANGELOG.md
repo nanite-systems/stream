@@ -1,5 +1,11 @@
 # @nss/rabbitmq
 
+## 1.0.4
+
+### Patch Changes
+
+- [#58](https://github.com/nanite-systems/stream/pull/58) [`1dada12`](https://github.com/nanite-systems/stream/commit/1dada12ea938e66b23f187aab0203eb82b173aa3) Thanks [@depfu](https://github.com/apps/depfu)! - Update all pnpm dependencies (2026-05-12)
+
 ## 1.0.3
 
 ### Patch Changes
