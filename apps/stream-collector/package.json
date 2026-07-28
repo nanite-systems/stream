@@ -9,10 +9,10 @@
     "package.json"
   ],
   "dependencies": {
-    "@nestjs/common": "^11.1.19",
-    "@nestjs/core": "^11.1.19",
-    "@nestjs/microservices": "^11.1.19",
-    "@nestjs/platform-fastify": "^11.1.19",
+    "@nestjs/common": "^11.1.28",
+    "@nestjs/core": "^11.1.28",
+    "@nestjs/microservices": "^11.1.28",
+    "@nestjs/platform-fastify": "^11.1.28",
     "@nestjs/terminus": "^11.1.1",
     "@nss/ess-concerns": "workspace:*",
     "@nss/rabbitmq": "workspace:*",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
-    "@types/node": "^22.19.19",
+    "@types/node": "^22.20.1",
     "@types/validator": "^13.15.10",
     "@types/ws": "^8.18.1",
     "ts-node": "^10.9.2",
